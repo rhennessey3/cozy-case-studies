@@ -31,7 +31,7 @@ const Home = () => {
       <div 
         className={cn(
           "fixed inset-16 border border-border rounded-xl overflow-hidden shadow-md max-w-[1800px] bg-card/50 backdrop-blur-sm z-10 mt-16 transition-transform duration-300 ease-in-out",
-          isFlyoutOpen ? "translate-x-[-4.5rem]" : "translate-x-0"
+          isFlyoutOpen ? "translate-x-[4.5rem]" : "translate-x-0"
         )}
       >
         <ScrollArea className="h-full">
