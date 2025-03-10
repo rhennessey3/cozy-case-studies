@@ -13,8 +13,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b h-16">
+      <div className="container mx-auto h-full px-4 flex justify-between items-center">
         <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
         
         {/* Desktop Navigation */}
