@@ -30,7 +30,7 @@ const Home = () => {
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       <div 
         className={cn(
-          "fixed inset-16 border border-[1px] rounded-xl overflow-hidden shadow-md max-w-[1800px] bg-card/50 backdrop-blur-sm z-10 mt-16 transition-transform duration-300 ease-in-out mx-auto left-0 right-0",
+          "fixed inset-16 border rounded-xl overflow-hidden shadow-md bg-card/50 backdrop-blur-sm z-10 mt-16 transition-transform duration-300 ease-in-out mx-auto left-0 right-0",
           isFlyoutOpen ? "translate-x-72 border-l-0" : "translate-x-0 border-border"
         )}
         style={{ 
