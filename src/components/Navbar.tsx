@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
+import Logo from './Logo';
 
 interface NavbarProps {
   className?: string;
@@ -30,7 +31,10 @@ const Navbar = ({ className }: NavbarProps) => {
     <>
       <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
         <div className="container mx-auto h-full px-4 flex justify-between items-center">
-          <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
+          <Link to="/" className="flex items-center gap-2 text-xl font-semibold text-cozy-900">
+            <Logo />
+            <span>Case Studies</span>
+          </Link>
           
           <Button 
             variant="ghost"
