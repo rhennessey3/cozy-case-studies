@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -15,6 +16,7 @@ const Home = () => {
       setIsFlyoutOpen(document.body.classList.contains('flyout-open'));
     };
     
+    // Use MutationObserver to watch for changes to body classes
     const observer = new MutationObserver(handleBodyClassChange);
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     
@@ -28,10 +30,11 @@ const Home = () => {
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       <div 
         className={cn(
-          "fixed inset-16 border-3 rounded-xl overflow-hidden shadow-md bg-card/50 backdrop-blur-sm z-10 mt-16 transition-transform duration-300 ease-in-out mx-auto left-0 right-0",
+          "fixed inset-16 border border-[1px] rounded-xl overflow-hidden shadow-md max-w-[1800px] bg-card/50 backdrop-blur-sm z-10 mt-16 transition-transform duration-300 ease-in-out mx-auto left-0 right-0",
           isFlyoutOpen ? "translate-x-72 border-l-0" : "translate-x-0 border-border"
         )}
         style={{ 
+          borderWidth: '1px',
           maxWidth: 'calc(100% - 2rem)',
           marginLeft: 'auto',
           marginRight: 'auto'
