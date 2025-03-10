@@ -17,34 +17,36 @@ const Navbar = ({ className }: NavbarProps) => {
   };
 
   return (
-    <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
-      <div className="container mx-auto h-full px-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
-        
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
-          <Link to="/" className="text-cozy-800 hover:text-cozy-600 transition-colors">
-            Home
-          </Link>
-          <Link to="/about" className="text-cozy-800 hover:text-cozy-600 transition-colors">
-            About
-          </Link>
+    <>
+      <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
+        <div className="container mx-auto h-full px-4 flex justify-between items-center">
+          <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
+          
+          {/* Mobile Menu Button */}
+          <Button 
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5 text-cozy-800" />
+            ) : (
+              <Menu className="h-5 w-5 text-cozy-800" />
+            )}
+          </Button>
         </div>
-        
-        {/* Mobile Menu Button */}
-        <Button 
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={toggleMobileMenu}
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? (
-            <X className="h-5 w-5 text-cozy-800" />
-          ) : (
-            <Menu className="h-5 w-5 text-cozy-800" />
-          )}
-        </Button>
+      </nav>
+      
+      {/* Desktop Navigation - Positioned on left border */}
+      <div className="fixed left-0 top-0 bottom-0 hidden md:flex flex-col items-center justify-center px-8 gap-8">
+        <Link to="/" className="text-cozy-800 hover:text-cozy-600 transition-colors">
+          Home
+        </Link>
+        <Link to="/about" className="text-cozy-800 hover:text-cozy-600 transition-colors">
+          About
+        </Link>
       </div>
       
       {/* Mobile Menu */}
@@ -71,7 +73,7 @@ const Navbar = ({ className }: NavbarProps) => {
           </Link>
         </div>
       </div>
-    </nav>
+    </>
   );
 };
 
