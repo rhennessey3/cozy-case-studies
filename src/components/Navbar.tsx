@@ -17,7 +17,7 @@ const Navbar = ({ className }: NavbarProps) => {
   };
 
   return (
-    <nav className={cn("bg-background/80 backdrop-blur-md border-b h-16", className)}>
+    <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
       <div className="container mx-auto h-full px-4 flex justify-between items-center">
         <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
         
