@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -19,7 +18,6 @@ const Navbar = ({ className }: NavbarProps) => {
 
   const toggleFlyoutMenu = () => {
     setFlyoutMenuOpen(!flyoutMenuOpen);
-    // Add a body class to prevent scrolling when the flyout is open
     if (!flyoutMenuOpen) {
       document.body.classList.add('flyout-open');
     } else {
@@ -33,7 +31,6 @@ const Navbar = ({ className }: NavbarProps) => {
         <div className="container mx-auto h-full px-4 flex justify-between items-center">
           <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
           
-          {/* Mobile Menu Button */}
           <Button 
             variant="ghost"
             size="icon"
@@ -50,7 +47,6 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </nav>
       
-      {/* Flyout menu trigger on the left side */}
       <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30">
         <Button
           variant="ghost"
@@ -67,11 +63,10 @@ const Navbar = ({ className }: NavbarProps) => {
         </Button>
       </div>
       
-      {/* Flyout Menu - slides in from left */}
       <div 
         className={cn(
           "fixed left-0 top-0 bottom-0 w-72 bg-card/95 backdrop-blur-md p-6 shadow-lg transition-transform duration-300 ease-in-out z-20",
-          flyoutMenuOpen ? "translate-x-0 border-r-0" : "translate-x-[-100%] border-r border-border"
+          flyoutMenuOpen ? "translate-x-0" : "translate-x-[-100%] border-r border-border"
         )}
       >
         <div className="flex flex-col gap-6 pt-16">
@@ -102,7 +97,6 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
       <div 
         className={cn(
           "fixed inset-0 z-40 bg-background pt-20 px-4 md:hidden transition-transform duration-300 ease-in-out",
