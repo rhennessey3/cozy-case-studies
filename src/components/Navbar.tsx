@@ -102,16 +102,6 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </div>
       
-      {/* Content push effect when flyout is open */}
-      <div 
-        className={cn(
-          "fixed inset-0 bg-transparent transition-transform duration-300 ease-in-out z-10 pointer-events-none",
-          flyoutMenuOpen ? "translate-x-[4.5rem]" : "translate-x-0"
-        )}
-      >
-        {/* This is a dummy div that pushes the content */}
-      </div>
-      
       {/* Mobile Menu */}
       <div 
         className={cn(
