@@ -35,6 +35,7 @@ const Home = () => {
         )}
         style={{ 
           borderWidth: '1px',
+          borderLeftWidth: '3px',
           maxWidth: 'calc(100% - 2rem)',
           marginLeft: 'auto',
           marginRight: 'auto'
