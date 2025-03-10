@@ -48,7 +48,7 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </nav>
       
-      <div className="fixed left-[2px] top-0 bottom-0 flex flex-col items-center justify-center w-[5.5rem] z-10">
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[5.5rem] z-30">
         <Button
           variant="ghost"
           size="icon"
