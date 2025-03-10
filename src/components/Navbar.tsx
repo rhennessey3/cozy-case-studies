@@ -51,7 +51,7 @@ const Navbar = ({ className }: NavbarProps) => {
       </nav>
       
       {/* Flyout menu trigger on the left side */}
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center px-8 z-30">
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30">
         <Button
           variant="ghost"
           size="icon"
