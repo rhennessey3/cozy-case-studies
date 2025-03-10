@@ -5,7 +5,11 @@ import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 
-const Navbar = () => {
+interface NavbarProps {
+  className?: string;
+}
+
+const Navbar = ({ className }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -13,7 +17,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b h-16">
+    <nav className={cn("bg-background/80 backdrop-blur-md border-b h-16", className)}>
       <div className="container mx-auto h-full px-4 flex justify-between items-center">
         <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
         
