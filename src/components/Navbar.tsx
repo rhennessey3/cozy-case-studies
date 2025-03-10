@@ -50,18 +50,8 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </nav>
       
-      {/* Desktop Navigation - Positioned on left border */}
-      <div className="fixed left-0 top-0 bottom-0 hidden md:flex flex-col items-center justify-center px-8 gap-8">
-        <Link to="/" className="text-cozy-800 hover:text-cozy-600 transition-colors">
-          Home
-        </Link>
-        <Link to="/about" className="text-cozy-800 hover:text-cozy-600 transition-colors">
-          About
-        </Link>
-      </div>
-      
       {/* Flyout menu trigger on the left side */}
-      <div className="fixed left-0 top-1/4 flex flex-col items-center justify-center px-8 z-30">
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center px-8 z-30">
         <Button
           variant="ghost"
           size="icon"
