@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
-import Logo from './Logo';
 
 interface NavbarProps {
   className?: string;
@@ -31,10 +30,7 @@ const Navbar = ({ className }: NavbarProps) => {
     <>
       <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
         <div className="container mx-auto h-full px-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 text-xl font-semibold text-cozy-900">
-            <Logo />
-            <span>Case Studies</span>
-          </Link>
+          <Link to="/" className="text-xl font-semibold text-cozy-900">Case Studies</Link>
           
           <Button 
             variant="ghost"
@@ -52,7 +48,7 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </nav>
       
-      <div className="fixed left-0 top-16 bottom-16 flex flex-col items-center justify-center w-[4.5rem] z-30">
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30">
         <Button
           variant="ghost"
           size="icon"
@@ -70,11 +66,11 @@ const Navbar = ({ className }: NavbarProps) => {
       
       <div 
         className={cn(
-          "fixed left-0 top-16 bottom-16 w-72 bg-card/95 backdrop-blur-md p-6 shadow-lg transition-transform duration-300 ease-in-out z-20 border-r border-[1px]",
+          "fixed left-0 top-0 bottom-0 w-72 bg-card/95 backdrop-blur-md p-6 shadow-lg transition-transform duration-300 ease-in-out z-20 border-r border-[1px]",
           flyoutMenuOpen ? "translate-x-0 border-r-0" : "translate-x-[-100%] border-border"
         )}
       >
-        <div className="flex flex-col gap-6 pt-4">
+        <div className="flex flex-col gap-6 pt-16">
           <h2 className="text-xl font-semibold text-cozy-900 mb-4">Menu</h2>
           <nav className="flex flex-col gap-4">
             <Link 
