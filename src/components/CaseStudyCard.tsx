@@ -11,7 +11,14 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
-  const { title, coverImage, category, slug, height } = caseStudy;
+  const { title, coverImage, category, slug, height, description } = caseStudy;
+  
+  // Extract first 40 characters of description or use placeholder
+  const excerptText = description 
+    ? description.length > 40 
+      ? `${description.substring(0, 40)}...` 
+      : description
+    : "View case study details...";
   
   return (
     <div 
@@ -32,8 +39,9 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
               {category}
             </Badge>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4 text-white transform transition-transform">
-            <h3 className="text-lg font-medium line-clamp-1">{title}</h3>
+          <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4 text-white transform transition-all duration-300 group-hover:translate-y-[-28px]">
+            <h3 className="text-lg font-medium line-clamp-1 transition-all duration-300">{title}</h3>
+            <p className="text-sm mt-2 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto transition-all duration-300 line-clamp-2">{excerptText}</p>
           </div>
         </div>
       </Link>
