@@ -21,7 +21,7 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
       )}
     >
       <Link to={`/case-study/${slug}`} className="block">
-        <div className="relative h-[57.6px] overflow-hidden">
+        <div className="relative h-48 overflow-hidden">
           <img 
             src={coverImage} 
             alt={title} 
