@@ -111,18 +111,21 @@ const Navbar = ({ className }: NavbarProps) => {
           <h2 className="text-xl font-semibold text-cozy-900 mb-4">Menu</h2>
           <nav className="flex flex-col gap-4">
             <button 
+              type="button"
               className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/')}
             >
               Home
             </button>
             <button 
+              type="button"
               className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/about')}
             >
               About
             </button>
             <button 
+              type="button"
               className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/case-study/example')}
             >
@@ -140,18 +143,21 @@ const Navbar = ({ className }: NavbarProps) => {
       >
         <div className="flex flex-col space-y-6 text-center text-lg">
           <button 
+            type="button"
             className="py-2 border-b border-cozy-200 cursor-pointer"
             onClick={() => handleNavigation('/')}
           >
             Home
           </button>
           <button 
+            type="button"
             className="py-2 border-b border-cozy-200 cursor-pointer"
             onClick={() => handleNavigation('/about')}
           >
             About
           </button>
           <button 
+            type="button"
             className="py-2 border-b border-cozy-200 cursor-pointer"
             onClick={() => handleNavigation('/case-study/example')}
           >
