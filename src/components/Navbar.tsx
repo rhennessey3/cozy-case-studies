@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
@@ -13,9 +13,19 @@ const Navbar = ({ className }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [flyoutMenuOpen, setFlyoutMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close menus when location changes
+  useEffect(() => {
+    closeBothMenus();
+  }, [location]);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+    if (flyoutMenuOpen) {
+      setFlyoutMenuOpen(false);
+      document.body.classList.remove('flyout-open');
+    }
   };
 
   const toggleFlyoutMenu = () => {
@@ -25,16 +35,21 @@ const Navbar = ({ className }: NavbarProps) => {
     } else {
       document.body.classList.remove('flyout-open');
     }
+    
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
   };
 
-  const handleNavigation = (path: string) => {
-    // Close the menus
+  const closeBothMenus = () => {
     setMobileMenuOpen(false);
     setFlyoutMenuOpen(false);
     document.body.classList.remove('flyout-open');
-    
-    // Navigate to the path
+  };
+
+  const handleNavigation = (path: string) => {
     console.log("Navigating to:", path);
+    closeBothMenus();
     navigate(path);
   };
 
