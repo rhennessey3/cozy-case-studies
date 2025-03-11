@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import CaseStudyDetail from "./pages/CaseStudyDetail";
 import NotFound from "./pages/NotFound";
+import FontManager from "./pages/FontManager";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/case-study/:slug" element={<CaseStudyDetail />} />
+          <Route path="/fonts" element={<FontManager />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
