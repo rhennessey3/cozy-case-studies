@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,7 @@ interface NavbarProps {
 const Navbar = ({ className }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [flyoutMenuOpen, setFlyoutMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -26,13 +27,23 @@ const Navbar = ({ className }: NavbarProps) => {
     }
   };
 
+  const handleNavigation = (path: string) => {
+    // Close the menus
+    setMobileMenuOpen(false);
+    setFlyoutMenuOpen(false);
+    document.body.classList.remove('flyout-open');
+    
+    // Navigate to the path
+    navigate(path);
+  };
+
   return (
     <>
       <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
         <div className="container mx-auto h-full px-4 flex justify-between items-center">
-          <Link 
-            to="/" 
-            className="fixed left-0 top-0 bottom-0 flex items-center justify-center w-[4.5rem] z-30" 
+          <div 
+            className="fixed left-0 top-0 bottom-0 flex items-center justify-center w-[4.5rem] z-30 cursor-pointer" 
+            onClick={() => handleNavigation('/')}
             aria-label="Home"
           >
             <svg 
@@ -55,7 +66,7 @@ const Navbar = ({ className }: NavbarProps) => {
                 </g>
               </g>
             </svg>
-          </Link>
+          </div>
           
           <Button 
             variant="ghost"
@@ -98,27 +109,24 @@ const Navbar = ({ className }: NavbarProps) => {
         <div className="flex flex-col gap-6 pt-16">
           <h2 className="text-xl font-semibold text-cozy-900 mb-4">Menu</h2>
           <nav className="flex flex-col gap-4">
-            <Link 
-              to="/" 
-              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200"
-              onClick={() => setFlyoutMenuOpen(false)}
+            <div 
+              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              onClick={() => handleNavigation('/')}
             >
               Home
-            </Link>
-            <Link 
-              to="/about" 
-              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200"
-              onClick={() => setFlyoutMenuOpen(false)}
+            </div>
+            <div 
+              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              onClick={() => handleNavigation('/about')}
             >
               About
-            </Link>
-            <Link 
-              to="/case-study/example" 
-              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200"
-              onClick={() => setFlyoutMenuOpen(false)}
+            </div>
+            <div 
+              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              onClick={() => handleNavigation('/case-study/example')}
             >
               Featured Case Study
-            </Link>
+            </div>
           </nav>
         </div>
       </div>
@@ -130,20 +138,24 @@ const Navbar = ({ className }: NavbarProps) => {
         )}
       >
         <div className="flex flex-col space-y-6 text-center text-lg">
-          <Link 
-            to="/" 
-            className="py-2 border-b border-cozy-200"
-            onClick={() => setMobileMenuOpen(false)}
+          <div 
+            className="py-2 border-b border-cozy-200 cursor-pointer"
+            onClick={() => handleNavigation('/')}
           >
             Home
-          </Link>
-          <Link 
-            to="/about" 
-            className="py-2 border-b border-cozy-200"
-            onClick={() => setMobileMenuOpen(false)}
+          </div>
+          <div 
+            className="py-2 border-b border-cozy-200 cursor-pointer"
+            onClick={() => handleNavigation('/about')}
           >
             About
-          </Link>
+          </div>
+          <div 
+            className="py-2 border-b border-cozy-200 cursor-pointer"
+            onClick={() => handleNavigation('/case-study/example')}
+          >
+            Featured Case Study
+          </div>
         </div>
       </div>
     </>
