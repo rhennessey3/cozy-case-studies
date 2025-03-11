@@ -32,6 +32,9 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
               {category}
             </Badge>
           </div>
+          <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4 text-white transform transition-transform">
+            <h3 className="text-lg font-medium line-clamp-1">{title}</h3>
+          </div>
         </div>
       </Link>
     </div>
