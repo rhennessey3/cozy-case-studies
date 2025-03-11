@@ -23,7 +23,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar className="fixed top-0 left-0 right-0 z-50" />
+      <Navbar className="fixed top-0 left-0 right-0 z-50 bg-white" />
       <ScrollArea className="h-full pt-16">
         {/* About Content */}
         <section className="min-h-screen bg-white py-20">
