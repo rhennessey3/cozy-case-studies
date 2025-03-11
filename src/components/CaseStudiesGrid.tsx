@@ -5,7 +5,7 @@ import CaseStudyCard from './CaseStudyCard';
 
 const CaseStudiesGrid = () => {
   return (
-    <section id="case-studies" className="py-16 px-4 w-full">
+    <section id="case-studies" className="py-8 px-4 w-full">
       <div className="mx-auto max-w-screen-2xl">
         <div className="masonry-grid">
           {caseStudies.map((study) => (
