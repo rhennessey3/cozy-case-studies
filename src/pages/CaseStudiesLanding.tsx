@@ -27,7 +27,7 @@ const CaseStudiesLanding = () => {
       <ScrollArea className="h-full pt-16">
         <section className="min-h-screen bg-white py-20">
           <div className="w-full px-0">
-            <div className="text-center mb-8">
+            <div className="text-left max-w-screen-2xl mx-auto px-4 mb-8">
               <h1 className="text-4xl md:text-5xl font-[900] mb-3 text-[#1b1b1b]">CASE STUDIES.</h1>
             </div>
             
