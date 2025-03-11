@@ -30,8 +30,8 @@ const Home = () => {
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       <div 
         className={cn(
-          "fixed inset-16 border border-[1px] rounded-xl overflow-hidden shadow-md max-w-[1800px] bg-card/50 backdrop-blur-sm z-10 transition-transform duration-300 ease-in-out",
-          isFlyoutOpen ? "translate-x-72 border-l-0" : "translate-x-0 border-border"
+          "fixed inset-16 border border-[#333333] rounded-xl overflow-hidden shadow-md max-w-[1800px] bg-card/50 backdrop-blur-sm z-10 transition-transform duration-300 ease-in-out",
+          isFlyoutOpen ? "translate-x-72 border-l-0" : "translate-x-0"
         )}
       >
         <ScrollArea className="h-full">
