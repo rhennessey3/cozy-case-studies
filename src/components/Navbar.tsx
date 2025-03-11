@@ -123,25 +123,25 @@ const Navbar = ({ className }: NavbarProps) => {
         )}
       >
         <div className="flex flex-col gap-6 pt-16">
-          <h2 className="text-xl font-semibold text-black mb-4">Menu</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Menu</h2>
           <nav className="flex flex-col gap-4">
             <button 
               type="button"
-              className="text-left text-black hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/')}
             >
               Home
             </button>
             <button 
               type="button"
-              className="text-left text-black hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/about')}
             >
               About
             </button>
             <button 
               type="button"
-              className="text-left text-black hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/case-studies')}
             >
               Case Studies
@@ -159,21 +159,21 @@ const Navbar = ({ className }: NavbarProps) => {
         <div className="flex flex-col space-y-6 text-center text-lg">
           <button 
             type="button"
-            className="py-2 border-b border-cozy-200 cursor-pointer text-black"
+            className="py-2 border-b border-cozy-200 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/')}
           >
             Home
           </button>
           <button 
             type="button"
-            className="py-2 border-b border-cozy-200 cursor-pointer text-black"
+            className="py-2 border-b border-cozy-200 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/about')}
           >
             About
           </button>
           <button 
             type="button"
-            className="py-2 border-b border-cozy-200 cursor-pointer text-black"
+            className="py-2 border-b border-cozy-200 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/case-studies')}
           >
             Case Studies
