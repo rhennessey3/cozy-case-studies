@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Book } from 'lucide-react';
@@ -30,9 +29,8 @@ const Navbar = ({ className }: NavbarProps) => {
     <>
       <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
         <div className="container mx-auto h-full px-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 text-xl font-semibold text-cozy-900">
+          <Link to="/" className="flex items-center text-xl font-semibold text-cozy-900" aria-label="Home">
             <Book className="h-6 w-6" />
-            Case Studies
           </Link>
           
           <Button 
