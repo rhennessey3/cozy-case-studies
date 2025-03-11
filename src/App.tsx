@@ -9,7 +9,6 @@ import About from "./pages/About";
 import CaseStudyDetail from "./pages/CaseStudyDetail";
 import CaseStudiesLanding from "./pages/CaseStudiesLanding";
 import NotFound from "./pages/NotFound";
-import Navbar from "./components/Navbar";
 
 const queryClient = new QueryClient();
 
