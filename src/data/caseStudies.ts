@@ -4,6 +4,7 @@ export interface CaseStudy {
   title: string;
   slug: string;
   summary: string;
+  description?: string; // Adding optional description field
   coverImage: string;
   category: string;
   height?: string;

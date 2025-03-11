@@ -11,13 +11,13 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
-  const { title, coverImage, category, slug, height, description } = caseStudy;
+  const { title, coverImage, category, slug, height, description, summary } = caseStudy;
   
-  // Extract first 40 characters of description or use placeholder
-  const excerptText = description 
-    ? description.length > 40 
-      ? `${description.substring(0, 40)}...` 
-      : description
+  // Extract first 40 characters of description/summary or use placeholder
+  const excerptText = (description || summary)
+    ? (description || summary).length > 40 
+      ? `${(description || summary).substring(0, 40)}...` 
+      : (description || summary)
     : "View case study details...";
   
   return (
