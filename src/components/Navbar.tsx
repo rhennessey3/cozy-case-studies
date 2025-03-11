@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -143,7 +144,7 @@ const Navbar = ({ className }: NavbarProps) => {
               className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/case-study/example')}
             >
-              Featured Case Study
+              Case Studies
             </button>
           </nav>
         </div>
@@ -175,7 +176,7 @@ const Navbar = ({ className }: NavbarProps) => {
             className="py-2 border-b border-cozy-200 cursor-pointer"
             onClick={() => handleNavigation('/case-study/example')}
           >
-            Featured Case Study
+            Case Studies
           </button>
         </div>
       </div>
