@@ -1,25 +1,7 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Custom Font Declarations */
-@font-face {
-  font-family: 'YourCustomFont';
-  src: url('./assets/fonts/YourCustomFont.woff2') format('woff2'),
-       url('./assets/fonts/YourCustomFont.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'YourCustomFont';
-  src: url('./assets/fonts/YourCustomFont-Bold.woff2') format('woff2'),
-       url('./assets/fonts/YourCustomFont-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
 
 @layer base {
   :root {
