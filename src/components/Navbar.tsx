@@ -142,7 +142,7 @@ const Navbar = ({ className }: NavbarProps) => {
             <button 
               type="button"
               className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
-              onClick={() => handleNavigation('/case-study/example')}
+              onClick={() => handleNavigation('/case-studies')}
             >
               Case Studies
             </button>
@@ -174,7 +174,7 @@ const Navbar = ({ className }: NavbarProps) => {
           <button 
             type="button"
             className="py-2 border-b border-cozy-200 cursor-pointer"
-            onClick={() => handleNavigation('/case-study/example')}
+            onClick={() => handleNavigation('/case-studies')}
           >
             Case Studies
           </button>
