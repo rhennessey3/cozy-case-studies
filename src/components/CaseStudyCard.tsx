@@ -33,15 +33,6 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
             </Badge>
           </div>
         </div>
-        <div className="p-5">
-          <h3 className="mb-4 text-xl font-bold tracking-tight text-cozy-900 group-hover:text-cozy-700 transition-colors">
-            {title}
-          </h3>
-          <div className="flex items-center text-cozy-600 font-medium group-hover:text-cozy-800 transition-colors">
-            Read case study
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </div>
-        </div>
       </Link>
     </div>
   );
