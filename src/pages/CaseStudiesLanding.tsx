@@ -31,10 +31,10 @@ const CaseStudiesLanding = () => {
         <section className="min-h-screen bg-white py-20">
           <div className="w-full px-4 md:px-6 lg:px-8">
             <div className="text-left max-w-screen-2xl mx-auto mb-2">
-              <h1 className="text-4xl md:text-5xl font-[900] mb-3 text-[#1b1b1b] pb-4 border-b border-[#EAEAEA]">CASE STUDIES.</h1>
+              <h1 className="text-4xl md:text-5xl font-[900] mb-3 text-[#1b1b1b] pb-4 border-b border-[#EAEAEA] pl-4">CASE STUDIES.</h1>
             </div>
             
-            <CaseStudiesGrid className="px-[10px]" />
+            <CaseStudiesGrid />
           </div>
         </section>
       </ScrollArea>
