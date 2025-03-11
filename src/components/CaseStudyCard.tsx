@@ -11,7 +11,7 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
-  const { title, summary, coverImage, category, slug, height } = caseStudy;
+  const { title, coverImage, category, slug, height } = caseStudy;
   
   return (
     <div 
@@ -34,12 +34,9 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
           </div>
         </div>
         <div className="p-5">
-          <h3 className="mb-2 text-xl font-bold tracking-tight text-cozy-900 group-hover:text-cozy-700 transition-colors">
+          <h3 className="mb-4 text-xl font-bold tracking-tight text-cozy-900 group-hover:text-cozy-700 transition-colors">
             {title}
           </h3>
-          <p className="text-cozy-700 line-clamp-3 mb-4">
-            {summary}
-          </p>
           <div className="flex items-center text-cozy-600 font-medium group-hover:text-cozy-800 transition-colors">
             Read case study
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
