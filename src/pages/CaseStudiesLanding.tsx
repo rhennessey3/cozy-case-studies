@@ -28,7 +28,7 @@ const CaseStudiesLanding = () => {
         <section className="min-h-screen bg-white py-20">
           <div className="container mx-auto max-w-6xl px-4">
             <div className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-[900] mb-6 text-cozy-900">WO<br />RK.</h1>
+              <h1 className="text-4xl md:text-5xl font-[900] mb-6 text-[#1b1b1b]">WO<br />RK.</h1>
               <p className="text-xl text-cozy-700 max-w-3xl mx-auto">
                 Explore our portfolio of successful projects and discover how we've helped clients achieve their goals.
               </p>
