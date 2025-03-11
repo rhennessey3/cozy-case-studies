@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
@@ -34,6 +34,7 @@ const Navbar = ({ className }: NavbarProps) => {
     document.body.classList.remove('flyout-open');
     
     // Navigate to the path
+    console.log("Navigating to:", path);
     navigate(path);
   };
 
@@ -109,24 +110,24 @@ const Navbar = ({ className }: NavbarProps) => {
         <div className="flex flex-col gap-6 pt-16">
           <h2 className="text-xl font-semibold text-cozy-900 mb-4">Menu</h2>
           <nav className="flex flex-col gap-4">
-            <div 
-              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+            <button 
+              className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/')}
             >
               Home
-            </div>
-            <div 
-              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+            </button>
+            <button 
+              className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/about')}
             >
               About
-            </div>
-            <div 
-              className="text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+            </button>
+            <button 
+              className="text-left text-cozy-800 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/case-study/example')}
             >
               Featured Case Study
-            </div>
+            </button>
           </nav>
         </div>
       </div>
@@ -138,24 +139,24 @@ const Navbar = ({ className }: NavbarProps) => {
         )}
       >
         <div className="flex flex-col space-y-6 text-center text-lg">
-          <div 
+          <button 
             className="py-2 border-b border-cozy-200 cursor-pointer"
             onClick={() => handleNavigation('/')}
           >
             Home
-          </div>
-          <div 
+          </button>
+          <button 
             className="py-2 border-b border-cozy-200 cursor-pointer"
             onClick={() => handleNavigation('/about')}
           >
             About
-          </div>
-          <div 
+          </button>
+          <button 
             className="py-2 border-b border-cozy-200 cursor-pointer"
             onClick={() => handleNavigation('/case-study/example')}
           >
             Featured Case Study
-          </div>
+          </button>
         </div>
       </div>
     </>
