@@ -27,13 +27,14 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
         height === "tall" ? "masonry-item-tall" : ""
       )}
     >
-      <Link to={`/case-study/${slug}`} className="block">
-        <div className="relative aspect-video overflow-hidden">
+      <Link to={`/case-study/${slug}`} className="block relative h-full">
+        <div className="relative aspect-video overflow-hidden h-full">
           <img 
             src={coverImage} 
             alt={title} 
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div className="absolute top-4 left-4">
             <Badge variant="secondary" className="bg-white/90 hover:bg-white text-cozy-800">
               {category}
