@@ -35,7 +35,7 @@ const Home = () => {
         <ScrollArea className="h-full">
           <div className="min-h-full">
             <HeroSection />
-            <section className="min-h-screen bg-white py-20">
+            <section className="min-h-screen bg-white py-20 w-full">
               <CaseStudiesGrid />
             </section>
             <ContactSection />
