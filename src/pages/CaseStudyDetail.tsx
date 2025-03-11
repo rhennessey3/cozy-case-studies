@@ -1,15 +1,17 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 const CaseStudyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
   
   const caseStudy = caseStudies.find(study => study.slug === slug);
   
@@ -18,8 +20,16 @@ const CaseStudyDetail = () => {
       navigate('/404');
     }
     
-    // Scroll to top when component mounts
-    window.scrollTo(0, 0);
+    const handleBodyClassChange = () => {
+      setIsFlyoutOpen(document.body.classList.contains('flyout-open'));
+    };
+    
+    const observer = new MutationObserver(handleBodyClassChange);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    
+    return () => {
+      observer.disconnect();
+    };
   }, [caseStudy, navigate]);
   
   if (!caseStudy) {
@@ -29,66 +39,72 @@ const CaseStudyDetail = () => {
   const { title, coverImage, category, content } = caseStudy;
   
   return (
-    <>
-      <Navbar />
-      <div className="bg-white min-h-screen">
-        <div className="h-96 relative">
-          <img 
-            src={coverImage} 
-            alt={title} 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
-            <div className="container mx-auto px-4 pb-10">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mb-4 bg-white"
-                onClick={() => navigate('/')}
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" /> Back to case studies
-              </Button>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{title}</h1>
-              <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md">
-                {category}
+    <div className="min-h-screen bg-background">
+      <Navbar className="fixed top-0 left-0 right-0 z-50" />
+      <div 
+        className={cn(
+          "fixed inset-16 overflow-hidden max-w-[1800px] bg-card/50 backdrop-blur-sm z-10 transition-transform duration-300 ease-in-out",
+          isFlyoutOpen ? "translate-x-72 border-l-0" : "translate-x-0"
+        )}
+      >
+        <ScrollArea className="h-full">
+          <div className="min-h-full">
+            {/* Case Study Hero */}
+            <section className="h-screen flex">
+              <div className="w-1/3 bg-gradient-to-r from-[#e85d59] to-[#e67573]"></div>
+              <div className="w-2/3 bg-[#f5f5f5] relative">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img 
+                    src={coverImage} 
+                    alt={title} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
-            </div>
+            </section>
+
+            {/* Case Study Content */}
+            <section className="min-h-screen bg-white py-20">
+              <div className="container mx-auto px-4 max-w-4xl">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mb-8 bg-white"
+                  onClick={() => navigate('/')}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" /> Back to case studies
+                </Button>
+                
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
+                <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md mb-8">
+                  {category}
+                </div>
+
+                <article className="prose prose-lg max-w-none">
+                  <h2 className="text-cozy-900">Introduction</h2>
+                  <p>{content.intro}</p>
+                  
+                  <h2 className="text-cozy-900">The Challenge</h2>
+                  <p>{content.challenge}</p>
+                  
+                  <h2 className="text-cozy-900">Our Approach</h2>
+                  <p>{content.approach}</p>
+                  
+                  <h2 className="text-cozy-900">The Solution</h2>
+                  <p>{content.solution}</p>
+                  
+                  <h2 className="text-cozy-900">Results</h2>
+                  <p>{content.results}</p>
+                  
+                  <h2 className="text-cozy-900">Conclusion</h2>
+                  <p>{content.conclusion}</p>
+                </article>
+              </div>
+            </section>
           </div>
-        </div>
-        
-        <div className="container mx-auto px-4 py-10 max-w-4xl">
-          <article className="prose prose-lg max-w-none">
-            <h2 className="text-cozy-900">Introduction</h2>
-            <p>{content.intro}</p>
-            
-            <h2 className="text-cozy-900">The Challenge</h2>
-            <p>{content.challenge}</p>
-            
-            <h2 className="text-cozy-900">Our Approach</h2>
-            <p>{content.approach}</p>
-            
-            <h2 className="text-cozy-900">The Solution</h2>
-            <p>{content.solution}</p>
-            
-            <h2 className="text-cozy-900">Results</h2>
-            <p>{content.results}</p>
-            
-            <h2 className="text-cozy-900">Conclusion</h2>
-            <p>{content.conclusion}</p>
-          </article>
-          
-          <div className="mt-16 border-t border-cozy-100 pt-8">
-            <Button 
-              className="bg-cozy-800 hover:bg-cozy-900 text-white"
-              onClick={() => navigate('/')}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to all case studies
-            </Button>
-          </div>
-        </div>
+        </ScrollArea>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 
