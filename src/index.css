@@ -132,7 +132,7 @@
   
   @media (min-width: 1024px) {
     .masonry-grid {
-      column-count: 3;
+      column-count: 2;
     }
   }
 }
