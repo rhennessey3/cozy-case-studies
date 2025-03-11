@@ -34,7 +34,7 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
             alt={title} 
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-black/60 opacity-100 group-hover:opacity-0 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-black/40 opacity-100 group-hover:opacity-0 transition-opacity duration-300"></div>
           <div className="absolute top-4 left-4">
             <Badge variant="secondary" className="bg-white/90 hover:bg-white text-cozy-800">
               {category}
