@@ -39,9 +39,9 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
               {category}
             </Badge>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4 text-white transform transition-all duration-300 group-hover:translate-y-[-28px]">
-            <h3 className="text-lg font-medium line-clamp-1 transition-all duration-300">{title}</h3>
-            <p className="text-sm mt-2 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto transition-all duration-300 line-clamp-2">{excerptText}</p>
+          <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4 text-white">
+            <h3 className="text-lg font-medium transform transition-all duration-300 group-hover:translate-y-[-20px]">{title}</h3>
+            <p className="text-sm mt-2 opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-20 transition-all duration-300">{excerptText}</p>
           </div>
         </div>
       </Link>
