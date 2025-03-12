@@ -59,6 +59,28 @@ const CaseStudyDetail = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
+                
+                {/* Semi-transparent black overlay with three columns */}
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                  <div className="container mx-auto px-4 py-16">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
+                      <div className="text-center">
+                        <h3 className="text-xl md:text-2xl font-bold mb-4">Objective</h3>
+                        <p className="text-sm md:text-base">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
+                      </div>
+                      
+                      <div className="text-center">
+                        <h3 className="text-xl md:text-2xl font-bold mb-4">Approach</h3>
+                        <p className="text-sm md:text-base">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
+                      </div>
+                      
+                      <div className="text-center">
+                        <h3 className="text-xl md:text-2xl font-bold mb-4">Results</h3>
+                        <p className="text-sm md:text-base">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 
