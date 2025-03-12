@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -63,17 +64,17 @@ const CaseStudyDetail = () => {
                 <div className="absolute bottom-0 left-0 right-0 h-[20%] bg-black bg-opacity-40 flex items-center justify-center">
                   <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
-                      <div className="text-center">
+                      <div className="text-left">
                         <h3 className="text-base md:text-xl font-bold mb-2">Objective</h3>
                         <p className="text-sm md:text-base">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
                       </div>
                       
-                      <div className="text-center">
+                      <div className="text-left">
                         <h3 className="text-base md:text-xl font-bold mb-2">Approach</h3>
                         <p className="text-sm md:text-base">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
                       </div>
                       
-                      <div className="text-center">
+                      <div className="text-left">
                         <h3 className="text-base md:text-xl font-bold mb-2">Results</h3>
                         <p className="text-sm md:text-base">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
                       </div>
