@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -125,21 +126,21 @@ const Navbar = ({ className }: NavbarProps) => {
           <nav className="flex flex-col gap-4">
             <button 
               type="button"
-              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/')}
             >
               Home
             </button>
             <button 
               type="button"
-              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/about')}
             >
               About
             </button>
             <button 
               type="button"
-              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-2 border-b border-cozy-200 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 border-b border-cozy-200 cursor-pointer"
               onClick={() => handleNavigation('/case-studies')}
             >
               Case Studies
@@ -157,21 +158,21 @@ const Navbar = ({ className }: NavbarProps) => {
         <div className="flex flex-col space-y-6 text-center text-lg">
           <button 
             type="button"
-            className="py-2 border-b border-cozy-200 cursor-pointer text-gray-900"
+            className="py-3 px-4 border-b border-cozy-200 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/')}
           >
             Home
           </button>
           <button 
             type="button"
-            className="py-2 border-b border-cozy-200 cursor-pointer text-gray-900"
+            className="py-3 px-4 border-b border-cozy-200 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/about')}
           >
             About
           </button>
           <button 
             type="button"
-            className="py-2 border-b border-cozy-200 cursor-pointer text-gray-900"
+            className="py-3 px-4 border-b border-cozy-200 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/case-studies')}
           >
             Case Studies
