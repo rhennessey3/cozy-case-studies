@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -87,7 +88,7 @@ const CaseStudyDetail = () => {
                     <div>
                       <h2 className="text-white text-2xl md:text-3xl font-bold">
                         <span className="block">{category}</span>
-                        <span className="block text-xl md:text-2xl mt-1">: {title}</span>
+                        <span className="block text-xl md:text-2xl mt-1">{title}</span>
                       </h2>
                       <p className="text-white text-sm md:text-base mt-2">
                         A case study showcasing innovative solutions and measurable results.
