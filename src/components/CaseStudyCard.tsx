@@ -52,8 +52,8 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
               className="h-full w-full object-cover"
             />
           )}
-          {/* Changed this overlay to only apply when not hovering */}
-          <div className="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:opacity-0"></div>
+          {/* Modified overlay to be less opaque and never fully transparent */}
+          <div className="absolute inset-0 bg-black/30 transition-opacity duration-300 group-hover:bg-black/10"></div>
           <div className="absolute top-4 left-4">
             <Badge variant="secondary" className="bg-white/90 hover:bg-white text-cozy-800">
               {category}
