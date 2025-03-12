@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -65,17 +64,17 @@ const CaseStudyDetail = () => {
                   <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
                       <div className="text-left">
-                        <h3 className="text-base md:text-xl font-bold mb-2">Objective</h3>
+                        <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Objective</h3>
                         <p className="text-sm md:text-base">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
                       </div>
                       
                       <div className="text-left">
-                        <h3 className="text-base md:text-xl font-bold mb-2">Approach</h3>
+                        <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Approach</h3>
                         <p className="text-sm md:text-base">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
                       </div>
                       
                       <div className="text-left">
-                        <h3 className="text-base md:text-xl font-bold mb-2">Results</h3>
+                        <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Results</h3>
                         <p className="text-sm md:text-base">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
                       </div>
                     </div>
@@ -88,7 +87,7 @@ const CaseStudyDetail = () => {
                     <div>
                       <h2 className="text-white text-2xl md:text-3xl font-bold">
                         <span className="block">{category}</span>
-                        <span className="block text-xl md:text-2xl mt-1">{title}</span>
+                        <span className="block text-[#89c5cc] text-xl md:text-2xl mt-1">{title}</span>
                       </h2>
                       <p className="text-white text-sm md:text-base mt-2">
                         A case study showcasing innovative solutions and measurable results.
