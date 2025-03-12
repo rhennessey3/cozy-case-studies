@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -42,8 +41,8 @@ const CaseStudyDetail = () => {
     <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       
-      {/* Fixed Back Button - aligned with the S in sustainability */}
-      <div className="fixed top-[3.25rem] z-40 left-[10%]">
+      {/* Fixed Back Button - aligned with container edge */}
+      <div className="fixed top-[3.25rem] z-40 container mx-auto px-4 max-w-4xl">
         <Button 
           variant="outline" 
           size="sm" 
