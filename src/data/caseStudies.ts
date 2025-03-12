@@ -1,4 +1,3 @@
-
 export interface CaseStudy {
   id: string;
   title: string;
@@ -24,7 +23,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Eco-Friendly Packaging Redesign",
     slug: "eco-packaging-redesign",
     summary: "How we helped a consumer goods company reduce their environmental impact with sustainable packaging.",
-    coverImage: "https://images.unsplash.com/photo-1605600659873-d808a13e4d2a?auto=format&fit=crop&q=80&w=800",
+    coverImage: "https://asset.cloudinary.com/dtrbqr2hn/3e97998558e6cb60dc37152b3d793bc2",
     category: "Sustainability",
     height: "tall",
     content: {
