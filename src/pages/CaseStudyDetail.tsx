@@ -83,9 +83,9 @@ const CaseStudyDetail = () => {
                 </div>
                 
                 {/* Title overlay positioned just above the bottom overlay with padding */}
-                <div className="absolute bottom-[calc(20%+1.5rem)] left-0 right-0 h-[15%] bg-black bg-opacity-30 flex items-center">
+                <div className="absolute bottom-[calc(20%+1.5rem)] left-0 w-[30%] h-[15%] bg-black bg-opacity-30 flex items-center">
                   <div className="container mx-auto px-4">
-                    <div className="max-w-[30%]">
+                    <div>
                       <h2 className="text-white text-2xl md:text-3xl font-bold">
                         {category}: {title}
                       </h2>
