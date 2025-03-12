@@ -39,27 +39,10 @@ const Navbar = ({ className }: NavbarProps) => {
 
   return (
     <>
-      {/* Toggle Button Container - contains the hamburger/close icon */}
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-40 bg-white shadow-sm" id="toggleButtonContainer">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleDrawer}
-          aria-label="Toggle drawer menu"
-          className="text-cozy-800 hover:text-cozy-600 transition-colors"
-        >
-          {drawerOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
-        </Button>
-      </div>
-      
       {/* Flyout Drawer - the menu that slides out */}
       <div 
         className={cn(
-          "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out z-30 h-screen overflow-y-auto shadow-md",
+          "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out h-screen overflow-y-auto shadow-md z-50",
           drawerOpen ? "translate-x-0" : "translate-x-[-280px]"
         )}
         id="flyoutDrawer"
@@ -115,6 +98,23 @@ const Navbar = ({ className }: NavbarProps) => {
             </button>
           </nav>
         </div>
+      </div>
+      
+      {/* Toggle Button Container - contains the hamburger/close icon */}
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-40 bg-white shadow-sm" id="toggleButtonContainer">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleDrawer}
+          aria-label="Toggle drawer menu"
+          className="text-cozy-800 hover:text-cozy-600 transition-colors"
+        >
+          {drawerOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </Button>
       </div>
     </>
   );
