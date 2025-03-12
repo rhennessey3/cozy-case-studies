@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 const CaseStudyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const caseStudy = caseStudies.find(study => study.slug === slug);
   
@@ -21,7 +21,7 @@ const CaseStudyDetail = () => {
     }
     
     const handleBodyClassChange = () => {
-      setIsFlyoutOpen(document.body.classList.contains('flyout-open'));
+      setIsDrawerOpen(document.body.classList.contains('drawer-open'));
     };
     
     const observer = new MutationObserver(handleBodyClassChange);
@@ -43,8 +43,8 @@ const CaseStudyDetail = () => {
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       <div 
         className={cn(
-          "fixed inset-16 overflow-hidden max-w-[1800px] bg-card/50 backdrop-blur-sm z-10 transition-transform duration-300 ease-in-out",
-          isFlyoutOpen ? "translate-x-72 border-l-0" : "translate-x-0"
+          "fixed inset-0 overflow-hidden max-w-[1800px] transition-all duration-300 ease-in-out",
+          isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"
         )}
       >
         <ScrollArea className="h-full">

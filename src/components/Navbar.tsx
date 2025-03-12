@@ -10,57 +10,63 @@ interface NavbarProps {
 }
 
 const Navbar = ({ className }: NavbarProps) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [flyoutMenuOpen, setFlyoutMenuOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    closeBothMenus();
+    closeDrawer();
   }, [location]);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-    if (flyoutMenuOpen) {
-      setFlyoutMenuOpen(false);
-      document.body.classList.remove('flyout-open');
-    }
-  };
-
-  const toggleFlyoutMenu = () => {
-    setFlyoutMenuOpen(!flyoutMenuOpen);
-    if (!flyoutMenuOpen) {
-      document.body.classList.add('flyout-open');
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+    if (!drawerOpen) {
+      document.body.classList.add('drawer-open');
     } else {
-      document.body.classList.remove('flyout-open');
-    }
-    
-    if (mobileMenuOpen) {
-      setMobileMenuOpen(false);
+      document.body.classList.remove('drawer-open');
     }
   };
 
-  const closeBothMenus = () => {
-    setMobileMenuOpen(false);
-    setFlyoutMenuOpen(false);
-    document.body.classList.remove('flyout-open');
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    document.body.classList.remove('drawer-open');
   };
 
   const handleNavigation = (path: string) => {
-    console.log("Navigating to:", path);
-    closeBothMenus();
+    closeDrawer();
     navigate(path);
   };
 
   return (
     <>
-      {/* Top navbar - only visible on mobile */}
-      <nav className={cn("bg-background/80 backdrop-blur-md h-16 md:hidden", className)}>
-        <div className="container mx-auto h-full px-4 flex justify-between items-center">
+      {/* Left sidebar toggle - visible on all screen sizes */}
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30 bg-white">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleDrawer}
+          aria-label="Toggle drawer menu"
+          className="text-cozy-800 hover:text-cozy-600 transition-colors"
+        >
+          {drawerOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
+      
+      {/* Left drawer menu */}
+      <div 
+        className={cn(
+          "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out z-20 h-screen border-r border-gray-100",
+          drawerOpen ? "translate-x-0" : "translate-x-[-280px]"
+        )}
+      >
+        <div className="flex flex-col gap-6 pt-24">
           <div 
-            className="fixed left-0 top-0 bottom-0 flex items-center justify-center w-[4.5rem] z-30 cursor-pointer" 
+            className="cursor-pointer px-10 mb-6"
             onClick={() => handleNavigation('/')}
-            aria-label="Home"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -84,103 +90,29 @@ const Navbar = ({ className }: NavbarProps) => {
             </svg>
           </div>
           
-          <Button 
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? (
-              <X className="h-5 w-5 text-cozy-800" />
-            ) : (
-              <Menu className="h-5 w-5 text-cozy-800" />
-            )}
-          </Button>
-        </div>
-      </nav>
-      
-      {/* Left sidebar - visible on all screen sizes */}
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30 bg-white">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleFlyoutMenu}
-          aria-label="Toggle flyout menu"
-          className="text-cozy-800 hover:text-cozy-600 transition-colors"
-        >
-          {flyoutMenuOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
-        </Button>
-      </div>
-      
-      {/* Flyout menu */}
-      <div 
-        className={cn(
-          "fixed left-0 top-0 w-[350px] bg-white p-6 transition-transform duration-300 ease-in-out z-20 h-screen",
-          flyoutMenuOpen ? "translate-x-0" : "translate-x-[-100%]"
-        )}
-      >
-        <div className="flex flex-col gap-6 pt-16">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Menu</h2>
-          <nav className="flex flex-col gap-4">
+          <nav className="flex flex-col gap-2 px-6">
             <button 
               type="button"
-              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md"
               onClick={() => handleNavigation('/')}
             >
               Home
             </button>
             <button 
               type="button"
-              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md"
               onClick={() => handleNavigation('/about')}
             >
               About
             </button>
             <button 
               type="button"
-              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer"
+              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md"
               onClick={() => handleNavigation('/case-studies')}
             >
               Case Studies
             </button>
           </nav>
-        </div>
-      </div>
-      
-      {/* Mobile full-screen menu */}
-      <div 
-        className={cn(
-          "fixed inset-0 z-40 bg-white pt-20 px-4 md:hidden transition-transform duration-300 ease-in-out",
-          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        )}
-      >
-        <div className="flex flex-col space-y-6 text-center text-lg">
-          <button 
-            type="button"
-            className="py-3 px-4 cursor-pointer text-gray-900"
-            onClick={() => handleNavigation('/')}
-          >
-            Home
-          </button>
-          <button 
-            type="button"
-            className="py-3 px-4 cursor-pointer text-gray-900"
-            onClick={() => handleNavigation('/about')}
-          >
-            About
-          </button>
-          <button 
-            type="button"
-            className="py-3 px-4 cursor-pointer text-gray-900"
-            onClick={() => handleNavigation('/case-studies')}
-          >
-            Case Studies
-          </button>
         </div>
       </div>
     </>
