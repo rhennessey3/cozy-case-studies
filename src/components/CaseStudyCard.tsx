@@ -11,7 +11,7 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
-  const { title, coverImage, category, slug, height, description, summary } = caseStudy;
+  const { title, coverImage, videoBackground, category, slug, height, description, summary } = caseStudy;
   
   // Extract first 40 characters of description/summary or use placeholder
   const excerptText = (description || summary)
@@ -29,11 +29,29 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
     >
       <Link to={`/case-study/${slug}`} className="block relative h-full">
         <div className="relative aspect-video overflow-hidden h-full">
-          <img 
-            src={coverImage} 
-            alt={title} 
-            className="h-full w-full object-cover"
-          />
+          {videoBackground ? (
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className="h-full w-full object-cover"
+            >
+              <source src={videoBackground} type="video/mp4" />
+              {/* Fallback to image if video fails to load */}
+              <img 
+                src={coverImage} 
+                alt={title} 
+                className="h-full w-full object-cover"
+              />
+            </video>
+          ) : (
+            <img 
+              src={coverImage} 
+              alt={title} 
+              className="h-full w-full object-cover"
+            />
+          )}
           <div className="absolute inset-0 bg-black/40 opacity-100 group-hover:opacity-0 transition-opacity duration-300"></div>
           <div className="absolute top-4 left-4">
             <Badge variant="secondary" className="bg-white/90 hover:bg-white text-cozy-800">
