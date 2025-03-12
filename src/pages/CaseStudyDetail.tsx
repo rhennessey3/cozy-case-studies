@@ -42,8 +42,8 @@ const CaseStudyDetail = () => {
     <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       
-      {/* Fixed Back Button - aligned to center with the SVG */}
-      <div className="fixed top-20 z-40 w-[4.5rem] flex justify-center">
+      {/* Fixed Back Button - centered horizontally */}
+      <div className="fixed top-20 z-40 left-1/2 transform -translate-x-1/2">
         <Button 
           variant="outline" 
           size="sm" 
