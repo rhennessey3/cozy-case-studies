@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -117,7 +116,7 @@ const Navbar = ({ className }: NavbarProps) => {
       
       <div 
         className={cn(
-          "fixed left-0 top-0 bottom-0 w-[350px] bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out z-20",
+          "fixed left-0 top-0 bottom-0 w-[350px] bg-white p-6 transition-transform duration-300 ease-in-out z-20",
           flyoutMenuOpen ? "translate-x-0" : "translate-x-[-100%]"
         )}
       >
