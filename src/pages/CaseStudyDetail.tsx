@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -40,6 +41,22 @@ const CaseStudyDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
+      
+      {/* Fixed Back Button */}
+      <div className={cn(
+        "fixed top-20 z-40 transition-all duration-300 ease-in-out",
+        isDrawerOpen ? "left-[295px]" : "left-[5.5rem]"
+      )}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="bg-white/80 backdrop-blur-sm hover:bg-white/90"
+          onClick={() => navigate('/')}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back to case studies
+        </Button>
+      </div>
+      
       <div 
         className={cn(
           "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out",
@@ -101,15 +118,6 @@ const CaseStudyDetail = () => {
             {/* Case Study Content */}
             <section className="min-h-screen bg-white py-20">
               <div className="container mx-auto px-4 max-w-4xl">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mb-8 bg-white"
-                  onClick={() => navigate('/')}
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" /> Back to case studies
-                </Button>
-                
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
                 <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md mb-8">
                   {category}
