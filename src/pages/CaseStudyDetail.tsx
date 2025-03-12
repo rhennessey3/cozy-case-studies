@@ -42,8 +42,8 @@ const CaseStudyDetail = () => {
     <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       
-      {/* Fixed Back Button - aligned vertically with the SVG in sidebar */}
-      <div className="fixed top-[3.25rem] z-40 left-1/2 transform -translate-x-1/2">
+      {/* Fixed Back Button - aligned with the S in sustainability */}
+      <div className="fixed top-[3.25rem] z-40 left-[10%]">
         <Button 
           variant="outline" 
           size="sm" 
