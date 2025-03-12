@@ -99,7 +99,7 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </nav>
       
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30 bg-white">
+      <div className="fixed right-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30 bg-white">
         <Button
           variant="ghost"
           size="icon"
@@ -117,8 +117,8 @@ const Navbar = ({ className }: NavbarProps) => {
       
       <div 
         className={cn(
-          "fixed left-0 top-0 bottom-0 w-[350px] bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out z-20 border-r border-[1px]",
-          flyoutMenuOpen ? "translate-x-0 border-r-0" : "translate-x-[-100%] border-border"
+          "fixed right-0 top-0 bottom-0 w-[350px] bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out z-20",
+          flyoutMenuOpen ? "translate-x-0" : "translate-x-[100%]"
         )}
       >
         <div className="flex flex-col gap-6 pt-16">
@@ -126,21 +126,21 @@ const Navbar = ({ className }: NavbarProps) => {
           <nav className="flex flex-col gap-4">
             <button 
               type="button"
-              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 border-b border-cozy-200 cursor-pointer"
+              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer"
               onClick={() => handleNavigation('/')}
             >
               Home
             </button>
             <button 
               type="button"
-              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 border-b border-cozy-200 cursor-pointer"
+              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer"
               onClick={() => handleNavigation('/about')}
             >
               About
             </button>
             <button 
               type="button"
-              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 border-b border-cozy-200 cursor-pointer"
+              className="text-right text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer"
               onClick={() => handleNavigation('/case-studies')}
             >
               Case Studies
@@ -158,21 +158,21 @@ const Navbar = ({ className }: NavbarProps) => {
         <div className="flex flex-col space-y-6 text-center text-lg">
           <button 
             type="button"
-            className="py-3 px-4 border-b border-cozy-200 cursor-pointer text-gray-900"
+            className="py-3 px-4 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/')}
           >
             Home
           </button>
           <button 
             type="button"
-            className="py-3 px-4 border-b border-cozy-200 cursor-pointer text-gray-900"
+            className="py-3 px-4 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/about')}
           >
             About
           </button>
           <button 
             type="button"
-            className="py-3 px-4 border-b border-cozy-200 cursor-pointer text-gray-900"
+            className="py-3 px-4 cursor-pointer text-gray-900"
             onClick={() => handleNavigation('/case-studies')}
           >
             Case Studies
