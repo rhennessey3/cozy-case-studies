@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -42,11 +43,11 @@ const CaseStudyDetail = () => {
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       <div 
         className={cn(
-          "fixed inset-0 overflow-hidden max-w-[1800px] transition-all duration-300 ease-in-out",
+          "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out",
           isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"
         )}
       >
-        <ScrollArea className="h-full">
+        <ScrollArea className="h-full w-full">
           <div className="min-h-full">
             {/* Case Study Hero */}
             <section className="h-screen flex">
