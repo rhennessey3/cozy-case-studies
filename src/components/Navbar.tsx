@@ -43,7 +43,7 @@ const Navbar = ({
       <div className={cn("fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out h-screen overflow-y-auto shadow-md z-50", drawerOpen ? "translate-x-0" : "translate-x-[-280px]")} id="flyoutDrawer">
         <div className="flex flex-col gap-6 pt-20 pb-8 h-full px-6">
           <div className="cursor-pointer mb-6 flex items-center justify-center" onClick={() => handleNavigation('/')}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-10 w-10">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-10 w-10 md:h-12 md:w-12">
               <defs>
                 <style>
                   {`.cls-1{fill:none;stroke:#231f20;stroke-miterlimit:10;stroke-width:7px;}
@@ -77,7 +77,7 @@ const Navbar = ({
       
       <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center w-[4.5rem] z-[9999] bg-white shadow-sm" id="toggleButtonContainer">
         <div className="flex flex-col items-center justify-between h-full py-6">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-8 w-8">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-8 w-8 md:h-9.6 md:w-9.6">
             <defs>
               <style>
                 {`.cls-1{fill:none;stroke:#231f20;stroke-miterlimit:10;stroke-width:7px;}
