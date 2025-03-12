@@ -118,7 +118,7 @@ const Navbar = ({ className }: NavbarProps) => {
       
       <div 
         className={cn(
-          "fixed left-0 top-0 bottom-0 w-72 bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out z-20 border-r border-[1px]",
+          "fixed left-0 top-0 bottom-0 w-[280px] bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out z-20 border-r border-[1px]",
           flyoutMenuOpen ? "translate-x-0 border-r-0" : "translate-x-[-100%] border-border"
         )}
       >
