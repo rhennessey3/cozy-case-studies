@@ -60,23 +60,23 @@ const CaseStudyDetail = () => {
                   />
                 </div>
                 
-                {/* Semi-transparent black overlay with three columns */}
-                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                  <div className="container mx-auto px-4 py-16">
+                {/* Semi-transparent black overlay with three columns - positioned at bottom 10% */}
+                <div className="absolute bottom-0 left-0 right-0 h-[10%] bg-black bg-opacity-40 flex items-center justify-center">
+                  <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
                       <div className="text-center">
-                        <h3 className="text-xl md:text-2xl font-bold mb-4">Objective</h3>
-                        <p className="text-sm md:text-base">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
+                        <h3 className="text-sm md:text-lg font-bold mb-1">Objective</h3>
+                        <p className="text-xs md:text-sm">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
                       </div>
                       
                       <div className="text-center">
-                        <h3 className="text-xl md:text-2xl font-bold mb-4">Approach</h3>
-                        <p className="text-sm md:text-base">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
+                        <h3 className="text-sm md:text-lg font-bold mb-1">Approach</h3>
+                        <p className="text-xs md:text-sm">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
                       </div>
                       
                       <div className="text-center">
-                        <h3 className="text-xl md:text-2xl font-bold mb-4">Results</h3>
-                        <p className="text-sm md:text-base">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
+                        <h3 className="text-sm md:text-lg font-bold mb-1">Results</h3>
+                        <p className="text-xs md:text-sm">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
                       </div>
                     </div>
                   </div>
