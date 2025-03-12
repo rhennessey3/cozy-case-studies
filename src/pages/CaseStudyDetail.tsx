@@ -42,8 +42,8 @@ const CaseStudyDetail = () => {
     <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       
-      {/* Fixed Back Button - moved 90px to the right from container edge and adjusted position */}
-      <div className="fixed top-[1.49rem] z-40 container mx-auto px-4 max-w-4xl pl-[90px]">
+      {/* Fixed Back Button - moved 90px to the right from container edge and adjusted position, moved down by 25px */}
+      <div className="fixed top-[2.53rem] z-40 container mx-auto px-4 max-w-4xl pl-[90px]">
         <Button 
           variant="outline" 
           size="sm" 
