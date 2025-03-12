@@ -39,8 +39,8 @@ const Navbar = ({ className }: NavbarProps) => {
 
   return (
     <>
-      {/* Left sidebar toggle - visible on all screen sizes */}
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30 bg-white">
+      {/* Menu toggle button */}
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-40 bg-white shadow-sm">
         <Button
           variant="ghost"
           size="icon"
@@ -56,16 +56,16 @@ const Navbar = ({ className }: NavbarProps) => {
         </Button>
       </div>
       
-      {/* Left drawer menu - positioned outside the content flow to prevent clipping */}
+      {/* Left drawer menu with higher z-index than the toggle button container */}
       <div 
         className={cn(
-          "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out z-20 h-screen overflow-y-auto",
+          "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out z-30 h-screen overflow-y-auto shadow-md",
           drawerOpen ? "translate-x-0" : "translate-x-[-280px]"
         )}
       >
-        <div className="flex flex-col gap-6 pt-24 pb-8 h-full">
+        <div className="flex flex-col gap-6 pt-20 pb-8 h-full px-6">
           <div 
-            className="cursor-pointer px-10 mb-6"
+            className="cursor-pointer mb-6 flex items-center justify-center"
             onClick={() => handleNavigation('/')}
           >
             <svg 
@@ -90,7 +90,7 @@ const Navbar = ({ className }: NavbarProps) => {
             </svg>
           </div>
           
-          <nav className="flex flex-col gap-2 px-6 flex-1">
+          <nav className="flex flex-col gap-2 flex-1">
             <button 
               type="button"
               className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md"
