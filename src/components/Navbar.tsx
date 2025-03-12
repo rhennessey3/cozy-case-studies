@@ -39,8 +39,8 @@ const Navbar = ({ className }: NavbarProps) => {
 
   return (
     <>
-      {/* Menu toggle button */}
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-40 bg-white shadow-sm">
+      {/* Toggle Button Container - contains the hamburger/close icon */}
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-40 bg-white shadow-sm" id="toggleButtonContainer">
         <Button
           variant="ghost"
           size="icon"
@@ -56,12 +56,13 @@ const Navbar = ({ className }: NavbarProps) => {
         </Button>
       </div>
       
-      {/* Left drawer menu with higher z-index than the toggle button container */}
+      {/* Flyout Drawer - the menu that slides out */}
       <div 
         className={cn(
           "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out z-30 h-screen overflow-y-auto shadow-md",
           drawerOpen ? "translate-x-0" : "translate-x-[-280px]"
         )}
+        id="flyoutDrawer"
       >
         <div className="flex flex-col gap-6 pt-20 pb-8 h-full px-6">
           <div 
