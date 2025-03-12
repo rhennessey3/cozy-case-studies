@@ -25,7 +25,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "eco-packaging-redesign",
     summary: "How we helped a consumer goods company reduce their environmental impact with sustainable packaging.",
     coverImage: "https://images.unsplash.com/photo-1605600659873-d808a13e4d2a?auto=format&fit=crop&q=80&w=800",
-    videoBackground: "YOUR_VIDEO_URL_HERE",
+    videoBackground: "https://player.cloudinary.com/embed/?cloud_name=dtrbqr2hn&public_id=hbh_bpsqzw&profile=hbh-loop2",
     category: "Sustainability",
     height: "tall",
     content: {
