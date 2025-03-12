@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -41,11 +42,8 @@ const CaseStudyDetail = () => {
     <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       
-      {/* Fixed Back Button */}
-      <div className={cn(
-        "fixed top-20 z-40 transition-all duration-300 ease-in-out",
-        isDrawerOpen ? "left-[295px]" : "left-[5.5rem]"
-      )}>
+      {/* Fixed Back Button - aligned to center with the SVG */}
+      <div className="fixed top-20 z-40 w-[4.5rem] flex justify-center">
         <Button 
           variant="outline" 
           size="sm" 
