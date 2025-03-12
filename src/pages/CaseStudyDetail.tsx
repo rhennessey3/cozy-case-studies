@@ -60,18 +60,6 @@ const CaseStudyDetail = () => {
                   />
                 </div>
                 
-                {/* New transparent overlay positioned at 33% down from the top with 15% height */}
-                <div className="absolute top-[33%] left-0 right-0 h-[15%] bg-black bg-opacity-30 flex items-center">
-                  <div className="container mx-auto px-4">
-                    <h2 className="text-white text-2xl md:text-3xl font-bold">
-                      {category}: {title}
-                    </h2>
-                    <p className="text-white text-sm md:text-base mt-2">
-                      A case study showcasing innovative solutions and measurable results.
-                    </p>
-                  </div>
-                </div>
-                
                 {/* Semi-transparent black overlay with three columns - positioned at bottom 20% */}
                 <div className="absolute bottom-0 left-0 right-0 h-[20%] bg-black bg-opacity-40 flex items-center justify-center">
                   <div className="container mx-auto px-4">
@@ -91,6 +79,18 @@ const CaseStudyDetail = () => {
                         <p className="text-sm md:text-base">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
                       </div>
                     </div>
+                  </div>
+                </div>
+                
+                {/* Title overlay positioned just above the bottom overlay with padding */}
+                <div className="absolute bottom-[calc(20%+1.5rem)] left-0 right-0 h-[15%] bg-black bg-opacity-30 flex items-center">
+                  <div className="container mx-auto px-4">
+                    <h2 className="text-white text-2xl md:text-3xl font-bold">
+                      {category}: {title}
+                    </h2>
+                    <p className="text-white text-sm md:text-base mt-2">
+                      A case study showcasing innovative solutions and measurable results.
+                    </p>
                   </div>
                 </div>
               </div>
