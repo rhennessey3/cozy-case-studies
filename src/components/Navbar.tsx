@@ -54,7 +54,8 @@ const Navbar = ({ className }: NavbarProps) => {
 
   return (
     <>
-      <nav className={cn("bg-background/80 backdrop-blur-md h-16", className)}>
+      {/* Top navbar - only visible on mobile */}
+      <nav className={cn("bg-background/80 backdrop-blur-md h-16 md:hidden", className)}>
         <div className="container mx-auto h-full px-4 flex justify-between items-center">
           <div 
             className="fixed left-0 top-0 bottom-0 flex items-center justify-center w-[4.5rem] z-30 cursor-pointer" 
@@ -99,6 +100,7 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </nav>
       
+      {/* Left sidebar - visible on all screen sizes */}
       <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-30 bg-white">
         <Button
           variant="ghost"
@@ -115,6 +117,7 @@ const Navbar = ({ className }: NavbarProps) => {
         </Button>
       </div>
       
+      {/* Flyout menu */}
       <div 
         className={cn(
           "fixed left-0 top-0 w-[350px] bg-white p-6 transition-transform duration-300 ease-in-out z-20 h-screen",
@@ -149,6 +152,7 @@ const Navbar = ({ className }: NavbarProps) => {
         </div>
       </div>
       
+      {/* Mobile full-screen menu */}
       <div 
         className={cn(
           "fixed inset-0 z-40 bg-white pt-20 px-4 md:hidden transition-transform duration-300 ease-in-out",
