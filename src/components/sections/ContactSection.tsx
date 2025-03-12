@@ -68,8 +68,8 @@ const ContactSection = () => {
     setIsSubmitting(true);
     
     try {
-      // Replace this URL with your own webhook or serverless function URL
-      const webhookUrl = 'https://formsubmit.co/your-email@domain.com';
+      // Updated to use the provided email
+      const webhookUrl = 'https://formsubmit.co/workwith@rickhennessey.com';
       
       await fetch(webhookUrl, {
         method: 'POST',
