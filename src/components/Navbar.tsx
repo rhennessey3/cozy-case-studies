@@ -101,7 +101,7 @@ const Navbar = ({ className }: NavbarProps) => {
       </div>
       
       {/* Toggle Button Container - contains the hamburger/close icon */}
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-[9999] bg-white shadow-sm" id="toggleButtonContainer">
+      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center justify-center w-[4.5rem] z-40 bg-white shadow-sm" id="toggleButtonContainer">
         <Button
           variant="ghost"
           size="icon"
