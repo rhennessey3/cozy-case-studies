@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -75,7 +76,7 @@ const Navbar = ({
       </div>
       
       <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center w-[4.5rem] z-[9999] bg-white shadow-sm" id="toggleButtonContainer">
-        <div className="flex flex-col items-center gap-6 pt-6">
+        <div className="flex flex-col items-center justify-between h-full py-6">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-8 w-8">
             <defs>
               <style>
@@ -92,9 +93,12 @@ const Navbar = ({
               </g>
             </g>
           </svg>
+          
           <Button variant="ghost" size="icon" onClick={toggleDrawer} aria-label="Toggle drawer menu" className="text-cozy-800 hover:text-cozy-600 transition-colors">
             {drawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
+          
+          <div className="w-8 h-8"></div> {/* Empty div to balance the layout */}
         </div>
       </div>
     </>;
