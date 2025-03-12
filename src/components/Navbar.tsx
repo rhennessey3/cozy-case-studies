@@ -56,14 +56,14 @@ const Navbar = ({ className }: NavbarProps) => {
         </Button>
       </div>
       
-      {/* Left drawer menu */}
+      {/* Left drawer menu - positioned outside the content flow to prevent clipping */}
       <div 
         className={cn(
-          "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out z-20 h-screen border-r border-gray-100",
+          "fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out z-20 h-screen overflow-y-auto",
           drawerOpen ? "translate-x-0" : "translate-x-[-280px]"
         )}
       >
-        <div className="flex flex-col gap-6 pt-24">
+        <div className="flex flex-col gap-6 pt-24 pb-8 h-full">
           <div 
             className="cursor-pointer px-10 mb-6"
             onClick={() => handleNavigation('/')}
@@ -90,7 +90,7 @@ const Navbar = ({ className }: NavbarProps) => {
             </svg>
           </div>
           
-          <nav className="flex flex-col gap-2 px-6">
+          <nav className="flex flex-col gap-2 px-6 flex-1">
             <button 
               type="button"
               className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md"
