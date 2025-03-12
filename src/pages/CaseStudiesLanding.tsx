@@ -26,10 +26,10 @@ const CaseStudiesLanding = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar className="fixed top-0 left-0 right-0 z-50 bg-white" />
+      <Navbar className="fixed top-0 left-0 right-0" />
       <div 
         className={cn(
-          "fixed inset-0 overflow-hidden max-w-[1800px] transition-all duration-300 ease-in-out",
+          "fixed inset-0 overflow-hidden max-w-[1800px] transition-all duration-300 ease-in-out z-30",
           isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"
         )}
       >
