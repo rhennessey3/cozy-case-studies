@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -51,7 +50,7 @@ const CaseStudyDetail = () => {
           variant="outline" 
           size="sm" 
           className="bg-white/80 backdrop-blur-sm hover:bg-white/90"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/case-studies')}
         >
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to case studies
         </Button>
