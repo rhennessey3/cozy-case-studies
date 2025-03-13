@@ -1,0 +1,111 @@
+
+.hamburger-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hamburger-icon:focus {
+  outline: none;
+}
+
+.burger {
+  position: relative;
+  width: 30px;
+  height: 20px;
+}
+
+.strip {
+  position: absolute;
+  width: 30px;
+  height: 20px;
+}
+
+.strip div {
+  position: relative;
+  height: 2px;
+  background-color: #333;
+  border-radius: 4px;
+  transform-origin: center;
+  transition: transform 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0), 
+              background-color 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0), 
+              opacity 0.55s ease;
+}
+
+.burger-strip-2 div {
+  position: absolute;
+  width: 100%;
+}
+
+.burger-strip-2 div:nth-child(1) {
+  top: 0;
+}
+
+.burger-strip-2 div:nth-child(2) {
+  top: 9px;
+}
+
+.burger-strip-2 div:nth-child(3) {
+  top: 18px;
+}
+
+.burger-strip-3 {
+  opacity: 0;
+}
+
+.burger-strip-3 div {
+  position: absolute;
+  width: 100%;
+}
+
+.hamburger-icon.is-active .burger-strip-2 div:nth-child(1) {
+  transform: rotate(45deg);
+  top: 9px;
+}
+
+.hamburger-icon.is-active .burger-strip-2 div:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-icon.is-active .burger-strip-2 div:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 9px;
+}
+
+/* Adjust the button size to match the layout */
+@media (max-width: 768px) {
+  .hamburger-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .burger {
+    width: 24px;
+    height: 16px;
+  }
+  
+  .strip {
+    width: 24px;
+    height: 16px;
+  }
+  
+  .burger-strip-2 div:nth-child(2) {
+    top: 7px;
+  }
+  
+  .burger-strip-2 div:nth-child(3) {
+    top: 14px;
+  }
+  
+  .hamburger-icon.is-active .burger-strip-2 div:nth-child(1),
+  .hamburger-icon.is-active .burger-strip-2 div:nth-child(3) {
+    top: 7px;
+  }
+}

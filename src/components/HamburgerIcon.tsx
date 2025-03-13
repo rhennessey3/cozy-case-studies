@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import './HamburgerIcon.css';
 
 interface HamburgerIconProps {
   isOpen: boolean;
@@ -12,27 +13,21 @@ const HamburgerIcon: React.FC<HamburgerIconProps> = ({ isOpen, onClick, classNam
   return (
     <button 
       onClick={onClick} 
-      className={cn("flex flex-col justify-center items-center w-10 h-10 space-y-1.5 focus:outline-none", className)}
+      className={cn("hamburger-icon", isOpen ? "is-active" : "", className)}
       aria-label={isOpen ? "Close menu" : "Open menu"}
     >
-      <span 
-        className={cn(
-          "block h-0.5 w-6 bg-gray-800 transition-all duration-300",
-          isOpen ? "transform rotate-45 translate-y-2" : ""
-        )}
-      />
-      <span 
-        className={cn(
-          "block h-0.5 w-6 bg-gray-800 transition-all duration-300",
-          isOpen ? "opacity-0" : ""
-        )}
-      />
-      <span 
-        className={cn(
-          "block h-0.5 w-6 bg-gray-800 transition-all duration-300",
-          isOpen ? "transform -rotate-45 -translate-y-2" : ""
-        )}
-      />
+      <div className="burger">
+        <div className="strip burger-strip-2">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div className="strip burger-strip-3">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
     </button>
   );
 };
