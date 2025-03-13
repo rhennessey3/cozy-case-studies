@@ -7,7 +7,7 @@ const HeroSection = () => {
       <div className="w-1/3 bg-gradient-to-r from-[#e85d59] to-[#e67573]"></div>
       <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center">
         <div className="max-w-lg px-8">
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-start mb-8">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-20 w-20">
               <defs>
                 <style>
