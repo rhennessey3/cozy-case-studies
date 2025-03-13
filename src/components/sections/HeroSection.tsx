@@ -1,18 +1,67 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 
+// Import DrawSVG plugin (we'll register it in the component)
 const HeroSection = () => {
+  const logoRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    // Need to check for window since GSAP plugins are client-side only
+    if (typeof window !== 'undefined') {
+      // Import and register DrawSVG plugin (this is a workaround since DrawSVG is a premium plugin)
+      // We'll use standard GSAP animations instead
+      const tl = gsap.timeline();
+      
+      if (logoRef.current) {
+        // First hide all paths
+        gsap.set(logoRef.current.querySelectorAll('path'), { 
+          opacity: 0,
+          strokeDasharray: function(i, el) {
+            const length = el.getTotalLength ? el.getTotalLength() : 100;
+            return `${length} ${length}`;
+          },
+          strokeDashoffset: function(i, el) {
+            const length = el.getTotalLength ? el.getTotalLength() : 100;
+            return length;
+          } 
+        });
+        
+        // Animate paths drawing
+        tl.to(logoRef.current.querySelectorAll('path'), {
+          duration: 1.5,
+          opacity: 1,
+          strokeDashoffset: 0,
+          ease: "power2.inOut",
+          stagger: 0.2
+        });
+        
+        // Then animate fill
+        tl.to(logoRef.current.querySelectorAll('.cls-2'), {
+          duration: 0.8,
+          fillOpacity: 1,
+          ease: "power1.inOut",
+        }, "-=0.5");
+      }
+    }
+  }, []);
+
   return (
     <section className="h-screen flex">
       <div className="w-1/3 bg-gradient-to-r from-[#e85d59] to-[#e67573]"></div>
       <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center">
         <div className="max-w-lg px-8">
           <div className="flex justify-start mb-8">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-28 w-28">
+            <svg 
+              ref={logoRef}
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 53.34 71.44" 
+              className="h-28 w-28"
+            >
               <defs>
                 <style>
-                  {`.cls-1{fill:none;stroke:#231f20;stroke-miterlimit:10;stroke-width:7px;}
-                  .cls-2{fill:#231f20;}`}
+                  {`.cls-1{fill:none;stroke:#231f20;stroke-miterlimit:10;stroke-width:7px;stroke-linecap:round;}
+                  .cls-2{fill:#231f20;fill-opacity:0;}`}
                 </style>
               </defs>
               <title>Logo</title>
@@ -25,8 +74,8 @@ const HeroSection = () => {
               </g>
             </svg>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Creative Solutions for Modern Challenges</h1>
-          <p className="text-lg md:text-xl text-gray-600">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 opacity-0 animate-fade-in" style={{ animationDelay: '1.5s', animationFillMode: 'forwards' }}>Creative Solutions for Modern Challenges</h1>
+          <p className="text-lg md:text-xl text-gray-600 opacity-0 animate-fade-in" style={{ animationDelay: '1.8s', animationFillMode: 'forwards' }}>
             We craft innovative solutions that transform ideas into impactful experiences, 
             helping businesses achieve their goals in today's digital landscape.
           </p>
