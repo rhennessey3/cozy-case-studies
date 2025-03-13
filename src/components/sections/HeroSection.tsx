@@ -69,26 +69,13 @@ const HeroSection = () => {
             element.classList.add('animation-triggered');
           });
         });
-        
-        // Add one-way gradient animation (no yoyo)
-        const gradientElement = document.querySelector('.breathing-gradient');
-        if (gradientElement) {
-          gsap.to(gradientElement, {
-            background: 'linear-gradient(to right, #e77e6e, #e67c6e)', // Ending color has a much closer hue to starting color
-            duration: 3.5,  // Slower duration
-            repeat: -1,      // Still repeat
-            repeatDelay: 1,  // Add a pause before repeating
-            yoyo: false,     // No reversing - just animate in one direction
-            ease: "sine.inOut"
-          });
-        }
       }
     }
   }, []);
 
   return (
     <section className="h-screen flex">
-      <div className="w-1/3 breathing-gradient bg-gradient-to-r from-[#e77e6e] to-[#e85d59]"></div>
+      <div className="w-1/3 bg-gradient-to-r from-[#e77e6e] to-[#e85d59]"></div>
       <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center">
         <div className="max-w-lg px-8">
           <div className="flex justify-start mb-8">
