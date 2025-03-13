@@ -70,14 +70,15 @@ const HeroSection = () => {
           });
         });
         
-        // Add breathing animation for the gradient with minimal intensity (80% reduction in color change)
+        // Add one-way gradient animation (no yoyo)
         const gradientElement = document.querySelector('.breathing-gradient');
         if (gradientElement) {
           gsap.to(gradientElement, {
             background: 'linear-gradient(to right, #e77e6e, #e67c6e)', // Ending color has a much closer hue to starting color
             duration: 3.5,  // Slower duration
-            repeat: -1,
-            yoyo: true,
+            repeat: -1,      // Still repeat
+            repeatDelay: 1,  // Add a pause before repeating
+            yoyo: false,     // No reversing - just animate in one direction
             ease: "sine.inOut"
           });
         }
