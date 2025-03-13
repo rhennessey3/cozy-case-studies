@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import './HeroSection.css'; // Import the CSS file for the gradient animation
 
 const HeroSection = () => {
   const logoRef = useRef<SVGSVGElement>(null);
@@ -75,7 +76,7 @@ const HeroSection = () => {
 
   return (
     <section className="h-screen flex">
-      <div className="w-1/3 bg-gradient-to-r from-[#e77e6e] to-[#e85d59]"></div>
+      <div className="gradient-background w-1/3"></div>
       <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center">
         <div className="max-w-lg px-8">
           <div className="flex justify-start mb-8">
