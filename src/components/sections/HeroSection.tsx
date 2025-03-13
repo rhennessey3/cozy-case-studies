@@ -36,29 +36,39 @@ const HeroSection = () => {
           fill: '#231f20'
         });
         
-        // Sequence 1: Draw border
+        // Start all animations at the same time with different durations to make them finish together
+        // Border animation - has the longest path, give it more time
         tl.to(border, {
-          duration: 1.2,
+          duration: 2.5,
           opacity: 1,
           strokeDashoffset: 0,
           ease: "power2.inOut"
-        });
+        }, 0); // Start at 0
         
-        // Sequence 2: Fill H from bottom to top
+        // H animation - medium length
         tl.to(letterH, {
-          duration: 1,
+          duration: 2.5, // Same duration to finish at the same time
           y: '0%',
           opacity: 1,
           ease: "power2.inOut"
-        }, "+=0.2"); // Small pause between animations
+        }, 0); // Start at 0
         
-        // Sequence 3: Fill 3 from bottom to top
+        // 3 animation - shortest
         tl.to(number3, {
-          duration: 1,
+          duration: 2.5, // Same duration to finish at the same time
           y: '0%',
           opacity: 1,
           ease: "power2.inOut"
-        }, "+=0.2"); // Small pause between animations
+        }, 0); // Start at 0
+        
+        // Now all text animation will begin after the logo animation completes
+        tl.add(() => {
+          // Text animations will trigger after logo animation completes
+          const headingElements = document.querySelectorAll('.animate-fade-in');
+          headingElements.forEach(element => {
+            element.classList.add('animation-triggered');
+          });
+        });
       }
     }
   }, []);
@@ -101,8 +111,8 @@ const HeroSection = () => {
               </g>
             </svg>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 opacity-0 animate-fade-in" style={{ animationDelay: '3.5s', animationFillMode: 'forwards' }}>Creative Solutions for Modern Challenges</h1>
-          <p className="text-lg md:text-xl text-gray-600 opacity-0 animate-fade-in" style={{ animationDelay: '3.8s', animationFillMode: 'forwards' }}>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 opacity-0 animate-fade-in" style={{ animationDelay: '2.7s', animationFillMode: 'forwards' }}>Creative Solutions for Modern Challenges</h1>
+          <p className="text-lg md:text-xl text-gray-600 opacity-0 animate-fade-in" style={{ animationDelay: '3.0s', animationFillMode: 'forwards' }}>
             We craft innovative solutions that transform ideas into impactful experiences, 
             helping businesses achieve their goals in today's digital landscape.
           </p>
