@@ -70,12 +70,12 @@ const HeroSection = () => {
           });
         });
         
-        // Add breathing animation for the gradient
+        // Add breathing animation for the gradient with reduced intensity
         const gradientElement = document.querySelector('.breathing-gradient');
         if (gradientElement) {
           gsap.to(gradientElement, {
-            background: 'linear-gradient(to right, #e85d59, #e88073)',
-            duration: 1.5,
+            background: 'linear-gradient(to right, #e85d59, #e77e6e)',
+            duration: 3,  // Slower duration
             repeat: -1,
             yoyo: true,
             ease: "sine.inOut"
