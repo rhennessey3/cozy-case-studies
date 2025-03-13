@@ -8,7 +8,7 @@ const HeroSection = () => {
       <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center">
         <div className="max-w-lg px-8">
           <div className="flex justify-start mb-8">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-20 w-20">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.34 71.44" className="h-28 w-28">
               <defs>
                 <style>
                   {`.cls-1{fill:none;stroke:#231f20;stroke-miterlimit:10;stroke-width:7px;}
