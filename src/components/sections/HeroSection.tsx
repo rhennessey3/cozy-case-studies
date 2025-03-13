@@ -74,7 +74,7 @@ const HeroSection = () => {
         const gradientElement = document.querySelector('.breathing-gradient');
         if (gradientElement) {
           gsap.to(gradientElement, {
-            background: 'linear-gradient(to right, #e77e6e, #e85d59)', // Reversed direction with closer colors (80% less variation)
+            background: 'linear-gradient(to right, #e77e6e, #e67c6e)', // Ending color has a much closer hue to starting color
             duration: 3.5,  // Slower duration
             repeat: -1,
             yoyo: true,
