@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
+import HamburgerIcon from './HamburgerIcon';
 
 interface NavbarProps {
   className?: string;
@@ -94,9 +94,11 @@ const Navbar = ({
             </g>
           </svg>
           
-          <Button variant="ghost" size="icon" onClick={toggleDrawer} aria-label="Toggle drawer menu" className="text-cozy-800 hover:text-cozy-600 transition-colors">
-            {drawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+          <HamburgerIcon 
+            isOpen={drawerOpen} 
+            onClick={toggleDrawer} 
+            className="text-cozy-800 hover:text-cozy-600 transition-colors" 
+          />
           
           <div className="w-8 h-8"></div> {/* Empty div to balance the layout */}
         </div>
@@ -105,4 +107,3 @@ const Navbar = ({
 };
 
 export default Navbar;
-
