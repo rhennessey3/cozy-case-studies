@@ -75,7 +75,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="h-screen flex">
+    <section className="h-screen flex overflow-hidden">
       <div className="gradient-background w-1/3"></div>
       <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center">
         <div className="max-w-lg px-8">
