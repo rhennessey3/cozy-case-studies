@@ -12,7 +12,7 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
   // Array of company logos with SVG data
   const companies = [
     {
-      name: 'Custom Logo',
+      name: 'Allstate',
       svg: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="-5.953125 -2.0967725 51.59375 12.580635" className="h-8 w-20">
           <g fill="#333333">
@@ -26,7 +26,7 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
       ),
     },
     {
-      name: 'New Logo 2',
+      name: 'Ferrari',
       svg: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.744 192.744" className="h-8 w-16">
           <g fill="#333333" fillRule="evenodd" clipRule="evenodd">
@@ -37,7 +37,7 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
       ),
     },
     {
-      name: 'Ethereum',
+      name: 'Airforce',
       svg: (
         <svg xmlns="http://www.w3.org/2000/svg" width="2500" height="2500" viewBox="0 0 192.756 192.756" className="h-8 w-10">
           <g fillRule="evenodd" clipRule="evenodd">
