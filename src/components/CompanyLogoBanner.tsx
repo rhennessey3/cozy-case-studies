@@ -12,27 +12,6 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
   // Array of company logos with SVG data
   const companies = [
     {
-      name: 'Microsoft',
-      svg: (
-        <svg viewBox="0 0 23 23" className="h-8 w-8" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11 0H0V11H11V0Z" fill="#333333"/>
-          <path d="M23 0H12V11H23V0Z" fill="#333333"/>
-          <path d="M11 12H0V23H11V12Z" fill="#333333"/>
-          <path d="M23 12H12V23H23V12Z" fill="#333333"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'Adobe',
-      svg: (
-        <svg viewBox="0 0 50 50" className="h-8 w-12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19.985 34.5H15.255L13.5 39H9L16.5 17.25H18.825L26.25 39H21.75L19.985 34.5ZM16.5 30.75H18.75L17.625 27.375L16.5 30.75Z" fill="#333333"/>
-          <path d="M34.5 39H30.75V17.25H34.5V39Z" fill="#333333"/>
-          <path d="M41.25 17.25V39H37.5V17.25H41.25Z" fill="#333333"/>
-        </svg>
-      ),
-    },
-    {
       name: 'Custom Logo',
       svg: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="-5.953125 -2.0967725 51.59375 12.580635" className="h-8 w-20">
