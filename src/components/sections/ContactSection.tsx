@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -104,17 +106,17 @@ const ContactSection = () => {
   };
   
   return (
-    <section className="min-h-screen bg-background py-20">
+    <section className="bg-background py-12">
       <div className="container mx-auto max-w-4xl px-4">
-        <h2 className="text-4xl font-bold mb-10">Contact Us</h2>
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <h2 className="text-4xl font-bold mb-8">Contact Us</h2>
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium mb-2" htmlFor="name">Name</label>
-            <input 
+            <Label className="block text-sm font-medium mb-2" htmlFor="name">Name</Label>
+            <Input 
               id="name"
               name="name"
               type="text" 
-              className={`w-full p-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50`}
+              className={`w-full p-3 ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50`}
               placeholder="Your name"
               value={formData.name}
               onChange={handleChange}
@@ -122,12 +124,12 @@ const ContactSection = () => {
             {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" htmlFor="email">Email</label>
-            <input 
+            <Label className="block text-sm font-medium mb-2" htmlFor="email">Email</Label>
+            <Input 
               id="email"
               name="email"
               type="email" 
-              className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50`}
+              className={`w-full p-3 ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50`}
               placeholder="your@email.com"
               value={formData.email}
               onChange={handleChange}
@@ -135,11 +137,11 @@ const ContactSection = () => {
             {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" htmlFor="message">Message</label>
+            <Label className="block text-sm font-medium mb-2" htmlFor="message">Message</Label>
             <textarea 
               id="message"
               name="message"
-              className={`w-full p-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-md h-32 focus:outline-none focus:ring-2 focus:ring-primary/50`}
+              className={`w-full p-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-md h-24 focus:outline-none focus:ring-2 focus:ring-primary/50`}
               placeholder="Your message"
               value={formData.message}
               onChange={handleChange}
