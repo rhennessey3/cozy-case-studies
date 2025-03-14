@@ -1,9 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -51,12 +48,6 @@ const CaseStudyDetail = () => {
 
   return <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
-      
-      <div className="fixed top-[1.53rem] z-40 container mx-auto px-4 max-w-4xl pl-[90px]">
-        <Button variant="outline" size="sm" className="bg-white/80 backdrop-blur-sm hover:bg-white/90" onClick={() => navigate('/case-studies')}>
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back to case studies
-        </Button>
-      </div>
       
       <div className={cn("fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out", isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]")}>
         <ScrollArea className="h-full w-full">
@@ -323,10 +314,8 @@ const CaseStudyDetail = () => {
               </div>
             </section>
 
-            {/* New Contact Form Section */}
             <ContactSection />
             
-            {/* Footer */}
             <Footer />
           </div>
         </ScrollArea>
