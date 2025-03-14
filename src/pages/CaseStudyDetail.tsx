@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
 
 const CaseStudyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -112,33 +113,74 @@ const CaseStudyDetail = () => {
               </div>
             </section>
 
-            {/* Case Study Content */}
+            {/* Case Study Content - Modified to two columns */}
             <section className="min-h-screen bg-white py-20">
-              <div className="container mx-auto px-4 max-w-4xl">
+              <div className="container mx-auto px-4 max-w-6xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
                 <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md mb-8">
                   {category}
                 </div>
 
-                <article className="prose prose-lg max-w-none">
-                  <h2 className="text-cozy-900">Introduction</h2>
-                  <p>{content.intro}</p>
+                {/* Two column layout */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Left column - Content */}
+                  <div className="prose prose-lg max-w-none">
+                    <h2 className="text-cozy-900">Introduction</h2>
+                    <p>{content.intro}</p>
+                    
+                    <h2 className="text-cozy-900">The Challenge</h2>
+                    <p>{content.challenge}</p>
+                    
+                    <h2 className="text-cozy-900">Our Approach</h2>
+                    <p>{content.approach}</p>
+                    
+                    <h2 className="text-cozy-900">The Solution</h2>
+                    <p>{content.solution}</p>
+                    
+                    <h2 className="text-cozy-900">Results</h2>
+                    <p>{content.results}</p>
+                    
+                    <h2 className="text-cozy-900">Conclusion</h2>
+                    <p>{content.conclusion}</p>
+                  </div>
                   
-                  <h2 className="text-cozy-900">The Challenge</h2>
-                  <p>{content.challenge}</p>
-                  
-                  <h2 className="text-cozy-900">Our Approach</h2>
-                  <p>{content.approach}</p>
-                  
-                  <h2 className="text-cozy-900">The Solution</h2>
-                  <p>{content.solution}</p>
-                  
-                  <h2 className="text-cozy-900">Results</h2>
-                  <p>{content.results}</p>
-                  
-                  <h2 className="text-cozy-900">Conclusion</h2>
-                  <p>{content.conclusion}</p>
-                </article>
+                  {/* Right column - Photo */}
+                  <div className="flex flex-col space-y-6">
+                    <Card className="overflow-hidden shadow-lg rounded-lg border-0">
+                      <CardContent className="p-0">
+                        <img 
+                          src={coverImage} 
+                          alt={`${title} visual`}
+                          className="w-full h-auto object-cover"
+                        />
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="overflow-hidden shadow-lg rounded-lg border-0">
+                      <CardContent className="p-6">
+                        <h3 className="text-2xl font-bold text-cozy-800 mb-4">Key Achievements</h3>
+                        <ul className="space-y-2">
+                          <li className="flex items-center">
+                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                            <span>30% reduction in material usage</span>
+                          </li>
+                          <li className="flex items-center">
+                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                            <span>45% increase in brand recognition</span>
+                          </li>
+                          <li className="flex items-center">
+                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                            <span>100% biodegradable packaging</span>
+                          </li>
+                          <li className="flex items-center">
+                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                            <span>20% cost reduction in shipping</span>
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </div>
             </section>
           </div>
