@@ -104,46 +104,44 @@ const CaseStudyDetail = () => {
 
             <section className="min-h-screen bg-white py-20">
               <div className="container mx-auto px-4">
-                <div className="max-w-[33.33%] ml-[16.67%]">
-                  <h1 className="text-4xl md:text-5xl font-bold mb-2 text-cozy-900">Turning Chaos into Opportunity</h1>
-                  <h2 className="text-2xl md:text-3xl font-medium mb-6 text-cozy-600">Building a Streamlined Fundraising Platform</h2>
-                  
-                  <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md mb-8">
-                    {category}
-                  </div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-2 text-cozy-900">Turning Chaos into Opportunity</h1>
+                <h2 className="text-2xl md:text-3xl font-medium mb-6 text-cozy-600">Building a Streamlined Fundraising Platform</h2>
+                
+                <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md mb-8">
+                  {category}
+                </div>
 
-                  <div className="prose prose-lg max-w-none">
-                    <h2 className="text-cozy-900 text-left">Introduction</h2>
-                    <p className="text-left">Managing a fundraiser with pen and paper is inefficient, confusing, and time-consuming for everyone involved. Recognizing this challenge, <strong>HoneyBaked Ham</strong>, in collaboration with its gift card fulfillment agency, set out to create a <strong>modern, digital fundraising platform</strong> that is <strong>easy to use, trustworthy, and highly profitable</strong> for all stakeholders.</p>
-                    <br />
-                    <p className="text-left">The goal was clear: <strong>transition from paper-based fundraisers to a seamless online experience</strong>, reducing organizers' time to invest while unlocking a new revenue stream for HoneyBaked Ham. More importantly, this project could scale beyond just HoneyBaked Ham—offering the gift card fulfillment agency an opportunity to expand its services to multiple clients with similar needs.</p>
-                  </div>
-                  
-                  <div className="mt-8">
-                    <Card className="overflow-hidden shadow-lg rounded-lg border-0">
-                      <CardContent className="p-6">
-                        <h3 className="text-2xl font-bold text-cozy-800 mb-4">Key Achievements</h3>
-                        <ul className="space-y-2">
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
-                            <span>30% reduction in material usage</span>
-                          </li>
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
-                            <span>45% increase in brand recognition</span>
-                          </li>
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
-                            <span>100% biodegradable packaging</span>
-                          </li>
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
-                            <span>20% cost reduction in shipping</span>
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
+                <div className="prose prose-lg max-w-none">
+                  <h2 className="text-cozy-900 text-left">Introduction</h2>
+                  <p className="text-left">Managing a fundraiser with pen and paper is inefficient, confusing, and time-consuming for everyone involved. Recognizing this challenge, <strong>HoneyBaked Ham</strong>, in collaboration with its gift card fulfillment agency, set out to create a <strong>modern, digital fundraising platform</strong> that is <strong>easy to use, trustworthy, and highly profitable</strong> for all stakeholders.</p>
+                  <br />
+                  <p className="text-left">The goal was clear: <strong>transition from paper-based fundraisers to a seamless online experience</strong>, reducing organizers' time to invest while unlocking a new revenue stream for HoneyBaked Ham. More importantly, this project could scale beyond just HoneyBaked Ham—offering the gift card fulfillment agency an opportunity to expand its services to multiple clients with similar needs.</p>
+                </div>
+                
+                <div className="mt-8">
+                  <Card className="overflow-hidden shadow-lg rounded-lg border-0">
+                    <CardContent className="p-6">
+                      <h3 className="text-2xl font-bold text-cozy-800 mb-4">Key Achievements</h3>
+                      <ul className="space-y-2">
+                        <li className="flex items-center">
+                          <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                          <span>30% reduction in material usage</span>
+                        </li>
+                        <li className="flex items-center">
+                          <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                          <span>45% increase in brand recognition</span>
+                        </li>
+                        <li className="flex items-center">
+                          <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                          <span>100% biodegradable packaging</span>
+                        </li>
+                        <li className="flex items-center">
+                          <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
+                          <span>20% cost reduction in shipping</span>
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
             </section>
