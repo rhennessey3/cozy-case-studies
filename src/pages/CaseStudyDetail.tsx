@@ -115,7 +115,7 @@ const CaseStudyDetail = () => {
 
             {/* Case Study Content - Modified to two columns */}
             <section className="min-h-screen bg-white py-20">
-              <div className="container mx-auto px-4 max-w-6xl">
+              <div className="container mx-auto px-4">
                 {/* Updated headline with primary and subhead structure */}
                 <h1 className="text-4xl md:text-5xl font-bold mb-2 text-cozy-900">Turning Chaos into Opportunity</h1>
                 <h2 className="text-2xl md:text-3xl font-medium mb-6 text-cozy-600">Building a Streamlined Fundraising Platform</h2>
