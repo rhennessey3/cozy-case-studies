@@ -224,8 +224,8 @@ const CaseStudyDetail = () => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <h3 className="text-xl font-semibold text-cozy-800 mb-4">Initial Wireframing</h3>
-                    <p className="text-cozy-700 text-center">
+                    <h3 className="text-xl font-semibold text-[#89c5cc] mb-4">Initial Wireframing</h3>
+                    <p className="text-gray-300 text-center">
                       We developed low-fidelity wireframes based on our initial user flow diagrams to quickly test core 
                       navigation patterns and task flows with real users. This allowed us to identify major usability issues 
                       before investing in high-fidelity designs.
@@ -240,8 +240,8 @@ const CaseStudyDetail = () => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <h3 className="text-xl font-semibold text-cozy-800 mb-4">User Testing & Refinement</h3>
-                    <p className="text-cozy-700 text-center">
+                    <h3 className="text-xl font-semibold text-[#89c5cc] mb-4">User Testing & Refinement</h3>
+                    <p className="text-gray-300 text-center">
                       Each iteration was tested with representative users from all stakeholder groups. We observed their interaction 
                       with the platform, documented pain points, and collected quantitative metrics on task completion rates and 
                       time-on-task to measure improvements.
@@ -256,8 +256,8 @@ const CaseStudyDetail = () => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <h3 className="text-xl font-semibold text-cozy-800 mb-4">Optimized Final Flows</h3>
-                    <p className="text-cozy-700 text-center">
+                    <h3 className="text-xl font-semibold text-[#89c5cc] mb-4">Optimized Final Flows</h3>
+                    <p className="text-gray-300 text-center">
                       The final user flow diagrams achieved a 40% reduction in required steps while improving task completion rates 
                       by 65%. These optimized flows formed the foundation for our high-fidelity prototypes and final UI implementation, 
                       ensuring the platform remained intuitive for all users.
