@@ -126,25 +126,25 @@ const CaseStudyDetail = () => {
 
                 {/* Two column layout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Left column - Content */}
+                  {/* Left column - Content - Now aligned with container */}
                   <div className="prose prose-lg max-w-none">
-                    <h2 className="text-cozy-900">Introduction</h2>
-                    <p>{content.intro}</p>
+                    <h2 className="text-cozy-900 text-left">Introduction</h2>
+                    <p className="text-left">{content.intro}</p>
                     
-                    <h2 className="text-cozy-900">The Challenge</h2>
-                    <p>{content.challenge}</p>
+                    <h2 className="text-cozy-900 text-left">The Challenge</h2>
+                    <p className="text-left">{content.challenge}</p>
                     
-                    <h2 className="text-cozy-900">Our Approach</h2>
-                    <p>{content.approach}</p>
+                    <h2 className="text-cozy-900 text-left">Our Approach</h2>
+                    <p className="text-left">{content.approach}</p>
                     
-                    <h2 className="text-cozy-900">The Solution</h2>
-                    <p>{content.solution}</p>
+                    <h2 className="text-cozy-900 text-left">The Solution</h2>
+                    <p className="text-left">{content.solution}</p>
                     
-                    <h2 className="text-cozy-900">Results</h2>
-                    <p>{content.results}</p>
+                    <h2 className="text-cozy-900 text-left">Results</h2>
+                    <p className="text-left">{content.results}</p>
                     
-                    <h2 className="text-cozy-900">Conclusion</h2>
-                    <p>{content.conclusion}</p>
+                    <h2 className="text-cozy-900 text-left">Conclusion</h2>
+                    <p className="text-left">{content.conclusion}</p>
                   </div>
                   
                   {/* Right column - Only Key Achievements */}
