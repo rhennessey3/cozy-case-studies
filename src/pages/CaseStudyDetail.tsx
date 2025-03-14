@@ -126,26 +126,6 @@ const CaseStudyDetail = () => {
                       <br />
                       <p className="text-left">The goal was clear: <strong>transition from paper-based fundraisers to a seamless online experience</strong>, reducing organizers' time to invest while unlocking a new revenue stream for HoneyBaked Ham.</p>
                     </div>
-                    
-                    <Card className="mt-6 overflow-hidden shadow-lg rounded-lg border-0">
-                      <CardContent className="p-4">
-                        <h3 className="text-xl font-bold text-cozy-800 mb-3">Key Achievements</h3>
-                        <ul className="space-y-2">
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
-                            <span>30% reduction in material usage</span>
-                          </li>
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
-                            <span>45% increase in brand recognition</span>
-                          </li>
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-cozy-500 rounded-full mr-2"></span>
-                            <span>100% biodegradable packaging</span>
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
                   </div>
                 </div>
               </div>
