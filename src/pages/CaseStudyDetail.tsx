@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -116,7 +115,7 @@ const CaseStudyDetail = () => {
                     <h2 className="text-cozy-900 text-left">Introduction</h2>
                     <p className="text-left">Managing a fundraiser with pen and paper is inefficient, confusing, and time-consuming for everyone involved. Recognizing this challenge, <strong>HoneyBaked Ham</strong>, in collaboration with its gift card fulfillment agency, set out to create a <strong>modern, digital fundraising platform</strong> that is <strong>easy to use, trustworthy, and highly profitable</strong> for all stakeholders.</p>
                     <br />
-                    <p className="text-left">The goal was clear: transition from paper-based fundraisers to a seamless online experience, reducing organizers' time to invest while unlocking a new revenue stream for HoneyBaked Ham. More importantly, this project could scale beyond just HoneyBaked Ham—offering the gift card fulfillment agency an opportunity to expand its services to multiple clients with similar needs.</p>
+                    <p className="text-left">The goal was clear: <strong>transition from paper-based fundraisers to a seamless online experience</strong>, reducing organizers' time to invest while unlocking a new revenue stream for HoneyBaked Ham. More importantly, this project could scale beyond just HoneyBaked Ham—offering the gift card fulfillment agency an opportunity to expand its services to multiple clients with similar needs.</p>
                   </div>
                   
                   <div className="flex flex-col space-y-6">
