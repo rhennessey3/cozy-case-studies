@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { CaseStudy } from '@/data/caseStudies';
 import CaseStudyIntro from './CaseStudyIntro';
 import UserResearchSection from './UserResearchSection';
 import UserNeedsSection from './UserNeedsSection';
@@ -9,15 +10,19 @@ import PrototypingSection from './PrototypingSection';
 import ContactSection from '@/components/sections/ContactSection';
 import Footer from '@/components/Footer';
 
-const CaseStudyContent = () => {
+interface CaseStudyContentProps {
+  caseStudy: CaseStudy;
+}
+
+const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
   return (
     <>
-      <CaseStudyIntro />
-      <UserResearchSection />
-      <UserNeedsSection />
-      <UserFlowSection />
-      <IterationSection />
-      <PrototypingSection />
+      <CaseStudyIntro caseStudy={caseStudy} />
+      <UserResearchSection caseStudy={caseStudy} />
+      <UserNeedsSection caseStudy={caseStudy} />
+      <UserFlowSection caseStudy={caseStudy} />
+      <IterationSection caseStudy={caseStudy} />
+      <PrototypingSection caseStudy={caseStudy} />
       <ContactSection />
       <Footer />
     </>

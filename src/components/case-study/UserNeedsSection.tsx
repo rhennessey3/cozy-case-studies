@@ -1,7 +1,12 @@
 
 import React from 'react';
+import { CaseStudy } from '@/data/caseStudies';
 
-const UserNeedsSection = () => {
+interface UserNeedsSectionProps {
+  caseStudy: CaseStudy;
+}
+
+const UserNeedsSection: React.FC<UserNeedsSectionProps> = ({ caseStudy }) => {
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -16,15 +21,12 @@ const UserNeedsSection = () => {
             </div>
           </div>
           <div className="w-full md:w-1/2 pl-0 md:pl-8 mb-8 md:mb-0 order-1 md:order-2">
-            <h2 className="text-3xl font-bold text-cozy-900 mb-4">User Needs Evaluation</h2>
+            <h2 className="text-3xl font-bold text-cozy-900 mb-4">Identifying Needs</h2>
             <p className="text-lg text-cozy-700 mb-6">
-              After consolidating our interview findings, we conducted a thorough evaluation of user needs across all stakeholder groups. 
-              This process revealed critical pain points in the existing fundraising workflow and highlighted opportunities for significant improvement.
+              {caseStudy.content.challenge}
             </p>
             <p className="text-lg text-cozy-700">
-              We identified that organizers needed streamlined management tools, donors wanted transparent and secure payment options, 
-              and administrators required comprehensive reporting capabilities. These insights directly informed our design decisions 
-              and feature prioritization in the subsequent development phases.
+              Our approach: {caseStudy.content.approach}
             </p>
           </div>
         </div>

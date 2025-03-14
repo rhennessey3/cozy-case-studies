@@ -49,7 +49,7 @@ const CaseStudyDetail = () => {
               coverImage={coverImage}
               category={category}
             />
-            <CaseStudyContent />
+            <CaseStudyContent caseStudy={caseStudy} />
           </div>
         </ScrollArea>
       </div>
