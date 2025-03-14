@@ -11,11 +11,11 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
 }) => {
   // Array of company logos with their names for accessibility
   const companies = [
-    { name: 'Microsoft', logo: '/microsoft-logo.svg' },
-    { name: 'Adobe', logo: '/adobe-logo.svg' },
-    { name: 'Spotify', logo: '/spotify-logo.svg' },
-    { name: 'Tesla', logo: '/tesla-logo.svg' },
-    { name: 'Google', logo: '/google-logo.svg' },
+    { name: 'Microsoft', color: '#8E9196' },
+    { name: 'Adobe', color: '#D946EF' },
+    { name: 'Spotify', color: '#8B5CF6' },
+    { name: 'Tesla', color: '#F97316' },
+    { name: 'Google', color: '#0EA5E9' },
   ];
 
   return (
@@ -28,9 +28,14 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
               key={index} 
               className="grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
             >
-              {/* Placeholder for company logos - using div with text for now */}
+              {/* Styled placeholder logo */}
               <div className="h-8 flex items-center justify-center">
-                <span className="font-bold text-xl text-cozy-800">{company.name}</span>
+                <div 
+                  className="w-24 h-8 rounded flex items-center justify-center" 
+                  style={{ backgroundColor: company.color }}
+                >
+                  <span className="font-bold text-xs text-white">{company.name}</span>
+                </div>
               </div>
             </div>
           ))}
