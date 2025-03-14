@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -83,8 +84,8 @@ const CaseStudyDetail = () => {
                   </div>
                 </div>
                 
-                {/* Title overlay positioned just above the bottom overlay with padding */}
-                <div className="absolute bottom-[calc(20%+1.5rem)] left-0 w-[30%] h-[15%] bg-black bg-opacity-30 flex items-center">
+                {/* Title overlay positioned just above the bottom overlay with padding - width extended to fit title on one line */}
+                <div className="absolute bottom-[calc(20%+1.5rem)] left-0 w-[50%] h-[15%] bg-black bg-opacity-30 flex items-center">
                   <div className="container mx-auto px-4">
                     <div>
                       <h2 className="text-white text-2xl md:text-3xl font-bold">
