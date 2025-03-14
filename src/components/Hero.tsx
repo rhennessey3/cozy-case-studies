@@ -14,7 +14,7 @@ const Hero = () => {
 
   return (
     <section className="relative py-20 md:py-32 px-4 overflow-hidden">
-      <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto max-w-6xl mb-20">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-cozy-900 animate-fade-in">
             Showcasing Our Best Work
@@ -32,11 +32,11 @@ const Hero = () => {
         </div>
       </div>
       
-      {/* Background gradient - moved below the logo banner */}
+      {/* Background gradient */}
       <div className="absolute -z-10 inset-0 bg-gradient-to-b from-cozy-50 to-background"></div>
       
-      {/* Company Logo Banner - positioned higher in z-index */}
-      <div className="absolute bottom-0 left-0 right-0 z-10">
+      {/* Company Logo Banner - now positioned as a separate section at the bottom */}
+      <div className="absolute bottom-0 left-0 right-0 w-full">
         <CompanyLogoBanner />
       </div>
     </section>

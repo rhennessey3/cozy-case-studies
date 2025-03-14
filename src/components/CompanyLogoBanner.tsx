@@ -19,7 +19,7 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
   ];
 
   return (
-    <div className={cn('w-full py-8 bg-white/80 backdrop-blur-sm', className)}>
+    <div className={cn('w-full py-8 bg-white/95 backdrop-blur-sm shadow-sm', className)}>
       <div className="container mx-auto max-w-6xl px-4">
         <p className="text-center text-sm text-cozy-600 uppercase tracking-wide mb-6">Trusted by leading companies</p>
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
