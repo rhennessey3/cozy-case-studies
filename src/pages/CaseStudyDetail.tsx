@@ -144,18 +144,8 @@ const CaseStudyDetail = () => {
                     <p>{content.conclusion}</p>
                   </div>
                   
-                  {/* Right column - Photo */}
+                  {/* Right column - Only Key Achievements */}
                   <div className="flex flex-col space-y-6">
-                    <Card className="overflow-hidden shadow-lg rounded-lg border-0">
-                      <CardContent className="p-0">
-                        <img 
-                          src={coverImage} 
-                          alt={`${title} visual`}
-                          className="w-full h-auto object-cover"
-                        />
-                      </CardContent>
-                    </Card>
-                    
                     <Card className="overflow-hidden shadow-lg rounded-lg border-0">
                       <CardContent className="p-6">
                         <h3 className="text-2xl font-bold text-cozy-800 mb-4">Key Achievements</h3>
