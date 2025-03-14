@@ -212,9 +212,9 @@ const CaseStudyDetail = () => {
               </div>
             </section>
 
-            <section className="py-16 bg-white">
+            <section className="py-16 bg-[#221F26]">
               <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-cozy-900 mb-12 text-center">Iterating User Tasks Flowchart</h2>
+                <h2 className="text-3xl font-bold text-white mb-12 text-center">Iterating User Tasks Flowchart</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="flex flex-col items-center">
                     <div className="w-full aspect-square mb-6 overflow-hidden rounded-lg shadow-lg">
