@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from './ui/button';
 import { ChevronDown } from 'lucide-react';
+import CompanyLogoBanner from './CompanyLogoBanner';
 
 const Hero = () => {
   const scrollToStudies = () => {
@@ -31,6 +32,11 @@ const Hero = () => {
         </div>
       </div>
       <div className="absolute -z-10 inset-0 bg-gradient-to-b from-cozy-50 to-background"></div>
+      
+      {/* Company Logo Banner */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <CompanyLogoBanner />
+      </div>
     </section>
   );
 };
