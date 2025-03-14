@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
+import ContactSection from '@/components/sections/ContactSection';
 
 const CaseStudyDetail = () => {
   const {
@@ -319,6 +320,9 @@ const CaseStudyDetail = () => {
                 </div>
               </div>
             </section>
+
+            {/* New Contact Form Section */}
+            <ContactSection />
           </div>
         </ScrollArea>
       </div>
