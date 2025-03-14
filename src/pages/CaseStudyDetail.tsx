@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -268,22 +267,22 @@ const CaseStudyDetail = () => {
               </div>
             </section>
 
-            <section className="py-16 bg-[#1A1F2C]">
+            <section className="py-16 bg-[#f3f3f3]">
               <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-white mb-12 text-left">Prototyping UI</h2>
+                <h2 className="text-3xl font-bold text-[#221F26] mb-12 text-left">Prototyping UI</h2>
                 <div className="flex flex-col md:flex-row items-center gap-8">
                   <div className="w-full md:w-2/3">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div>
-                        <h3 className="text-xl font-semibold text-[#9b87f5] mb-3 text-left">Visual Design System</h3>
-                        <p className="text-gray-300 text-left mb-8">
+                        <h3 className="text-xl font-semibold text-[#403E43] mb-3 text-left">Visual Design System</h3>
+                        <p className="text-[#222222] text-left mb-8">
                           We established a comprehensive design system with modular components, 
                           ensuring consistent visual language throughout the application while enabling 
                           rapid iteration and development.
                         </p>
                         
-                        <h3 className="text-xl font-semibold text-[#9b87f5] mb-3 text-left">Interaction Patterns</h3>
-                        <p className="text-gray-300 text-left">
+                        <h3 className="text-xl font-semibold text-[#403E43] mb-3 text-left">Interaction Patterns</h3>
+                        <p className="text-[#222222] text-left">
                           We defined consistent interaction patterns for common tasks, reducing 
                           cognitive load for users and ensuring that similar actions had similar 
                           outcomes throughout the platform.
@@ -291,15 +290,15 @@ const CaseStudyDetail = () => {
                       </div>
                       
                       <div>
-                        <h3 className="text-xl font-semibold text-[#9b87f5] mb-3 text-left">High-Fidelity Mockups</h3>
-                        <p className="text-gray-300 text-left mb-8">
+                        <h3 className="text-xl font-semibold text-[#403E43] mb-3 text-left">High-Fidelity Mockups</h3>
+                        <p className="text-[#222222] text-left mb-8">
                           Based on validated wireframes, we created pixel-perfect mockups 
                           of all key screens, incorporating feedback from stakeholders and 
                           maintaining accessibility standards.
                         </p>
                         
-                        <h3 className="text-xl font-semibold text-[#9b87f5] mb-3 text-left">Interactive Prototypes</h3>
-                        <p className="text-gray-300 text-left">
+                        <h3 className="text-xl font-semibold text-[#403E43] mb-3 text-left">Interactive Prototypes</h3>
+                        <p className="text-[#222222] text-left">
                           We built clickable prototypes to simulate the actual user experience, 
                           allowing stakeholders to experience the workflow before committing 
                           to development resources.
