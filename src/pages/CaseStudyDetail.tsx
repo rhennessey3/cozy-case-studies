@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -8,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import ContactSection from '@/components/sections/ContactSection';
+import Footer from '@/components/Footer';
 
 const CaseStudyDetail = () => {
   const {
@@ -323,6 +325,9 @@ const CaseStudyDetail = () => {
 
             {/* New Contact Form Section */}
             <ContactSection />
+            
+            {/* Footer */}
+            <Footer />
           </div>
         </ScrollArea>
       </div>
