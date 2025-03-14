@@ -127,7 +127,7 @@ const CaseStudyDetail = () => {
                 {/* Two column layout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Left column - Content - Now aligned with container */}
-                  <div className="prose prose-lg max-w-none">
+                  <div className="prose prose-lg max-w-none md:pl-0">
                     <h2 className="text-cozy-900 text-left">Introduction</h2>
                     <p className="text-left">{content.intro}</p>
                     
