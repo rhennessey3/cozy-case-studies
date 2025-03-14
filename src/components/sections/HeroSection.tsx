@@ -1,3 +1,4 @@
+
 import React from 'react';
 import './HeroSection.css'; // Import the CSS file for the gradient animation
 import CompanyLogoBanner from '../CompanyLogoBanner';
@@ -5,13 +6,11 @@ import CompanyLogoBanner from '../CompanyLogoBanner';
 const HeroSection = () => {
   return (
     <section className="h-screen flex flex-col">
-      <div className="flex flex-grow">
+      <div className="flex flex-grow relative">
         <div className="gradient-background w-1/3 relative">
-          <div className="absolute bottom-0 left-0 right-0">
-            <CompanyLogoBanner className="bg-transparent" />
-          </div>
+          {/* Removed the CompanyLogoBanner from here */}
         </div>
-        <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center">
+        <div className="w-2/3 bg-[#f5f5f5] flex items-center justify-center relative">
           <div className="max-w-lg px-8">
             <div className="flex justify-start mb-8">
               <svg 
@@ -40,6 +39,11 @@ const HeroSection = () => {
               We craft innovative solutions that transform ideas into impactful experiences, 
               helping businesses achieve their goals in today's digital landscape.
             </p>
+          </div>
+          
+          {/* Added CompanyLogoBanner at the bottom right of the content area */}
+          <div className="absolute bottom-0 right-0 left-0">
+            <CompanyLogoBanner className="bg-transparent" />
           </div>
         </div>
       </div>
