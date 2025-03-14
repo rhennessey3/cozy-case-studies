@@ -214,28 +214,53 @@ const CaseStudyDetail = () => {
 
             <section className="py-16 bg-white">
               <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row items-center">
-                  <div className="w-full md:w-1/2 order-2 md:order-1">
-                    <div className="rounded-lg overflow-hidden shadow-lg">
+                <h2 className="text-3xl font-bold text-cozy-900 mb-12 text-center">Iterating User Tasks Flowchart</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="flex flex-col items-center">
+                    <div className="w-full aspect-square mb-6 overflow-hidden rounded-lg shadow-lg">
                       <img 
-                        src="https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&q=80&w=800" 
-                        alt="Iterating user task flowcharts" 
-                        className="w-full h-auto object-cover"
+                        src="https://images.unsplash.com/photo-1642964057919-6c2ce94ffc13?auto=format&fit=crop&q=80&w=800" 
+                        alt="Initial wireframes" 
+                        className="w-full h-full object-cover"
                       />
                     </div>
-                  </div>
-                  <div className="w-full md:w-1/2 pl-0 md:pl-8 mb-8 md:mb-0 order-1 md:order-2">
-                    <h2 className="text-3xl font-bold text-cozy-900 mb-4">Iterating User Tasks Flowchart</h2>
-                    <p className="text-lg text-cozy-700 mb-6">
-                      After creating our initial task flow diagrams, we conducted multiple rounds of testing and refinement. 
-                      Each iteration was tested with actual users to identify friction points and validate our assumptions about 
-                      the mental models users bring to the platform.
+                    <h3 className="text-xl font-semibold text-cozy-800 mb-4">Initial Wireframing</h3>
+                    <p className="text-cozy-700 text-center">
+                      We developed low-fidelity wireframes based on our initial user flow diagrams to quickly test core 
+                      navigation patterns and task flows with real users. This allowed us to identify major usability issues 
+                      before investing in high-fidelity designs.
                     </p>
-                    <p className="text-lg text-cozy-700">
-                      Through this iterative process, we were able to reduce the number of steps in key workflows by 40%, 
-                      resulting in significantly improved task completion rates and user satisfaction scores. The refined 
-                      flowcharts became the foundation for our wireframes and final UI designs, ensuring the interface remained 
-                      focused on supporting users' actual behaviors and goals.
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="w-full aspect-square mb-6 overflow-hidden rounded-lg shadow-lg">
+                      <img 
+                        src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800" 
+                        alt="User testing sessions" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-xl font-semibold text-cozy-800 mb-4">User Testing & Refinement</h3>
+                    <p className="text-cozy-700 text-center">
+                      Each iteration was tested with representative users from all stakeholder groups. We observed their interaction 
+                      with the platform, documented pain points, and collected quantitative metrics on task completion rates and 
+                      time-on-task to measure improvements.
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="w-full aspect-square mb-6 overflow-hidden rounded-lg shadow-lg">
+                      <img 
+                        src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&q=80&w=800" 
+                        alt="Finalized user flow" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-xl font-semibold text-cozy-800 mb-4">Optimized Final Flows</h3>
+                    <p className="text-cozy-700 text-center">
+                      The final user flow diagrams achieved a 40% reduction in required steps while improving task completion rates 
+                      by 65%. These optimized flows formed the foundation for our high-fidelity prototypes and final UI implementation, 
+                      ensuring the platform remained intuitive for all users.
                     </p>
                   </div>
                 </div>
