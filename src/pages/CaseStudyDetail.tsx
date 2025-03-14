@@ -120,21 +120,6 @@ const CaseStudyDetail = () => {
                     <p className="text-left">Managing a fundraiser with pen and paper is inefficient, confusing, and time-consuming for everyone involved. Recognizing this challenge, HoneyBaked Ham, in collaboration with its gift card fulfillment agency, set out to create a modern, digital fundraising platform that is easy to use, trustworthy, and highly profitable for all stakeholders.</p>
                     
                     <p className="text-left">The goal was clear: transition from paper-based fundraisers to a seamless online experience, reducing organizers' time to invest while unlocking a new revenue stream for HoneyBaked Ham. More importantly, this project could scale beyond just HoneyBaked Ham—offering the gift card fulfillment agency an opportunity to expand its services to multiple clients with similar needs.</p>
-                    
-                    <h2 className="text-cozy-900 text-left">The Challenge</h2>
-                    <p className="text-left">{content.challenge}</p>
-                    
-                    <h2 className="text-cozy-900 text-left">Our Approach</h2>
-                    <p className="text-left">{content.approach}</p>
-                    
-                    <h2 className="text-cozy-900 text-left">The Solution</h2>
-                    <p className="text-left">{content.solution}</p>
-                    
-                    <h2 className="text-cozy-900 text-left">Results</h2>
-                    <p className="text-left">{content.results}</p>
-                    
-                    <h2 className="text-cozy-900 text-left">Conclusion</h2>
-                    <p className="text-left">{content.conclusion}</p>
                   </div>
                   
                   {/* Right column - Only Key Achievements */}
