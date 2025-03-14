@@ -33,9 +33,6 @@ const Hero = () => {
       
       {/* Background gradient */}
       <div className="absolute -z-10 inset-0 bg-gradient-to-b from-cozy-50 to-background"></div>
-      
-      {/* Black bar taking up 20% of the space at the bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-[20%] bg-black"></div>
     </section>
   );
 };
