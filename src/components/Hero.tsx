@@ -31,10 +31,12 @@ const Hero = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Background gradient - moved below the logo banner */}
       <div className="absolute -z-10 inset-0 bg-gradient-to-b from-cozy-50 to-background"></div>
       
-      {/* Company Logo Banner */}
-      <div className="absolute bottom-0 left-0 right-0">
+      {/* Company Logo Banner - positioned higher in z-index */}
+      <div className="absolute bottom-0 left-0 right-0 z-10">
         <CompanyLogoBanner />
       </div>
     </section>
