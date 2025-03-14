@@ -19,22 +19,22 @@ const CompanyLogoBanner: React.FC<CompanyLogoBannerProps> = ({
   ];
 
   return (
-    <div className={cn('w-full py-8 bg-white/95 backdrop-blur-sm shadow-sm', className)}>
+    <div className={cn('w-full py-8 bg-white', className)}>
       <div className="container mx-auto max-w-6xl px-4">
         <p className="text-center text-sm text-cozy-600 uppercase tracking-wide mb-6">Trusted by leading companies</p>
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
           {companies.map((company, index) => (
             <div 
               key={index} 
-              className="grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+              className="grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
             >
               {/* Styled placeholder logo */}
-              <div className="h-8 flex items-center justify-center">
+              <div className="h-10 flex items-center justify-center">
                 <div 
-                  className="w-24 h-8 rounded flex items-center justify-center" 
+                  className="w-28 h-10 rounded-md flex items-center justify-center shadow-sm" 
                   style={{ backgroundColor: company.color }}
                 >
-                  <span className="font-bold text-xs text-white">{company.name}</span>
+                  <span className="font-bold text-sm text-white">{company.name}</span>
                 </div>
               </div>
             </div>

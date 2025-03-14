@@ -13,33 +13,35 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative py-20 md:py-32 px-4 overflow-hidden">
-      <div className="container mx-auto max-w-6xl mb-20">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-cozy-900 animate-fade-in">
-            Showcasing Our Best Work
-          </h1>
-          <p className="text-xl md:text-2xl text-cozy-700 max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            A collection of carefully crafted case studies highlighting our design and development expertise.
-          </p>
-          <Button 
-            className="mt-4 animate-fade-in bg-cozy-800 hover:bg-cozy-900 text-white"
-            onClick={scrollToStudies}
-            style={{ animationDelay: '0.4s' }}
-          >
-            View Case Studies <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
+    <>
+      <section className="relative py-20 md:py-24 px-4 overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-cozy-900 animate-fade-in">
+              Showcasing Our Best Work
+            </h1>
+            <p className="text-xl md:text-2xl text-cozy-700 max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              A collection of carefully crafted case studies highlighting our design and development expertise.
+            </p>
+            <Button 
+              className="mt-4 animate-fade-in bg-cozy-800 hover:bg-cozy-900 text-white"
+              onClick={scrollToStudies}
+              style={{ animationDelay: '0.4s' }}
+            >
+              View Case Studies <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+        
+        {/* Background gradient */}
+        <div className="absolute -z-10 inset-0 bg-gradient-to-b from-cozy-50 to-background"></div>
+      </section>
       
-      {/* Background gradient */}
-      <div className="absolute -z-10 inset-0 bg-gradient-to-b from-cozy-50 to-background"></div>
-      
-      {/* Company Logo Banner - now positioned as a separate section at the bottom */}
-      <div className="absolute bottom-0 left-0 right-0 w-full">
+      {/* Company Logo Banner - now as a separate non-absolute section */}
+      <section className="border-t border-cozy-200 bg-white">
         <CompanyLogoBanner />
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
