@@ -1,23 +1,23 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { caseStudies } from '@/data/caseStudies';
 import Navbar from '@/components/Navbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import CaseStudyHero from '@/components/case-study/CaseStudyHero';
 import CaseStudyContent from '@/components/case-study/CaseStudyContent';
+import { CaseStudy } from '@/data/caseStudies';
+import { getCaseStudyBySlug } from '@/services/strapiService';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const CaseStudyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const caseStudy = caseStudies.find(study => study.slug === slug);
+  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!caseStudy) {
-      navigate('/404');
-    }
     const handleBodyClassChange = () => {
       setIsDrawerOpen(document.body.classList.contains('drawer-open'));
     };
@@ -29,11 +29,49 @@ const CaseStudyDetail = () => {
     return () => {
       observer.disconnect();
     };
-  }, [caseStudy, navigate]);
+  }, []);
 
-  if (!caseStudy) {
-    return null;
+  useEffect(() => {
+    const fetchCaseStudy = async () => {
+      if (!slug) {
+        navigate('/404');
+        return;
+      }
+
+      try {
+        const data = await getCaseStudyBySlug(slug);
+        if (!data) {
+          navigate('/404');
+          return;
+        }
+        setCaseStudy(data);
+      } catch (error) {
+        console.error('Failed to fetch case study:', error);
+        navigate('/404');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCaseStudy();
+  }, [slug, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar className="fixed top-0 left-0 right-0 z-50" />
+        <div className={cn("fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out", isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]")}>
+          <ScrollArea className="h-full w-full">
+            <div className="min-h-full pt-16">
+              <Skeleton className="w-full h-screen" />
+            </div>
+          </ScrollArea>
+        </div>
+      </div>
+    );
   }
+
+  if (!caseStudy) return null;
 
   const { title, coverImage, category } = caseStudy;
 
