@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { caseStudies } from '@/data/caseStudies';
@@ -8,70 +7,58 @@ import Navbar from '@/components/Navbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
-
 const CaseStudyDetail = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const {
+    slug
+  } = useParams<{
+    slug: string;
+  }>();
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
   const caseStudy = caseStudies.find(study => study.slug === slug);
-  
   useEffect(() => {
     if (!caseStudy) {
       navigate('/404');
     }
-    
     const handleBodyClassChange = () => {
       setIsDrawerOpen(document.body.classList.contains('drawer-open'));
     };
-    
     const observer = new MutationObserver(handleBodyClassChange);
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
     return () => {
       observer.disconnect();
     };
   }, [caseStudy, navigate]);
-  
   if (!caseStudy) {
     return null;
   }
-  
-  const { title, coverImage, category, content } = caseStudy;
-  
-  return (
-    <div className="min-h-screen bg-background">
+  const {
+    title,
+    coverImage,
+    category,
+    content
+  } = caseStudy;
+  return <div className="min-h-screen bg-background">
       <Navbar className="fixed top-0 left-0 right-0 z-50" />
       
       {/* Fixed Back Button - moved 90px to the right from container edge and adjusted position, moved up by 12px */}
       <div className="fixed top-[1.53rem] z-40 container mx-auto px-4 max-w-4xl pl-[90px]">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="bg-white/80 backdrop-blur-sm hover:bg-white/90"
-          onClick={() => navigate('/case-studies')}
-        >
+        <Button variant="outline" size="sm" className="bg-white/80 backdrop-blur-sm hover:bg-white/90" onClick={() => navigate('/case-studies')}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to case studies
         </Button>
       </div>
       
-      <div 
-        className={cn(
-          "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out",
-          isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"
-        )}
-      >
+      <div className={cn("fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out", isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]")}>
         <ScrollArea className="h-full w-full">
           <div className="min-h-full">
             {/* Case Study Hero */}
             <section className="h-screen flex">
               <div className="w-full bg-[#f5f5f5] relative">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <img 
-                    src={coverImage} 
-                    alt={title} 
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={coverImage} alt={title} className="w-full h-full object-cover" />
                 </div>
                 
                 {/* Semi-transparent black overlay with three columns - positioned at bottom 20% */}
@@ -101,10 +88,10 @@ const CaseStudyDetail = () => {
                   <div className="container mx-auto px-4">
                     <div>
                       <h2 className="text-white text-2xl md:text-3xl font-bold">
-                        <span className="block">{category}</span>
-                        <span className="block text-[#89c5cc] text-xl md:text-2xl mt-1">{title}</span>
+                        <span className="block px-[57px]">{category}</span>
+                        <span className="block text-[#89c5cc] text-xl md:text-2xl mt-1 px-[58px]">{title}</span>
                       </h2>
-                      <p className="text-white text-sm md:text-base mt-2">
+                      <p className="text-white text-sm md:text-base mt-2 px-[58px]">
                         A case study showcasing innovative solutions and measurable results.
                       </p>
                     </div>
@@ -179,8 +166,6 @@ const CaseStudyDetail = () => {
           </div>
         </ScrollArea>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default CaseStudyDetail;
