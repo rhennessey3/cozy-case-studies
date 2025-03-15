@@ -52,8 +52,8 @@ const CaseStudyHero = ({
             </div>
           </>}
         
-        {/* Three sections container */}
-        <div className={`${isExtraSmallScreen ? 'relative' : 'absolute bottom-0'} left-0 right-0 h-auto md:h-[20%] bg-black bg-opacity-40 flex items-center`}>
+        {/* Three sections container - Updated background color to match the title section */}
+        <div className={`${isExtraSmallScreen ? 'relative' : 'absolute bottom-0'} left-0 right-0 h-auto md:h-[20%] bg-[#221F26] flex items-center`}>
           <div className="container mx-auto px-4 py-4 md:py-0">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 text-white">
               <div className="text-left">
