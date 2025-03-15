@@ -22,7 +22,7 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-white mb-12 text-left">Implementation Process</h2>
         
-        <div className="relative px-12">
+        <div className="relative px-4 md:px-12">
           <Carousel
             opts={{
               align: "start",
@@ -80,10 +80,10 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
             </CarouselContent>
             
             <CarouselPrevious 
-              className={`bg-[#89c5cc] text-white hover:bg-[#70b0b8] border-none ${isMobile ? "-left-8" : "-left-12"}`}
+              className={`absolute bg-[#89c5cc] text-white hover:bg-[#70b0b8] border-none ${isMobile ? "-left-2 sm:-left-4" : "-left-12"}`}
             />
             <CarouselNext 
-              className={`bg-[#89c5cc] text-white hover:bg-[#70b0b8] border-none ${isMobile ? "-right-8" : "-right-12"}`}
+              className={`absolute bg-[#89c5cc] text-white hover:bg-[#70b0b8] border-none ${isMobile ? "-right-2 sm:-right-4" : "-right-12"}`}
             />
           </Carousel>
         </div>
