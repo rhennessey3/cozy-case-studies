@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -27,9 +28,6 @@ const CaseStudyHero = ({
                     <span className="block px-0">{category}</span>
                     <span className="block text-[#89c5cc] text-xl mt-1 px-0">{title}</span>
                   </h2>
-                  <p className="text-white text-sm mt-2 px-0">
-                    A case study showcasing innovative solutions and measurable results.
-                  </p>
                 </div>
               </div>
             </div>
@@ -46,9 +44,6 @@ const CaseStudyHero = ({
                     <span className="block px-4 md:px-[22px]">{category}</span>
                     <span className="block text-[#89c5cc] text-xl md:text-2xl mt-1 px-4 md:px-[25px]">{title}</span>
                   </h2>
-                  <p className="text-white text-sm md:text-base mt-2 px-4 md:px-[58px]">
-                    A case study showcasing innovative solutions and measurable results.
-                  </p>
                 </div>
               </div>
             </div>
