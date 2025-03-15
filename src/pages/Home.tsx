@@ -6,9 +6,14 @@ import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import ContactSection from '@/components/sections/ContactSection';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { CaseStudy } from '@/data/caseStudies';
+import { getCaseStudies } from '@/services/strapiService';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const handleBodyClassChange = () => {
@@ -21,6 +26,21 @@ const Home = () => {
     return () => {
       observer.disconnect();
     };
+  }, []);
+  
+  useEffect(() => {
+    const fetchCaseStudies = async () => {
+      try {
+        const data = await getCaseStudies();
+        setCaseStudies(data);
+      } catch (error) {
+        console.error('Failed to fetch case studies:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCaseStudies();
   }, []);
   
   return (
@@ -36,7 +56,17 @@ const Home = () => {
           <div className="min-h-full">
             <HeroSection />
             <section className="min-h-screen bg-white py-20 w-full">
-              <CaseStudiesGrid />
+              {loading ? (
+                <div className="w-full px-4 md:px-6 lg:px-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
+                    {[1, 2, 3, 4, 5, 6].map((n) => (
+                      <Skeleton key={n} className="w-full h-64" />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <CaseStudiesGrid caseStudies={caseStudies} />
+              )}
             </section>
             <ContactSection />
           </div>
