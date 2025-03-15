@@ -14,7 +14,7 @@ const CaseStudyIntro: React.FC<CaseStudyIntroProps> = ({ caseStudy }) => {
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-col">
-          <div className="w-full pr-0 md:pr-8 mb-8 md:mb-0">
+          <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-8 md:mb-0">
             <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-4`}>{caseStudy.title}</h2>
             <h3 className={`${isExtraSmallScreen ? 'text-xl' : 'text-2xl'} font-medium mb-6 text-cozy-600`}>{caseStudy.summary}</h3>
             
