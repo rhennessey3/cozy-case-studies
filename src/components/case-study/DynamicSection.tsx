@@ -47,10 +47,11 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
           {/* Content with image */}
           {image && content && (
             <>
+              {/* Image component - always on right for 'left' layout */}
               <div className={cn(
                 "w-full md:w-1/2 order-2",
-                layout === 'left' && "md:order-2", // Changed from md:order-1 to md:order-2
-                layout === 'right' && "md:order-2",
+                layout === 'left' && "md:order-2",
+                layout === 'right' && "md:order-1",
                 layout === 'full' && "md:w-full"
               )}>
                 <div className="rounded-lg overflow-hidden shadow-lg">
@@ -62,10 +63,11 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
                 </div>
               </div>
               
+              {/* Text component - always on left for 'left' layout */}
               <div className={cn(
                 "w-full md:w-1/2 order-1",
-                layout === 'left' && "md:order-1 pr-0 md:pr-8", // Changed from md:order-2 pl-0 md:pl-8 to md:order-1 pr-0 md:pr-8
-                layout === 'right' && "md:order-1 pr-0 md:pr-8",
+                layout === 'left' && "md:order-1 pr-0 md:pr-8",
+                layout === 'right' && "md:order-2 pl-0 md:pl-8",
                 layout === 'full' && "md:w-full"
               )}>
                 <div className={cn(
