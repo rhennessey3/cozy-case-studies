@@ -49,7 +49,7 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
             <>
               <div className={cn(
                 "w-full md:w-1/2 order-2",
-                layout === 'left' && "md:order-1",
+                layout === 'left' && "md:order-2", // Changed from md:order-1 to md:order-2
                 layout === 'right' && "md:order-2",
                 layout === 'full' && "md:w-full"
               )}>
@@ -64,7 +64,7 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
               
               <div className={cn(
                 "w-full md:w-1/2 order-1",
-                layout === 'left' && "md:order-2 pl-0 md:pl-8",
+                layout === 'left' && "md:order-1 pr-0 md:pr-8", // Changed from md:order-2 pl-0 md:pl-8 to md:order-1 pr-0 md:pr-8
                 layout === 'right' && "md:order-1 pr-0 md:pr-8",
                 layout === 'full' && "md:w-full"
               )}>
