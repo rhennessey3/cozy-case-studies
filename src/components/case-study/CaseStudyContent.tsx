@@ -20,9 +20,17 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
   if (caseStudy.sections && caseStudy.sections.length > 0) {
     return (
       <>
-        {caseStudy.sections.map((section, index) => (
-          <DynamicSection key={section.id || index} section={section} />
-        ))}
+        {caseStudy.sections.map((section, index) => {
+          // Create a modified section for the second section with no image
+          if (index === 1) {
+            const modifiedSection = {
+              ...section,
+              image: undefined // Remove the image for the second section
+            };
+            return <DynamicSection key={section.id || index} section={modifiedSection} />;
+          }
+          return <DynamicSection key={section.id || index} section={section} />;
+        })}
         <ContactSection />
         <Footer />
       </>
