@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface CaseStudyHeroProps {
   title: string;
@@ -8,12 +10,20 @@ interface CaseStudyHeroProps {
 }
 
 const CaseStudyHero = ({ title, coverImage, category }: CaseStudyHeroProps) => {
+  const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
+
   return (
-    <section className="h-screen flex">
+    <section className={`${isExtraSmallScreen ? 'h-auto' : 'h-screen'} flex`}>
       <div className="w-full bg-[#f5f5f5] relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img src={coverImage} alt={title} className="w-full h-full object-cover" />
-        </div>
+        {isExtraSmallScreen ? (
+          <AspectRatio ratio={1 / 1} className="w-full">
+            <img src={coverImage} alt={title} className="w-full h-full object-cover" />
+          </AspectRatio>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img src={coverImage} alt={title} className="w-full h-full object-cover" />
+          </div>
+        )}
         
         {/* Title section at the top for mobile */}
         <div className="absolute top-0 left-0 w-full md:w-[50%] bg-black bg-opacity-30 flex items-center pt-4 md:pt-0 md:bottom-[calc(20%+1.5rem)] md:top-auto">
@@ -31,7 +41,7 @@ const CaseStudyHero = ({ title, coverImage, category }: CaseStudyHeroProps) => {
         </div>
         
         {/* Three sections container - adjusted for mobile to be below the title */}
-        <div className="absolute bottom-0 left-0 right-0 h-auto md:h-[20%] bg-black bg-opacity-40 flex items-center">
+        <div className={`${isExtraSmallScreen ? 'relative' : 'absolute bottom-0'} left-0 right-0 h-auto md:h-[20%] bg-black bg-opacity-40 flex items-center`}>
           <div className="container mx-auto px-4 py-4 md:py-0">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 text-white">
               <div className="text-left">
