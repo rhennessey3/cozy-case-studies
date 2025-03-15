@@ -51,15 +51,28 @@ export interface StrapiCaseStudy {
   coverImage: StrapiImage;
   category: string;
   height: string | null;
-  content: {
-    intro: string;
-    challenge: string;
-    approach: string;
-    solution: string;
-    results: string;
-    conclusion: string;
-  };
+  sections: StrapiCaseStudySection[];
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
+}
+
+export interface StrapiCaseStudySection {
+  id: number;
+  __component: string;
+  title?: string;
+  content?: string;
+  image?: StrapiImage;
+  layout?: "left" | "right" | "center" | "full";
+  backgroundColor?: string;
+}
+
+// For backward compatibility
+export interface StrapiLegacyCaseStudyContent {
+  intro: string;
+  challenge: string;
+  approach: string;
+  solution: string;
+  results: string;
+  conclusion: string;
 }

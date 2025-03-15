@@ -1,10 +1,12 @@
 
+import { StrapiCaseStudySection } from "@/types/strapi";
+
 export interface CaseStudy {
   id: string;
   title: string;
   slug: string;
   summary: string;
-  description?: string; // Adding optional description field
+  description?: string;
   coverImage: string;
   category: string;
   height?: string;
@@ -16,6 +18,7 @@ export interface CaseStudy {
     results: string;
     conclusion: string;
   };
+  sections?: StrapiCaseStudySection[];
 }
 
 export const caseStudies: CaseStudy[] = [
