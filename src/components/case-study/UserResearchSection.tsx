@@ -1,19 +1,22 @@
 
 import React from 'react';
 import { CaseStudy } from '@/data/caseStudies';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface UserResearchSectionProps {
   caseStudy: CaseStudy;
 }
 
 const UserResearchSection: React.FC<UserResearchSectionProps> = ({ caseStudy }) => {
+  const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
+  
   return (
     <section className="py-16 bg-[#f9f9f9]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-8 md:mb-0">
-            <h2 className="text-3xl font-bold text-cozy-900 mb-4">User Research & Analysis</h2>
-            <p className="text-lg text-cozy-700 mb-6">
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-4`}>User Research & Analysis</h2>
+            <p className={`${isExtraSmallScreen ? 'text-base' : 'text-lg'} text-cozy-700 mb-6`}>
               {caseStudy.content.approach}
             </p>
           </div>
