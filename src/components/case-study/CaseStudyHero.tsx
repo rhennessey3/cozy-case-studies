@@ -24,7 +24,7 @@ const CaseStudyHero = ({
             </AspectRatio>
             
             {/* Mobile view - title and sections in one continuous block */}
-            <div className="w-full bg-[#221F26]">
+            <div className="w-full bg-[#221F26] rounded-tr-lg">
               <div className="container mx-auto px-4">
                 <div className="py-4 pb-0">
                   <h2 className="text-white text-2xl font-bold">
@@ -60,7 +60,7 @@ const CaseStudyHero = ({
             </div>
             
             {/* Desktop view - title section directly connected to the three sections */}
-            <div className="absolute bottom-[20%] left-0 w-full md:w-[50%] bg-[#221F26]">
+            <div className="absolute bottom-[20%] left-0 w-full md:w-[50%] bg-[#221F26] rounded-tr-lg">
               <div className="container mx-auto px-4">
                 <div className="py-4 md:py-4 pb-0">
                   <h2 className="text-white text-2xl md:text-3xl font-bold">
