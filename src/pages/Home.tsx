@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import TopNavbar from '@/components/TopNavbar';
 import HeroSection from '@/components/sections/HeroSection';
 import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import ContactSection from '@/components/sections/ContactSection';
@@ -9,11 +10,13 @@ import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
 import { getCaseStudies } from '@/services/strapiService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
+  const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   
   useEffect(() => {
     const handleBodyClassChange = () => {
@@ -45,11 +48,17 @@ const Home = () => {
   
   return (
     <div className="min-h-screen bg-background">
-      <Navbar className="fixed top-0 left-0 right-0" />
+      {isSmallScreen ? (
+        <TopNavbar className="fixed top-0 left-0 right-0 z-50" />
+      ) : (
+        <Navbar className="fixed top-0 left-0 right-0" />
+      )}
+      
       <div 
         className={cn(
           "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out z-30",
-          isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"
+          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"),
+          isSmallScreen && "pt-16" // Add top padding for the TopNavbar
         )}
       >
         <ScrollArea className="h-full">
