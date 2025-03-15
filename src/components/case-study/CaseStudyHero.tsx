@@ -36,14 +36,14 @@ const CaseStudyHero = ({ title, coverImage, category }: CaseStudyHeroProps) => {
           </div>
         </div>
         
-        <div className="absolute bottom-[calc(20%+1.5rem)] left-0 w-full sm:w-[50%] h-[15%] bg-black bg-opacity-30 flex items-center">
+        <div className="absolute bottom-[calc(20%+1.5rem)] left-0 w-full md:w-[50%] h-[15%] bg-black bg-opacity-30 flex items-center">
           <div className="container mx-auto px-4">
             <div>
               <h2 className="text-white text-2xl md:text-3xl font-bold">
-                <span className="block px-4 sm:px-[57px]">{category}</span>
-                <span className="block text-[#89c5cc] text-xl md:text-2xl mt-1 px-4 sm:px-[58px]">{title}</span>
+                <span className="block px-4 md:px-[57px]">{category}</span>
+                <span className="block text-[#89c5cc] text-xl md:text-2xl mt-1 px-4 md:px-[58px]">{title}</span>
               </h2>
-              <p className="text-white text-sm md:text-base mt-2 px-4 sm:px-[58px]">
+              <p className="text-white text-sm md:text-base mt-2 px-4 md:px-[58px]">
                 A case study showcasing innovative solutions and measurable results.
               </p>
             </div>
