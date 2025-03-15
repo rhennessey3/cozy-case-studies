@@ -1,10 +1,16 @@
+
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import TopNavbar from '@/components/TopNavbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { BookOpen, GraduationCap, Heart, Users } from 'lucide-react';
+import { useMediaQuery } from '@/hooks/use-media-query';
+
 const About = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isSmallScreen = useMediaQuery('(max-width: 1000px)');
+  
   useEffect(() => {
     const handleBodyClassChange = () => {
       setIsDrawerOpen(document.body.classList.contains('drawer-open'));
@@ -18,10 +24,23 @@ const About = () => {
       observer.disconnect();
     };
   }, []);
-  return <div className="min-h-screen bg-background">
-      <Navbar className="fixed top-0 left-0 right-0 z-50 bg-white" />
-      <div className={cn("fixed inset-0 overflow-hidden max-w-[1800px] transition-all duration-300 ease-in-out", isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]")}>
-        <ScrollArea className="h-full pt-16 py-0">
+  
+  return (
+    <div className="min-h-screen bg-background">
+      {isSmallScreen ? (
+        <TopNavbar className="fixed top-0 left-0 right-0 z-50" />
+      ) : (
+        <Navbar className="fixed top-0 left-0 right-0 z-50 bg-white" />
+      )}
+      
+      <div 
+        className={cn(
+          "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out",
+          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"),
+          isSmallScreen && "pt-16" // Add top padding for the TopNavbar
+        )}
+      >
+        <ScrollArea className="h-full">
           {/* About Content */}
           <section className="min-h-screen bg-white py-20">
             <div className="container mx-auto max-w-6xl px-4">
@@ -81,6 +100,8 @@ const About = () => {
           </section>
         </ScrollArea>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default About;
