@@ -18,10 +18,6 @@ const CaseStudyIntro: React.FC<CaseStudyIntroProps> = ({ caseStudy }) => {
             <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-4`}>{caseStudy.title}</h2>
             <h3 className={`${isExtraSmallScreen ? 'text-xl' : 'text-2xl'} font-medium mb-6 text-cozy-600`}>{caseStudy.summary}</h3>
             
-            <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md mb-6">
-              {caseStudy.category}
-            </div>
-
             <div className="prose prose-lg max-w-none">
               <p className={`text-left ${isExtraSmallScreen ? 'text-base' : ''}`}>{caseStudy.content.intro}</p>
               <br />
