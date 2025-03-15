@@ -64,17 +64,17 @@ const CaseStudyHero = ({ title, coverImage, category }: CaseStudyHeroProps) => {
           <div className="container mx-auto px-4 py-4 md:py-0">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 text-white">
               <div className="text-left">
-                <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Objective</h3>
+                <h3 className={`text-[#89c5cc] ${isExtraSmallScreen ? 'text-xl' : 'text-base md:text-xl'} font-bold mb-2`}>Objective</h3>
                 <p className="text-sm md:text-base">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
               </div>
               
               <div className="text-left">
-                <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Approach</h3>
+                <h3 className={`text-[#89c5cc] ${isExtraSmallScreen ? 'text-xl' : 'text-base md:text-xl'} font-bold mb-2`}>Approach</h3>
                 <p className="text-sm md:text-base">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
               </div>
               
               <div className="text-left">
-                <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Results</h3>
+                <h3 className={`text-[#89c5cc] ${isExtraSmallScreen ? 'text-xl' : 'text-base md:text-xl'} font-bold mb-2`}>Results</h3>
                 <p className="text-sm md:text-base">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
               </div>
             </div>

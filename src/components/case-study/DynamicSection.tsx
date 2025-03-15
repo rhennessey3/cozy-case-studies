@@ -2,6 +2,7 @@
 import React from 'react';
 import { StrapiCaseStudySection } from '@/types/strapi';
 import { cn } from '@/lib/utils';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface DynamicSectionProps {
   section: StrapiCaseStudySection;
@@ -10,6 +11,7 @@ interface DynamicSectionProps {
 const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
   const { __component, title, content, image, layout = 'left', backgroundColor = 'white' } = section;
   const type = __component.split('.')[1]; // Get component type after the dot
+  const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   
   // Set background color based on component type or explicitly defined color
   const bgColorClass = backgroundColor !== 'custom' 
@@ -28,8 +30,10 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
       <div className="container mx-auto px-4">
         {title && (
           <h2 className={cn(
-            "text-3xl font-bold mb-8 text-left",
-            isTextLight ? "text-white" : "text-[#221F26]"
+            "text-left",
+            isTextLight ? "text-white" : "text-[#221F26]",
+            isExtraSmallScreen ? "text-2xl" : "text-3xl",
+            "font-bold mb-8"
           )}>
             {title}
           </h2>
@@ -68,7 +72,10 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
                   "prose prose-lg max-w-none",
                   isTextLight && "prose-invert"
                 )}>
-                  <div dangerouslySetInnerHTML={{ __html: content }} />
+                  <div 
+                    className={isExtraSmallScreen ? "text-base" : ""} 
+                    dangerouslySetInnerHTML={{ __html: content }} 
+                  />
                 </div>
               </div>
             </>
@@ -84,7 +91,10 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
                 "prose prose-lg max-w-none",
                 isTextLight && "prose-invert"
               )}>
-                <div dangerouslySetInnerHTML={{ __html: content }} />
+                <div 
+                  className={isExtraSmallScreen ? "text-base" : ""} 
+                  dangerouslySetInnerHTML={{ __html: content }} 
+                />
               </div>
             </div>
           )}

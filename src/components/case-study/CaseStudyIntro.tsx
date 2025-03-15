@@ -1,12 +1,15 @@
 
 import React from 'react';
 import { CaseStudy } from '@/data/caseStudies';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface CaseStudyIntroProps {
   caseStudy: CaseStudy;
 }
 
 const CaseStudyIntro: React.FC<CaseStudyIntroProps> = ({ caseStudy }) => {
+  const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
+  
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -21,17 +24,17 @@ const CaseStudyIntro: React.FC<CaseStudyIntroProps> = ({ caseStudy }) => {
             </div>
           </div>
           <div className="w-full md:w-1/2 pl-0 md:pl-8 mb-8 md:mb-0 order-1 md:order-2">
-            <h2 className="text-3xl font-bold text-cozy-900 mb-4">{caseStudy.title}</h2>
-            <h3 className="text-2xl font-medium mb-6 text-cozy-600">{caseStudy.summary}</h3>
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-4`}>{caseStudy.title}</h2>
+            <h3 className={`${isExtraSmallScreen ? 'text-xl' : 'text-2xl'} font-medium mb-6 text-cozy-600`}>{caseStudy.summary}</h3>
             
             <div className="inline-block bg-cozy-500 text-white px-3 py-1 text-sm rounded-md mb-6">
               {caseStudy.category}
             </div>
 
             <div className="prose prose-lg max-w-none">
-              <p className="text-left">{caseStudy.content.intro}</p>
+              <p className={`text-left ${isExtraSmallScreen ? 'text-base' : ''}`}>{caseStudy.content.intro}</p>
               <br />
-              <p className="text-left">{caseStudy.content.challenge}</p>
+              <p className={`text-left ${isExtraSmallScreen ? 'text-base' : ''}`}>{caseStudy.content.challenge}</p>
             </div>
           </div>
         </div>
