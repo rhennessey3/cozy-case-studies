@@ -26,9 +26,9 @@ const CaseStudyHero = ({
             {/* Title section for mobile - moved right above the three sections */}
             <div className="w-full bg-[#221F26] flex items-center">
               <div className="container mx-auto px-4">
-                <div className="py-8">
+                <div className="py-4">
                   <h2 className="text-white text-2xl font-bold">
-                    <span className="block px-0 py-2">{category}</span>
+                    <span className="block px-0 py-1">{category}</span>
                     <span className="block text-[#89c5cc] text-xl mt-2 px-0">{title}</span>
                   </h2>
                 </div>
@@ -42,9 +42,9 @@ const CaseStudyHero = ({
             {/* Title section for larger screens */}
             <div className="absolute top-0 left-0 w-full md:w-[50%] bg-[#221F26] flex items-center pt-4 md:pt-0 md:bottom-[calc(20%+1.5rem)] md:top-auto">
               <div className="container mx-auto px-4">
-                <div className="py-8 md:py-8">
+                <div className="py-4 md:py-4">
                   <h2 className="text-white text-2xl md:text-3xl font-bold">
-                    <span className="block px-4 md:px-[22px] py-2">{category}</span>
+                    <span className="block px-4 md:px-[22px] py-1">{category}</span>
                     <span className="block text-[#89c5cc] text-xl md:text-2xl mt-2 px-4 md:px-[25px]">{title}</span>
                   </h2>
                 </div>
