@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -20,7 +21,7 @@ const CaseStudyHero = ({
             </AspectRatio>
             
             {/* Title section for mobile - moved right above the three sections */}
-            <div className="w-full bg-black bg-opacity-30 flex items-center">
+            <div className="w-full bg-[#221F26] flex items-center">
               <div className="container mx-auto px-4">
                 <div className="py-4">
                   <h2 className="text-white text-2xl font-bold">
@@ -39,7 +40,7 @@ const CaseStudyHero = ({
             </div>
             
             {/* Title section for larger screens */}
-            <div className="absolute top-0 left-0 w-full md:w-[50%] bg-black bg-opacity-30 flex items-center pt-4 md:pt-0 md:bottom-[calc(20%+1.5rem)] md:top-auto">
+            <div className="absolute top-0 left-0 w-full md:w-[50%] bg-[#221F26] flex items-center pt-4 md:pt-0 md:bottom-[calc(20%+1.5rem)] md:top-auto">
               <div className="container mx-auto px-4">
                 <div className="py-4 md:py-0">
                   <h2 className="text-white text-2xl md:text-3xl font-bold">
