@@ -21,7 +21,7 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
   return (
     <section className={`${isExtraSmallScreen ? 'py-6' : 'py-12'} bg-[#221F26]`}>
       <div className="container mx-auto px-4">
-        <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-white mb-3 md:mb-8 text-left`}>Implementation Process</h2>
+        <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-white mb-3 md:mb-8 text-left`}>3 Column Slider</h2>
         
         <div className="relative px-4 md:px-12">
           <Carousel
