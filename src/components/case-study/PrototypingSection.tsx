@@ -16,7 +16,7 @@ const PrototypingSection: React.FC<PrototypingSectionProps> = ({ caseStudy }) =>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
           <div className="w-full md:w-2/3">
-            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-[#221F26] mb-3 md:mb-8 text-left`}>Key Outcomes</h2>
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-[#221F26] mb-3 md:mb-8 text-left`}>4 Small Paragraphs and a Photo</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
               <div>
                 <h3 className={`${isExtraSmallScreen ? 'text-lg' : 'text-xl'} font-semibold text-[#403E43] mb-2 text-left`}>Project Impact</h3>
