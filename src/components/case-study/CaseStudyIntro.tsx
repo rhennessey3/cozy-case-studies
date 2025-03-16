@@ -10,12 +10,17 @@ interface CaseStudyIntroProps {
 const CaseStudyIntro: React.FC<CaseStudyIntroProps> = ({ caseStudy }) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   
+  // Change the title only for the eco-packaging-redesign case study
+  const displayTitle = caseStudy.slug === "eco-packaging-redesign" 
+    ? "Introduction of the Case Study" 
+    : caseStudy.title;
+  
   return (
     <section className={`${isExtraSmallScreen ? 'py-4' : 'py-8'} bg-white`}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col">
           <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-4 md:mb-0">
-            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>{caseStudy.title}</h2>
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>{displayTitle}</h2>
             <h3 className={`${isExtraSmallScreen ? 'text-xl' : 'text-2xl'} font-medium mb-2 md:mb-4 text-cozy-600 leading-tight`}>{caseStudy.summary}</h3>
             
             <div className="prose prose-lg max-w-none">
