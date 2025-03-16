@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -47,18 +46,7 @@ const CaseStudyDetail = () => {
           return;
         }
         
-        // If there are no sections yet or no hero section, add one
-        if (!data.sections || data.sections.length === 0 || !data.sections.some(s => s.__component === 'case-study.hero')) {
-          data.sections = [
-            {
-              id: 0,
-              __component: 'case-study.hero',
-              // Hero section uses the main case study data
-            },
-            ...(data.sections || [])
-          ];
-        }
-        
+        console.log("Fetched case study:", data);
         setCaseStudy(data);
       } catch (error) {
         console.error('Failed to fetch case study:', error);

@@ -21,33 +21,29 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
   if (caseStudy.sections && caseStudy.sections.length > 0) {
     return (
       <>
-        {caseStudy.sections.map((section, index) => {
-          // Check if this is a hero section component
-          if (section.__component === 'case-study.hero') {
-            return (
-              <CaseStudyHero 
-                key={section.id || index}
-                title={caseStudy.title}
-                coverImage={caseStudy.coverImage}
-                category={caseStudy.category}
-                objective={section.objective || "To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity."}
-                approach={section.approach || "Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability."}
-                results={section.results || "30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution."}
-              />
-            );
-          }
-          
-          // Create a modified section for the second section with no image
-          if (index === 1) {
-            const modifiedSection = {
-              ...section,
-              image: undefined // Remove the image for the second section
-            };
-            return <DynamicSection key={section.id || index} section={modifiedSection} />;
-          }
-          
-          return <DynamicSection key={section.id || index} section={section} />;
-        })}
+        {/* Display Hero section */}
+        <CaseStudyHero 
+          title={caseStudy.title}
+          coverImage={caseStudy.coverImage}
+          category={caseStudy.category}
+          objective="To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity."
+          approach="Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability."
+          results="30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution."
+        />
+
+        {/* Display all sections */}
+        <CaseStudyIntro caseStudy={caseStudy} />
+        <UserResearchSection caseStudy={caseStudy} />
+        <UserNeedsSection caseStudy={caseStudy} />
+        <UserFlowSection caseStudy={caseStudy} />
+        <IterationSection caseStudy={caseStudy} />
+        <PrototypingSection caseStudy={caseStudy} />
+
+        {/* Also display any dynamic sections from Strapi if they exist */}
+        {caseStudy.sections.map((section, index) => (
+          <DynamicSection key={section.id || index} section={section} />
+        ))}
+        
         <ContactSection />
         <Footer />
       </>
@@ -57,6 +53,14 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
   // Fallback to the original structure
   return (
     <>
+      <CaseStudyHero 
+        title={caseStudy.title}
+        coverImage={caseStudy.coverImage}
+        category={caseStudy.category}
+        objective="To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity."
+        approach="Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability."
+        results="30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution."
+      />
       <CaseStudyIntro caseStudy={caseStudy} />
       <UserResearchSection caseStudy={caseStudy} />
       <UserNeedsSection caseStudy={caseStudy} />
