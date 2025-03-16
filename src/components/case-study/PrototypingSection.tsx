@@ -2,6 +2,7 @@
 import React from 'react';
 import { CaseStudy } from '@/data/caseStudies';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface PrototypingSectionProps {
   caseStudy: CaseStudy;
@@ -44,7 +45,7 @@ const PrototypingSection: React.FC<PrototypingSectionProps> = ({ caseStudy }) =>
           </div>
           
           <div className="w-full md:w-1/3 mt-3 md:mt-0">
-            <div className="aspect-square overflow-hidden rounded-lg shadow-lg">
+            <div className="overflow-hidden rounded-lg shadow-lg">
               <img 
                 src="https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?auto=format&fit=crop&q=80&w=800" 
                 alt="Final product showcase" 
