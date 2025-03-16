@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { StrapiCaseStudySection } from '@/types/strapi';
 import { cn } from '@/lib/utils';
@@ -24,6 +23,26 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
   
   // Determine if text should be light on dark backgrounds
   const isTextLight = backgroundColor === 'custom' && type === 'conclusion';
+  
+  // Process image URL to handle both relative and absolute URLs
+  const getImageUrl = (image: any): string => {
+    if (!image?.data) return "";
+    
+    const imageUrl = image.data.attributes.url;
+    // If URL already includes http/https, use it directly
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    
+    // Otherwise, prefix with API URL from environment variable
+    const STRAPI_URL = import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337';
+    return `${STRAPI_URL}${imageUrl}`;
+  };
+
+  console.log('Rendering section type:', type, 'with layout:', layout);
+  if (image) {
+    console.log('Image data:', image);
+  }
   
   return (
     <section className={cn(
@@ -61,7 +80,7 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
               )}>
                 <div className="rounded-lg overflow-hidden shadow-lg">
                   <img 
-                    src={`${import.meta.env.VITE_STRAPI_API_URL}${image.data.attributes.url}`} 
+                    src={getImageUrl(image)} 
                     alt={title || "Section image"} 
                     className="w-full h-auto object-cover"
                   />
@@ -104,6 +123,26 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
                   dangerouslySetInnerHTML={{ __html: content }} 
                 />
               </div>
+            </div>
+          )}
+          
+          {/* Image only, no content */}
+          {image && !content && (
+            <div className="w-full">
+              <div className="rounded-lg overflow-hidden shadow-lg">
+                <img 
+                  src={getImageUrl(image)} 
+                  alt={title || "Section image"} 
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+            </div>
+          )}
+          
+          {/* If neither content nor image, show a placeholder message */}
+          {!image && !content && (
+            <div className="w-full py-8 text-center text-gray-500">
+              <p>This section has no content or image.</p>
             </div>
           )}
         </div>
