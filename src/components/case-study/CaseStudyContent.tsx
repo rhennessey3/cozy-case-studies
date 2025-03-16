@@ -17,6 +17,9 @@ interface CaseStudyContentProps {
 }
 
 const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
+  // Find hero section data if it exists in sections
+  const heroSection = caseStudy.sections?.find(section => section.__component === 'case-study.hero');
+  
   // If we have the new modular sections, use them
   if (caseStudy.sections && caseStudy.sections.length > 0) {
     return (
@@ -26,23 +29,17 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
           title={caseStudy.title}
           coverImage={caseStudy.coverImage}
           category={caseStudy.category}
-          objective="To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity."
-          approach="Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability."
-          results="30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution."
+          objective={heroSection?.objective || caseStudy.content.approach}
+          approach={heroSection?.approach || caseStudy.content.approach}
+          results={heroSection?.results || caseStudy.content.results}
         />
 
-        {/* Display all sections */}
-        <CaseStudyIntro caseStudy={caseStudy} />
-        <UserResearchSection caseStudy={caseStudy} />
-        <UserNeedsSection caseStudy={caseStudy} />
-        <UserFlowSection caseStudy={caseStudy} />
-        <IterationSection caseStudy={caseStudy} />
-        <PrototypingSection caseStudy={caseStudy} />
-
-        {/* Also display any dynamic sections from Strapi if they exist */}
-        {caseStudy.sections.map((section, index) => (
-          <DynamicSection key={section.id || index} section={section} />
-        ))}
+        {/* Display dynamic sections from Strapi */}
+        {caseStudy.sections
+          .filter(section => section.__component !== 'case-study.hero') // Skip hero section as it's already displayed
+          .map((section, index) => (
+            <DynamicSection key={section.id || index} section={section} />
+          ))}
         
         <ContactSection />
         <Footer />
@@ -57,9 +54,9 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
         title={caseStudy.title}
         coverImage={caseStudy.coverImage}
         category={caseStudy.category}
-        objective="To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity."
-        approach="Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability."
-        results="30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution."
+        objective={caseStudy.content.challenge}
+        approach={caseStudy.content.approach}
+        results={caseStudy.content.results}
       />
       <CaseStudyIntro caseStudy={caseStudy} />
       <UserResearchSection caseStudy={caseStudy} />
