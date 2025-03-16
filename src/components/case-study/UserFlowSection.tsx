@@ -15,7 +15,7 @@ const UserFlowSection: React.FC<UserFlowSectionProps> = ({ caseStudy }) => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-4 md:mb-0">
-            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>Solution Design</h2>
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>Left Aligned with Photo</h2>
             <p className={`text-lg text-cozy-700 mb-0`}>
               {caseStudy.content.solution}
             </p>
