@@ -51,32 +51,7 @@ export interface StrapiCaseStudy {
   coverImage: StrapiImage;
   category: string;
   height: string | null;
-  
-  // Mapping to your Strapi component structure
-  herocomponent?: {
-    id: number;
-    Objective?: string;
-    Approach?: string;
-    Results?: string;
-  };
-  
-  TextSectionComponent?: {
-    id: number;
-    text?: string;
-    content?: string;
-    layout?: "left" | "right" | "center" | "full";
-  };
-  
-  sections?: {
-    id: number;
-    text?: string;
-    content?: string;
-    layout?: "left" | "right" | "center" | "full";
-  }[];
-  
-  // Original sections field for backward compatibility
-  sections_old?: StrapiCaseStudySection[];
-  
+  sections: StrapiCaseStudySection[];
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
@@ -91,11 +66,11 @@ export interface StrapiCaseStudySection {
   layout?: "left" | "right" | "center" | "full";
   backgroundColor?: string;
   // Hero section specific fields
+  category?: string;
+  coverImage?: StrapiImage;
   objective?: string;
   approach?: string;
   results?: string;
-  category?: string;
-  coverImage?: StrapiImage;
 }
 
 // For backward compatibility
