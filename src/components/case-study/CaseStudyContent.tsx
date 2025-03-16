@@ -19,6 +19,8 @@ interface CaseStudyContentProps {
 const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
   // If we have the new modular sections, use them
   if (caseStudy.sections && caseStudy.sections.length > 0) {
+    console.log("Using modular sections:", caseStudy.sections);
+    
     return (
       <>
         {caseStudy.sections.map((section, index) => {
@@ -53,6 +55,8 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
       </>
     );
   }
+  
+  console.log("No sections found, using fallback layout");
   
   // Fallback to the original structure
   return (

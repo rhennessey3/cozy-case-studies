@@ -10,6 +10,7 @@ import { CaseStudy } from '@/data/caseStudies';
 import { getCaseStudyBySlug } from '@/services/strapiService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { toast } from '@/components/ui/use-toast';
 
 const CaseStudyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -47,21 +48,25 @@ const CaseStudyDetail = () => {
           return;
         }
         
-        // If there are no sections yet or no hero section, add one
-        if (!data.sections || data.sections.length === 0 || !data.sections.some(s => s.__component === 'case-study.hero')) {
-          data.sections = [
-            {
-              id: 0,
-              __component: 'case-study.hero',
-              // Hero section uses the main case study data
-            },
-            ...(data.sections || [])
-          ];
+        console.log("Fetched case study:", data);
+        
+        // Check if sections exist
+        if (!data.sections || data.sections.length === 0) {
+          toast({
+            title: "Missing sections",
+            description: "This case study doesn't have any sections defined in Strapi.",
+            variant: "destructive"
+          });
         }
         
         setCaseStudy(data);
       } catch (error) {
         console.error('Failed to fetch case study:', error);
+        toast({
+          title: "Error loading case study",
+          description: "There was a problem loading this case study. Using fallback data.",
+          variant: "destructive"
+        });
         navigate('/404');
       } finally {
         setLoading(false);

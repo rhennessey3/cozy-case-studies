@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { StrapiCaseStudySection } from '@/types/strapi';
 import { cn } from '@/lib/utils';
@@ -9,8 +10,10 @@ interface DynamicSectionProps {
 
 const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
   const { __component, title, content, image, layout = 'left', backgroundColor = 'white' } = section;
-  const type = __component.split('.')[1]; // Get component type after the dot
+  const type = __component?.split('.')[1] || 'text-section'; // Default to text-section if no component type
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
+  
+  console.log("Rendering dynamic section:", section);
   
   // Set background color based on component type or explicitly defined color
   const bgColorClass = backgroundColor !== 'custom' 

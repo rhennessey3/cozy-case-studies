@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { StrapiResponse, StrapiCaseStudy, StrapiLegacyCaseStudyContent, StrapiCaseStudySection } from '../types/strapi';
 import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
@@ -30,21 +31,46 @@ const transformStrapiCaseStudy = (strapiData: StrapiResponse<StrapiCaseStudy>): 
   return strapiData.data.map(item => {
     const caseStudy = item.attributes;
     
-    // Add a hero section if not present
-    const heroSectionExists = caseStudy.sections && caseStudy.sections.some(s => s.__component === 'case-study.hero');
+    // Map components to expected format
+    const sections: StrapiCaseStudySection[] = [];
     
-    const sections = [...(caseStudy.sections || [])];
-    
-    if (!heroSectionExists) {
-      sections.unshift({
+    // Add hero component if it exists
+    if (caseStudy.herocomponent) {
+      sections.push({
         id: 0,
-        __component: 'case-study.hero',
-        // Hero uses main case study data
+        __component: 'case-study.hero', // Map to the expected component type
+        objective: caseStudy.herocomponent.Objective,
+        approach: caseStudy.herocomponent.Approach,
+        results: caseStudy.herocomponent.Results
+      });
+    }
+    
+    // Add text sections if they exist
+    if (caseStudy.TextSectionComponent) {
+      sections.push({
+        id: 1,
+        __component: 'case-study.text-section',
+        title: caseStudy.TextSectionComponent.text,
+        content: caseStudy.TextSectionComponent.content,
+        layout: caseStudy.TextSectionComponent.layout
+      });
+    }
+    
+    // Add dynamic sections if they exist
+    if (caseStudy.sections && Array.isArray(caseStudy.sections)) {
+      caseStudy.sections.forEach((section, index) => {
+        sections.push({
+          id: index + 2, // Start IDs after hero and text section
+          __component: 'case-study.text-section', // Default component type
+          title: section.text,
+          content: section.content,
+          layout: section.layout
+        });
       });
     }
     
     // Handle both new modular sections and legacy content structure
-    const content = generateContentFromSections(caseStudy.sections) || {
+    const content = generateContentFromSections(sections) || {
       intro: "",
       challenge: "",
       approach: "",
@@ -87,25 +113,30 @@ const generateContentFromSections = (sections: StrapiCaseStudySection[] = []): a
     
     const type = section.__component.split('.')[1]; // Get component type after the dot
     
-    switch(type) {
-      case 'intro':
+    // Map herocomponent fields
+    if (type === 'hero') {
+      content.intro = section.objective || "";
+      content.approach = section.approach || "";
+      content.results = section.results || "";
+    }
+    
+    // Map text sections
+    if (type === 'text-section') {
+      const title = section.title?.toLowerCase() || "";
+      
+      if (title.includes('intro') || title.includes('introduction')) {
         content.intro = section.content || "";
-        break;
-      case 'challenge':
+      } else if (title.includes('challenge')) {
         content.challenge = section.content || "";
-        break;
-      case 'approach':
+      } else if (title.includes('approach')) {
         content.approach = section.content || "";
-        break;
-      case 'solution':
+      } else if (title.includes('solution')) {
         content.solution = section.content || "";
-        break;
-      case 'results':
+      } else if (title.includes('result')) {
         content.results = section.content || "";
-        break;
-      case 'conclusion':
+      } else if (title.includes('conclusion')) {
         content.conclusion = section.content || "";
-        break;
+      }
     }
   });
   
@@ -116,9 +147,10 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   try {
     console.log('Fetching case studies from:', `${API_URL}/case-studies`);
     const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
-      `${API_URL}/case-studies?populate=coverImage,sections,sections.image`,
+      `${API_URL}/case-studies?populate=coverImage,herocomponent,TextSectionComponent,sections`,
       { headers }
     );
+    console.log('Case studies response:', response.data);
     return transformStrapiCaseStudy(response.data);
   } catch (error) {
     console.error('Error fetching case studies from Strapi:', error);
@@ -135,7 +167,7 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
   try {
     console.log('Fetching case study with slug:', slug, 'from:', `${API_URL}/case-studies`);
     const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
-      `${API_URL}/case-studies?filters[slug][$eq]=${slug}&populate=coverImage,sections,sections.image`,
+      `${API_URL}/case-studies?filters[slug][$eq]=${slug}&populate=coverImage,herocomponent,TextSectionComponent,sections`,
       { headers }
     );
     
