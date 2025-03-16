@@ -1,12 +1,15 @@
 
 import React from 'react';
 import { CaseStudy } from '@/data/caseStudies';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface UserNeedsSectionProps {
   caseStudy: CaseStudy;
 }
 
 const UserNeedsSection: React.FC<UserNeedsSectionProps> = ({ caseStudy }) => {
+  const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
+  
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -21,7 +24,7 @@ const UserNeedsSection: React.FC<UserNeedsSectionProps> = ({ caseStudy }) => {
             </div>
           </div>
           <div className="w-full md:w-1/2 pl-0 md:pl-8 mb-8 md:mb-0 order-1 md:order-2">
-            <h2 className="text-3xl font-bold text-cozy-900 mb-4">Identifying Needs</h2>
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-4`}>Identifying Needs</h2>
             <p className="text-lg text-cozy-700 mb-6">
               {caseStudy.content.challenge}
             </p>

@@ -16,11 +16,12 @@ interface IterationSectionProps {
 
 const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
 
   return (
     <section className="py-16 bg-[#221F26]">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-white mb-12 text-left">Implementation Process</h2>
+        <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-white mb-12 text-left`}>Implementation Process</h2>
         
         <div className="relative px-4 md:px-12">
           <Carousel
