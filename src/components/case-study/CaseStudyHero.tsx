@@ -35,7 +35,7 @@ const CaseStudyHero = ({
               <div className="container mx-auto px-4">
                 <div className="py-4 pb-0">
                   <h2 className="text-white text-2xl font-bold leading-tight">
-                    <span className="block px-0 py-1">{category}</span>
+                    <span className="block px-0 py-1">{title}</span>
                   </h2>
                   <Separator className="bg-[#89c5cc] h-0.5 w-16 mt-2 mb-4" />
                 </div>
@@ -71,7 +71,7 @@ const CaseStudyHero = ({
               <div className="container mx-auto px-4">
                 <div className="py-4 md:py-4 pb-0">
                   <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight">
-                    <span className="block px-4 md:px-[22px] py-1">{category}</span>
+                    <span className="block px-4 md:px-[22px] py-1">{title}</span>
                   </h2>
                   <Separator className="bg-[#89c5cc] h-0.5 w-24 ml-4 md:ml-[22px] mt-2 mb-4" />
                 </div>
