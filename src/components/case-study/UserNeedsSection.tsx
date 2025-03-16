@@ -24,7 +24,7 @@ const UserNeedsSection: React.FC<UserNeedsSectionProps> = ({ caseStudy }) => {
             </div>
           </div>
           <div className="w-full md:w-1/2 pl-0 md:pl-8 mb-4 md:mb-0 order-1 md:order-2">
-            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>Identifying Needs</h2>
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>Right Aligned with Photo</h2>
             <p className={`${isExtraSmallScreen ? 'text-base' : 'text-lg'} text-cozy-700 mb-2 md:mb-4`}>
               {caseStudy.content.challenge}
             </p>
