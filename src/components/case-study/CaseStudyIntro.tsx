@@ -20,7 +20,7 @@ const CaseStudyIntro: React.FC<CaseStudyIntroProps> = ({ caseStudy }) => {
             
             <div className="prose prose-lg max-w-none">
               <p className={`text-left ${isExtraSmallScreen ? 'text-base' : ''}`}>{caseStudy.content.intro}</p>
-              <p className={`text-left ${isExtraSmallScreen ? 'text-base' : ''}`}>{caseStudy.content.challenge}</p>
+              <p className={`text-left ${isExtraSmallScreen ? 'text-base' : ''} mb-0`}>{caseStudy.content.challenge}</p>
             </div>
           </div>
         </div>
