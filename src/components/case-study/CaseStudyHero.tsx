@@ -24,7 +24,7 @@ const CaseStudyHero = ({
             </AspectRatio>
             
             {/* Mobile view - title and sections in one continuous block */}
-            <div className="w-full bg-[#221F26] rounded-tr-[2rem]">
+            <div className="w-full bg-[#221F26]">
               <div className="container mx-auto px-4">
                 <div className="py-4 pb-0">
                   <h2 className="text-white text-2xl font-bold">
