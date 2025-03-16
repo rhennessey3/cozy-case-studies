@@ -11,12 +11,12 @@ const UserFlowSection: React.FC<UserFlowSectionProps> = ({ caseStudy }) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   
   return (
-    <section className={`${isExtraSmallScreen ? 'py-8' : 'py-16'} bg-[#f9f9f9]`}>
+    <section className={`${isExtraSmallScreen ? 'py-4' : 'py-12'} bg-[#f9f9f9]`}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
-          <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-8 md:mb-0">
-            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-4`}>Solution Design</h2>
-            <p className="text-lg text-cozy-700 mb-6">
+          <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-4 md:mb-0">
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>Solution Design</h2>
+            <p className={`text-lg text-cozy-700 mb-0`}>
               {caseStudy.content.solution}
             </p>
           </div>

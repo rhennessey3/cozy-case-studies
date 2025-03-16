@@ -19,9 +19,9 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
 
   return (
-    <section className={`${isExtraSmallScreen ? 'py-8' : 'py-16'} bg-[#221F26]`}>
+    <section className={`${isExtraSmallScreen ? 'py-6' : 'py-12'} bg-[#221F26]`}>
       <div className="container mx-auto px-4">
-        <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-white mb-4 md:mb-12 text-left`}>Implementation Process</h2>
+        <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-white mb-3 md:mb-8 text-left`}>Implementation Process</h2>
         
         <div className="relative px-4 md:px-12">
           <Carousel
@@ -33,14 +33,14 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
             <CarouselContent>
               <CarouselItem className="basis-full md:basis-1/3">
                 <div className="flex flex-col items-start h-full">
-                  <div className="w-full aspect-square mb-4 md:mb-6 overflow-hidden rounded-lg shadow-lg relative">
+                  <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
                     <img 
                       src="https://images.unsplash.com/photo-1642964057919-6c2ce94ffc13?auto=format&fit=crop&q=80&w=800" 
                       alt="Initial wireframes" 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 md:mb-4 text-left">Planning</h3>
+                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 text-left">Planning</h3>
                   <p className="text-gray-300 text-left">
                     {caseStudy.content.approach.split('.')[0]}. 
                   </p>
@@ -49,14 +49,14 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
               
               <CarouselItem className="basis-full md:basis-1/3">
                 <div className="flex flex-col items-start h-full">
-                  <div className="w-full aspect-square mb-6 overflow-hidden rounded-lg shadow-lg relative">
+                  <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
                     <img 
                       src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800" 
                       alt="Development process" 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-4 text-left">Development</h3>
+                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 text-left">Development</h3>
                   <p className="text-gray-300 text-left">
                     {caseStudy.content.solution.split('.')[0]}.
                   </p>
@@ -65,14 +65,14 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
               
               <CarouselItem className="basis-full md:basis-1/3">
                 <div className="flex flex-col items-start h-full">
-                  <div className="w-full aspect-square mb-6 overflow-hidden rounded-lg shadow-lg relative">
+                  <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
                     <img 
                       src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&q=80&w=800" 
                       alt="Final implementation" 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-4 text-left">Results</h3>
+                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 text-left">Results</h3>
                   <p className="text-gray-300 text-left">
                     {caseStudy.content.results}
                   </p>

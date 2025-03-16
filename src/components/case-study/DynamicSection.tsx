@@ -26,21 +26,26 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
   const isTextLight = backgroundColor === 'custom' && type === 'conclusion';
   
   return (
-    <section className={cn("py-16", bgColorClass)}>
+    <section className={cn(
+      isExtraSmallScreen ? "py-4" : "py-12", 
+      bgColorClass
+    )}>
       <div className="container mx-auto px-4">
         {title && (
           <h2 className={cn(
             "text-left",
             isTextLight ? "text-white" : "text-[#221F26]",
             isExtraSmallScreen ? "text-2xl" : "text-3xl",
-            "font-bold mb-8"
+            "font-bold",
+            isExtraSmallScreen ? "mb-3" : "mb-6"
           )}>
             {title}
           </h2>
         )}
         
         <div className={cn(
-          "flex flex-col md:flex-row items-center gap-8",
+          "flex flex-col md:flex-row items-center",
+          isExtraSmallScreen ? "gap-3" : "gap-6",
           layout === 'center' && "justify-center text-center",
           layout === 'full' && "w-full"
         )}>
@@ -68,7 +73,8 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
                 "w-full md:w-1/2 order-1",
                 layout === 'left' && "md:order-1 pr-0 md:pr-8",
                 layout === 'right' && "md:order-2 pl-0 md:pl-8",
-                layout === 'full' && "md:w-full"
+                layout === 'full' && "md:w-full",
+                isExtraSmallScreen ? "mb-3" : "mb-0"
               )}>
                 <div className={cn(
                   "prose prose-lg max-w-none",
