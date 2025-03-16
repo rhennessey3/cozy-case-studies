@@ -2,6 +2,7 @@
 import React from 'react';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { Separator } from "@/components/ui/separator";
 
 interface CaseStudyHeroProps {
   title: string;
@@ -36,6 +37,7 @@ const CaseStudyHero = ({
                   <h2 className="text-white text-2xl font-bold leading-tight">
                     <span className="block px-0 py-1">{category}</span>
                   </h2>
+                  <Separator className="bg-[#89c5cc] h-0.5 w-16 mt-2 mb-4" />
                 </div>
               </div>
               
@@ -71,6 +73,7 @@ const CaseStudyHero = ({
                   <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight">
                     <span className="block px-4 md:px-[22px] py-1">{category}</span>
                   </h2>
+                  <Separator className="bg-[#89c5cc] h-0.5 w-24 ml-4 md:ml-[22px] mt-2 mb-4" />
                 </div>
               </div>
             </div>
