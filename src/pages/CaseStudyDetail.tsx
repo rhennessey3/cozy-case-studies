@@ -5,7 +5,6 @@ import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import CaseStudyHero from '@/components/case-study/CaseStudyHero';
 import CaseStudyContent from '@/components/case-study/CaseStudyContent';
 import { CaseStudy } from '@/data/caseStudies';
 import { getCaseStudyBySlug } from '@/services/strapiService';
@@ -47,6 +46,19 @@ const CaseStudyDetail = () => {
           navigate('/404');
           return;
         }
+        
+        // If there are no sections yet or no hero section, add one
+        if (!data.sections || data.sections.length === 0 || !data.sections.some(s => s.__component === 'case-study.hero')) {
+          data.sections = [
+            {
+              id: 0,
+              __component: 'case-study.hero',
+              // Hero section uses the main case study data
+            },
+            ...(data.sections || [])
+          ];
+        }
+        
         setCaseStudy(data);
       } catch (error) {
         console.error('Failed to fetch case study:', error);
@@ -86,8 +98,6 @@ const CaseStudyDetail = () => {
 
   if (!caseStudy) return null;
 
-  const { title, coverImage, category } = caseStudy;
-
   return (
     <div className="min-h-screen bg-background">
       {isSmallScreen ? (
@@ -105,11 +115,6 @@ const CaseStudyDetail = () => {
       >
         <ScrollArea className="h-full w-full">
           <div className="min-h-full">
-            <CaseStudyHero 
-              title={title}
-              coverImage={coverImage}
-              category={category}
-            />
             <CaseStudyContent caseStudy={caseStudy} />
           </div>
         </ScrollArea>

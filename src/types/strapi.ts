@@ -65,6 +65,12 @@ export interface StrapiCaseStudySection {
   image?: StrapiImage;
   layout?: "left" | "right" | "center" | "full";
   backgroundColor?: string;
+  // Hero section specific fields
+  category?: string;
+  coverImage?: StrapiImage;
+  objective?: string;
+  approach?: string;
+  results?: string;
 }
 
 // For backward compatibility

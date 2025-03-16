@@ -7,12 +7,18 @@ interface CaseStudyHeroProps {
   title: string;
   coverImage: string;
   category: string;
+  objective?: string;
+  approach?: string;
+  results?: string;
 }
 
 const CaseStudyHero = ({
   title,
   coverImage,
-  category
+  category,
+  objective = "To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.",
+  approach = "Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.",
+  results = "30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution."
 }: CaseStudyHeroProps) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   
@@ -39,17 +45,17 @@ const CaseStudyHero = ({
                 <div className="grid grid-cols-1 gap-4 text-white">
                   <div className="text-left">
                     <h3 className="text-[#89c5cc] text-xl font-bold mb-2">Objective</h3>
-                    <p className="text-sm">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
+                    <p className="text-sm">{objective}</p>
                   </div>
                   
                   <div className="text-left">
                     <h3 className="text-[#89c5cc] text-xl font-bold mb-2">Approach</h3>
-                    <p className="text-sm">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
+                    <p className="text-sm">{approach}</p>
                   </div>
                   
                   <div className="text-left">
                     <h3 className="text-[#89c5cc] text-xl font-bold mb-2">Results</h3>
-                    <p className="text-sm">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
+                    <p className="text-sm">{results}</p>
                   </div>
                 </div>
               </div>
@@ -77,17 +83,17 @@ const CaseStudyHero = ({
                 <div className="grid grid-cols-3 gap-8 text-white">
                   <div className="text-left">
                     <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Objective</h3>
-                    <p className="text-sm md:text-base">To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.</p>
+                    <p className="text-sm md:text-base">{objective}</p>
                   </div>
                   
                   <div className="text-left">
                     <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Approach</h3>
-                    <p className="text-sm md:text-base">Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.</p>
+                    <p className="text-sm md:text-base">{approach}</p>
                   </div>
                   
                   <div className="text-left">
                     <h3 className="text-[#89c5cc] text-base md:text-xl font-bold mb-2">Results</h3>
-                    <p className="text-sm md:text-base">30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.</p>
+                    <p className="text-sm md:text-base">{results}</p>
                   </div>
                 </div>
               </div>

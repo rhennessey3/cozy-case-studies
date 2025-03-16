@@ -10,6 +10,7 @@ import PrototypingSection from './PrototypingSection';
 import ContactSection from '@/components/sections/ContactSection';
 import Footer from '@/components/Footer';
 import DynamicSection from './DynamicSection';
+import CaseStudyHero from './CaseStudyHero';
 
 interface CaseStudyContentProps {
   caseStudy: CaseStudy;
@@ -21,6 +22,21 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
     return (
       <>
         {caseStudy.sections.map((section, index) => {
+          // Check if this is a hero section component
+          if (section.__component === 'case-study.hero') {
+            return (
+              <CaseStudyHero 
+                key={section.id || index}
+                title={caseStudy.title}
+                coverImage={caseStudy.coverImage}
+                category={caseStudy.category}
+                objective={section.objective || "To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity."}
+                approach={section.approach || "Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability."}
+                results={section.results || "30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution."}
+              />
+            );
+          }
+          
           // Create a modified section for the second section with no image
           if (index === 1) {
             const modifiedSection = {
@@ -29,6 +45,7 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
             };
             return <DynamicSection key={section.id || index} section={modifiedSection} />;
           }
+          
           return <DynamicSection key={section.id || index} section={section} />;
         })}
         <ContactSection />

@@ -18,6 +18,19 @@ const transformStrapiCaseStudy = (strapiData: StrapiResponse<StrapiCaseStudy>): 
   return strapiData.data.map(item => {
     const caseStudy = item.attributes;
     
+    // Add a hero section if not present
+    const heroSectionExists = caseStudy.sections && caseStudy.sections.some(s => s.__component === 'case-study.hero');
+    
+    const sections = [...(caseStudy.sections || [])];
+    
+    if (!heroSectionExists) {
+      sections.unshift({
+        id: 0,
+        __component: 'case-study.hero',
+        // Hero uses main case study data
+      });
+    }
+    
     // Handle both new modular sections and legacy content structure
     const content = generateContentFromSections(caseStudy.sections) || {
       intro: "",
@@ -38,7 +51,7 @@ const transformStrapiCaseStudy = (strapiData: StrapiResponse<StrapiCaseStudy>): 
       category: caseStudy.category,
       height: caseStudy.height || undefined,
       content,
-      sections: caseStudy.sections || []
+      sections
     };
   });
 };
@@ -58,6 +71,8 @@ const generateContentFromSections = (sections: StrapiCaseStudySection[] = []): a
   
   // Map component types to content fields
   sections.forEach(section => {
+    if (!section.__component) return;
+    
     const type = section.__component.split('.')[1]; // Get component type after the dot
     
     switch(type) {
