@@ -29,7 +29,7 @@ const CaseStudyHero = ({
                 <div className="py-4 pb-0">
                   <h2 className="text-white text-2xl font-bold">
                     <span className="block px-0 py-1">{category}</span>
-                    <span className="block text-[#89c5cc] text-xl mt-2 px-0">{title}</span>
+                    <span className="block text-[#89c5cc] text-xl mt-1 px-0">{title}</span>
                   </h2>
                 </div>
               </div>
@@ -65,7 +65,7 @@ const CaseStudyHero = ({
                 <div className="py-4 md:py-4 pb-0">
                   <h2 className="text-white text-2xl md:text-3xl font-bold">
                     <span className="block px-4 md:px-[22px] py-1">{category}</span>
-                    <span className="block text-[#89c5cc] text-xl md:text-2xl mt-2 px-4 md:px-[25px]">{title}</span>
+                    <span className="block text-[#89c5cc] text-xl md:text-2xl mt-1 px-4 md:px-[25px]">{title}</span>
                   </h2>
                 </div>
               </div>
