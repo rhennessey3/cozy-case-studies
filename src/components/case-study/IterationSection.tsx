@@ -81,10 +81,10 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
             </CarouselContent>
             
             <CarouselPrevious 
-              className={`absolute bg-[#89c5cc]/80 text-white hover:bg-[#70b0b8] border-none ${isExtraSmallScreen ? "left-6" : isMobile ? "left-6" : "left-10"} top-[50%] -translate-y-1/2 z-10`}
+              className={`absolute bg-[#89c5cc]/80 text-white hover:bg-[#70b0b8] border-none ${isExtraSmallScreen ? "left-0" : isMobile ? "left-0" : "left-0"} top-1/3 -translate-y-1/2 z-10 -translate-x-1/2`}
             />
             <CarouselNext 
-              className={`absolute bg-[#89c5cc]/80 text-white hover:bg-[#70b0b8] border-none ${isExtraSmallScreen ? "right-6" : isMobile ? "right-6" : "right-10"} top-[50%] -translate-y-1/2 z-10`}
+              className={`absolute bg-[#89c5cc]/80 text-white hover:bg-[#70b0b8] border-none ${isExtraSmallScreen ? "right-0" : isMobile ? "right-0" : "right-0"} top-1/3 -translate-y-1/2 z-10 translate-x-1/2`}
             />
           </Carousel>
         </div>
