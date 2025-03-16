@@ -11,7 +11,7 @@ const UserNeedsSection: React.FC<UserNeedsSectionProps> = ({ caseStudy }) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   
   return (
-    <section className="py-16 bg-white">
+    <section className={`${isExtraSmallScreen ? 'py-8' : 'py-16'} bg-white`}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 order-2 md:order-1">
@@ -25,10 +25,10 @@ const UserNeedsSection: React.FC<UserNeedsSectionProps> = ({ caseStudy }) => {
           </div>
           <div className="w-full md:w-1/2 pl-0 md:pl-8 mb-8 md:mb-0 order-1 md:order-2">
             <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-4`}>Identifying Needs</h2>
-            <p className="text-lg text-cozy-700 mb-6">
+            <p className={`${isExtraSmallScreen ? 'text-base' : 'text-lg'} text-cozy-700 mb-6`}>
               {caseStudy.content.challenge}
             </p>
-            <p className="text-lg text-cozy-700">
+            <p className={`${isExtraSmallScreen ? 'text-base' : 'text-lg'} text-cozy-700`}>
               Our approach: {caseStudy.content.approach}
             </p>
           </div>

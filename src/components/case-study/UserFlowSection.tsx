@@ -11,7 +11,7 @@ const UserFlowSection: React.FC<UserFlowSectionProps> = ({ caseStudy }) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   
   return (
-    <section className="py-16 bg-[#f9f9f9]">
+    <section className={`${isExtraSmallScreen ? 'py-8' : 'py-16'} bg-[#f9f9f9]`}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-8 md:mb-0">
