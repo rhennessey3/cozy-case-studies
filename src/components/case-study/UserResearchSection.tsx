@@ -13,10 +13,10 @@ const UserResearchSection: React.FC<UserResearchSectionProps> = ({ caseStudy }) 
   return (
     <section className={`${isExtraSmallScreen ? 'py-4' : 'py-12'} bg-[#f9f9f9]`}>
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-start"> {/* Changed items-center to items-start for left alignment */}
-          <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-4 md:mb-0 text-left"> {/* Added text-left class */}
-            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4 text-left`}>User Research & Analysis</h2>
-            <p className={`${isExtraSmallScreen ? 'text-base' : 'text-lg'} text-cozy-700 mb-0 text-left`}>
+        <div className="flex flex-col md:flex-row items-center">
+          <div className="w-full md:w-1/2 pr-0 md:pr-8 mb-4 md:mb-0">
+            <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-cozy-900 mb-2 md:mb-4`}>Left Aligned with Photo</h2>
+            <p className={`${isExtraSmallScreen ? 'text-base' : 'text-lg'} text-cozy-700 mb-0`}>
               {caseStudy.content.approach}
             </p>
           </div>
