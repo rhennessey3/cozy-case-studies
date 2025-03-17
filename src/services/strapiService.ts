@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { StrapiResponse, StrapiCaseStudy, StrapiLegacyCaseStudyContent, StrapiCaseStudySection } from '../types/strapi';
 import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
@@ -6,6 +5,17 @@ import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
 // You should replace this with your actual Strapi API URL
 const STRAPI_URL = import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337';
 const API_URL = `${STRAPI_URL}/api`;
+
+// Add debug mode to easily toggle verbose logging
+const DEBUG = true;
+
+// Log environment variable information on startup
+console.log('==========================================');
+console.log('Strapi Configuration:');
+console.log(`VITE_STRAPI_API_URL env variable: ${import.meta.env.VITE_STRAPI_API_URL ? 'Set ✅' : 'Not set ❌'}`);
+console.log(`Using Strapi URL: ${STRAPI_URL}`);
+console.log(`API endpoint: ${API_URL}/case-studies`);
+console.log('==========================================');
 
 // Helper function to transform image URL
 const getImageUrl = (image: any): string => {
@@ -108,9 +118,6 @@ const generateContentFromSections = (sections: StrapiCaseStudySection[] = []): a
   
   return content;
 };
-
-// Add debug mode to easily toggle verbose logging
-const DEBUG = true;
 
 export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   try {
