@@ -60,17 +60,53 @@ export interface StrapiCaseStudy {
 export interface StrapiCaseStudySection {
   id: number;
   __component: string;
+  
+  // Hero component fields
+  objectiveheading?: string;
+  approachheading?: string;
+  resultsheading?: string;
+  casestudytitle?: string;
+  objectiveparagraph?: string;
+  approachparagraph?: string;
+  resultsparagraph?: string;
+  
+  // Introduction component fields
+  introductionHeading?: string;
+  introductionSubheading?: string;
+  introductionBodyContent?: string;
+  layout?: "left" | "right" | "center" | "full";
+  
+  // Text with photo fields (left or right aligned)
+  textleftalignedHeading?: string;
+  textleftalignedBodyContent?: string;
+  textleftalignedPhoto?: StrapiImage;
+  altbackgroundcolor?: boolean;
+  
+  // Slider component fields
+  casestudysliderprimaryheading?: string;
+  casestudyslidercontent?: {
+    casestudysliderphoto?: StrapiImage;
+    caststudysliderheading?: string;
+    casestudysliderbodycontent?: string;
+  }[];
+  
+  // Four small paragraphs component fields
+  primaryheadingfoursmallparagraphs?: string;
+  heading1?: string;
+  paragraph1?: string;
+  heading2?: string;
+  paragraph2?: string;
+  heading3?: string;
+  paragraph3?: string;
+  heading4?: string;
+  paragraph4?: string;
+  fourheadingphoto?: StrapiImage;
+  
+  // Generic fields for all components
   title?: string;
   content?: string;
   image?: StrapiImage;
-  layout?: "left" | "right" | "center" | "full";
   backgroundColor?: string;
-  // Hero section specific fields
-  category?: string;
-  coverImage?: StrapiImage;
-  objective?: string;
-  approach?: string;
-  results?: string;
 }
 
 // For backward compatibility

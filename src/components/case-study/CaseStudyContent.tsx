@@ -26,12 +26,15 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
       <>
         {/* Display Hero section */}
         <CaseStudyHero 
-          title={caseStudy.title}
+          title={heroSection?.casestudytitle || caseStudy.title}
           coverImage={caseStudy.coverImage}
           category={caseStudy.category}
-          objective={heroSection?.objective || caseStudy.content.approach}
-          approach={heroSection?.approach || caseStudy.content.approach}
-          results={heroSection?.results || caseStudy.content.results}
+          objective={heroSection?.objectiveparagraph || caseStudy.content.challenge}
+          approach={heroSection?.approachparagraph || caseStudy.content.approach}
+          results={heroSection?.resultsparagraph || caseStudy.content.results}
+          objectiveHeading={heroSection?.objectiveheading || "Objective"}
+          approachHeading={heroSection?.approachheading || "Approach"}
+          resultsHeading={heroSection?.resultsheading || "Results"}
         />
 
         {/* Display dynamic sections from Strapi */}
