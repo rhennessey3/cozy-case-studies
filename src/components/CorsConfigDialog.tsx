@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Dialog,
@@ -71,110 +70,60 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
           <div className="border rounded-md p-4">
             <h3 className="font-bold flex items-center mb-2">
               <Github className="h-5 w-5 mr-2 text-blue-600" />
-              Method 2: GitHub Repository Configuration
+              Method 2: Using the Railway Strapi Template
             </h3>
             <p className="text-sm mb-2">
-              Since your Strapi project is deployed via GitHub, you'll need to modify the CORS configuration in your repository:
+              If you're having trouble accessing your current Strapi repository, you can create a new one using Railway's official Strapi template:
             </p>
             
             <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
               <h4 className="font-bold flex items-center mb-2 text-sm">
-                <Search className="h-4 w-4 mr-2 text-blue-600" />
-                Finding Your Actual Repository URL
+                <ExternalLink className="h-4 w-4 mr-2 text-blue-600" />
+                Creating a New Strapi Instance with Railway Template
               </h4>
-              <p className="text-xs text-blue-800 mb-2">
-                Before cloning, you need to find the <strong>exact URL</strong> of your Strapi repository on GitHub:
-              </p>
               <ol className="list-decimal pl-5 space-y-1 text-xs text-blue-800">
-                <li>Go to your <a href="https://railway.app/dashboard" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Railway dashboard</a></li>
-                <li>Select your Strapi project</li>
-                <li>Look for a "GitHub" section or a GitHub logo showing the repository connection</li>
-                <li>You should see the repository name (e.g., "yourusername/your-strapi-project")</li>
-                <li>Once you know your repository name, your clone URL will be:
-                  <div className="bg-gray-100 p-1 rounded-md mt-1 font-mono text-xs overflow-x-auto">
-                    https://github.com/[your-actual-username]/[your-actual-repo-name].git
-                  </div>
-                </li>
-                <li>Alternatively, if you have access to the repository on GitHub:
+                <li>Visit the <a href="https://github.com/railwayapp-templates/strapi" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Railway Strapi Template Repository</a></li>
+                <li>Click the green "Use this template" button and select "Create a new repository"</li>
+                <li>Name your repository (e.g., "my-strapi-cms")</li>
+                <li>Make the repository public or private as you prefer</li>
+                <li>Click "Create repository from template"</li>
+                <li>Once created, deploy this repository to Railway:
                   <div className="mt-1">
-                    <a href="https://github.com?tab=repositories" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Go to your GitHub repositories</a>
+                    <a href="https://railway.app/template/strapi" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Deploy Strapi on Railway with One Click</a>
                   </div>
-                  <span className="block mt-1">Find your Strapi repository and click the green "Code" button to get the clone URL</span>
+                  <span className="block mt-1">Or visit your Railway dashboard, create a new project, and select "Deploy from GitHub repo"</span>
                 </li>
+                <li>After deployment, you'll have a fresh Strapi instance that you can configure</li>
               </ol>
             </div>
             
             <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-4">
               <h4 className="font-bold flex items-center mb-2 text-sm">
                 <KeyRound className="h-4 w-4 mr-2 text-amber-600" />
-                Setting up GitHub Authentication
+                Configuring CORS in Your New Strapi Instance
               </h4>
               <p className="text-xs text-amber-800 mb-2">
-                GitHub no longer supports password authentication for Git operations. You need to use a personal access token or SSH key.
+                Once your new Strapi instance is deployed on Railway, you can clone the repository to set up CORS:
               </p>
-              <div className="space-y-2 text-xs text-amber-800">
-                <p className="font-semibold">Option 1: Use a Personal Access Token (Recommended for beginners)</p>
-                <ol className="list-decimal pl-5 space-y-1">
-                  <li>Go to <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">GitHub → Settings → Developer settings → Personal access tokens</a></li>
-                  <li>Click "Generate new token" and select "Fine-grained tokens"</li>
-                  <li>Set an expiration date and give the token a name like "Strapi Project"</li>
-                  <li>Under Repository access, select the Strapi repository</li>
-                  <li>Under Permissions → Repository permissions, give "Contents" access: Read and write</li>
-                  <li>Generate the token and copy it</li>
-                  <li>When cloning, use the token as your password:
-                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
-                      git clone https://github.com/your-actual-username/your-actual-repo-name.git<br />
-                      Username: your-github-username<br />
-                      Password: your-personal-access-token
-                    </div>
-                  </li>
-                </ol>
-                
-                <p className="font-semibold mt-3">Option 2: Configure SSH (Best for developers)</p>
-                <ol className="list-decimal pl-5 space-y-1">
-                  <li>Check if you have an existing SSH key: <span className="font-mono bg-gray-100 px-1 rounded">ls -al ~/.ssh</span></li>
-                  <li>Generate a new SSH key if needed: <span className="font-mono bg-gray-100 px-1 rounded">ssh-keygen -t ed25519 -C "your_email@example.com"</span></li>
-                  <li>Add the key to the ssh-agent: 
-                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
-                      eval "$(ssh-agent -s)"<br />
-                      ssh-add ~/.ssh/id_ed25519
-                    </div>
-                  </li>
-                  <li>Copy your public key to clipboard:
-                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
-                      # On macOS:<br />
-                      pbcopy &lt; ~/.ssh/id_ed25519.pub<br />
-                      # On Windows (in PowerShell):<br />
-                      Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
-                    </div>
-                  </li>
-                  <li>Add the SSH key to your GitHub account at <a href="https://github.com/settings/keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">GitHub → Settings → SSH and GPG keys</a></li>
-                  <li>Clone using SSH instead:
-                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
-                      git clone git@github.com:your-actual-username/your-actual-repo-name.git
-                    </div>
-                  </li>
-                </ol>
-              </div>
+              <ol className="list-decimal pl-5 space-y-1 text-xs text-amber-800">
+                <li>Clone your new repository:
+                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
+                    git clone https://github.com/[your-username]/[your-repo-name].git
+                  </div>
+                </li>
+                <li>Navigate to the project directory:
+                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
+                    cd [your-repo-name]
+                  </div>
+                </li>
+                <li>Find and edit the CORS configuration file at <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span></li>
+              </ol>
             </div>
             
             <ol className="list-decimal pl-5 space-y-2 text-sm">
               <li>
-                After setting up GitHub authentication and finding your repository URL, clone your Strapi repository:
-                <div className="bg-gray-100 p-2 rounded-md mt-1 mb-2 font-mono text-xs">
-                  # For HTTPS with personal access token:<br />
-                  git clone https://github.com/your-actual-username/your-actual-repo-name.git<br /><br />
-                  # Or for SSH:<br />
-                  git clone git@github.com:your-actual-username/your-actual-repo-name.git
-                </div>
+                Open the <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span> file in your code editor and modify the CORS configuration:
               </li>
-              <li>
-                Open the project in your code editor (like VS Code)
-              </li>
-              <li>
-                Find and edit the file: <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span>
-              </li>
-              <li>Modify the file to include your frontend URL in the CORS configuration:</li>
             </ol>
             <div className="bg-gray-900 text-gray-100 p-3 rounded-md mt-2 overflow-x-auto">
               <pre className="text-xs">
