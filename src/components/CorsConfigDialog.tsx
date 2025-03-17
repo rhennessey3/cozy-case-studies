@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Dialog,
@@ -9,7 +10,7 @@ import {
   DialogClose
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, FileCode, Cog, Code, ExternalLink, Github, KeyRound, Search } from 'lucide-react';
+import { AlertTriangle, FileCode, Cog, Code, ExternalLink, Github, KeyRound, Search, Check } from 'lucide-react';
 
 interface CorsConfigDialogProps {
   frontendUrl: string;
@@ -38,7 +39,7 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
           </DialogTitle>
           <DialogDescription>
             You need to configure your Strapi instance to accept requests from your frontend application.
-            There are two ways to fix this issue:
+            The configuration needs to be updated in the config/middlewares.js file.
           </DialogDescription>
         </DialogHeader>
         
@@ -69,11 +70,101 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
           
           <div className="border rounded-md p-4">
             <h3 className="font-bold flex items-center mb-2">
-              <Github className="h-5 w-5 mr-2 text-blue-600" />
-              Method 2: Using the Railway Strapi Template
+              <FileCode className="h-5 w-5 mr-2 text-blue-600" />
+              Method 2: Direct File Modification (config/middlewares.js)
             </h3>
             <p className="text-sm mb-2">
-              If you're having trouble accessing your current Strapi repository, you can create a new one using Railway's official Strapi template:
+              Based on the file you're looking at, you need to modify the <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span> file in your Strapi project:
+            </p>
+            
+            <div className="bg-gray-900 text-gray-100 p-3 rounded-md overflow-x-auto mb-4">
+              <pre className="text-xs">
+                <code>
+{`module.exports = [
+  'strapi::logger',
+  'strapi::errors',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'res.cloudinary.com'],
+          'media-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'res.cloudinary.com'],
+          upgradeInsecureRequests: null,
+        },
+      },
+    },
+  },
+  {
+    name: 'strapi::cors',
+    config: {
+      enabled: true,
+      headers: '*',
+      origin: ['${frontendUrl}', 'http://localhost:3000', 'http://localhost:5173']
+    }
+  },
+  'strapi::poweredBy',
+  'strapi::query',
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
+];`}
+                </code>
+              </pre>
+            </div>
+
+            <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-4">
+              <h4 className="font-bold flex items-center mb-2 text-sm">
+                <Check className="h-4 w-4 mr-2 text-green-600" />
+                Key Changes to Make
+              </h4>
+              <ol className="list-decimal pl-5 space-y-1 text-xs text-green-800">
+                <li>Replace the simple string <span className="font-mono bg-gray-100 px-1 rounded">'strapi::cors'</span> with an object configuration</li>
+                <li>Add the CORS configuration object as shown above</li>
+                <li>Make sure to include your frontend URL in the <span className="font-mono bg-gray-100 px-1 rounded">origin</span> array</li>
+                <li>Include development URLs like localhost if you're also testing locally</li>
+              </ol>
+            </div>
+            
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-4">
+              <h4 className="font-bold flex items-center mb-2 text-sm">
+                <KeyRound className="h-4 w-4 mr-2 text-amber-600" />
+                GitHub Authentication for Clone
+              </h4>
+              <p className="text-xs text-amber-800 mb-2">
+                If you're having trouble cloning the repository due to GitHub authentication:
+              </p>
+              <ol className="list-decimal pl-5 space-y-1 text-xs text-amber-800">
+                <li>Use a Personal Access Token (PAT):
+                  <div className="mt-1 mb-1">
+                    <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                      Create a token in GitHub Settings
+                    </a>
+                  </div>
+                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
+                    git clone https://YOUR_USERNAME:YOUR_TOKEN@github.com/railwayapp-templates/strapi.git
+                  </div>
+                </li>
+                <li>Or use SSH authentication:
+                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
+                    git clone git@github.com:railwayapp-templates/strapi.git
+                  </div>
+                  <span className="block mt-1">Make sure you have <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">SSH keys set up</a> in your GitHub account</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+          
+          <div className="border rounded-md p-4">
+            <h3 className="font-bold flex items-center mb-2">
+              <Github className="h-5 w-5 mr-2 text-blue-600" />
+              Method 3: Using the Railway Strapi Template
+            </h3>
+            <p className="text-sm mb-2">
+              If you're having trouble with your current Strapi repository, you can create a new one using Railway's official Strapi template:
             </p>
             
             <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
@@ -94,74 +185,6 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
                   <span className="block mt-1">Or visit your Railway dashboard, create a new project, and select "Deploy from GitHub repo"</span>
                 </li>
                 <li>After deployment, you'll have a fresh Strapi instance that you can configure</li>
-              </ol>
-            </div>
-            
-            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-4">
-              <h4 className="font-bold flex items-center mb-2 text-sm">
-                <KeyRound className="h-4 w-4 mr-2 text-amber-600" />
-                Configuring CORS in Your New Strapi Instance
-              </h4>
-              <p className="text-xs text-amber-800 mb-2">
-                Once your new Strapi instance is deployed on Railway, you can clone the repository to set up CORS:
-              </p>
-              <ol className="list-decimal pl-5 space-y-1 text-xs text-amber-800">
-                <li>Clone your new repository:
-                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
-                    git clone https://github.com/[your-username]/[your-repo-name].git
-                  </div>
-                </li>
-                <li>Navigate to the project directory:
-                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
-                    cd [your-repo-name]
-                  </div>
-                </li>
-                <li>Find and edit the CORS configuration file at <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span></li>
-              </ol>
-            </div>
-            
-            <ol className="list-decimal pl-5 space-y-2 text-sm">
-              <li>
-                Open the <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span> file in your code editor and modify the CORS configuration:
-              </li>
-            </ol>
-            <div className="bg-gray-900 text-gray-100 p-3 rounded-md mt-2 overflow-x-auto">
-              <pre className="text-xs">
-                <code>
-{`module.exports = [
-  'strapi::errors',
-  {
-    name: 'strapi::cors',
-    config: {
-      enabled: true,
-      headers: '*',
-      origin: ['${frontendUrl}', 'http://localhost:3000', 'http://localhost:5173']
-    }
-  },
-  // ...other middleware configs
-];`}
-                </code>
-              </pre>
-            </div>
-            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-sm text-blue-800 flex items-center">
-                <AlertTriangle className="h-4 w-4 mr-2" />
-                <strong>GitHub Workflow:</strong> After making these changes:
-              </p>
-              <ol className="list-decimal pl-5 mt-2 text-sm text-blue-800">
-                <li>Commit your changes to the repository:
-                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
-                    git add config/middlewares.js<br />
-                    git commit -m "Add CORS configuration for frontend"
-                  </div>
-                </li>
-                <li>Push the changes to GitHub:
-                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
-                    git push origin main
-                  </div>
-                </li>
-                <li>Railway will automatically deploy the new changes</li>
-                <li>Wait a few minutes for the deployment to complete</li>
               </ol>
             </div>
           </div>
