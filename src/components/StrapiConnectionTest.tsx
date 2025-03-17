@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { testStrapiConnection } from '@/services/strapiService';
 import { Button } from './ui/button';
-import { Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Loader2, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import CorsConfigDialog from './CorsConfigDialog';
 
@@ -43,10 +43,10 @@ const StrapiConnectionTest: React.FC = () => {
                       connectionStatus?.message?.toLowerCase().includes('cors') ||
                       connectionStatus?.statusText?.toLowerCase().includes('network error');
   
-  // Extract the Railway app URL for display purposes
-  const railwayAppUrl = strapiUrl.includes('railway.app') 
-    ? strapiUrl 
-    : 'your-strapi-app.up.railway.app';
+  // Check if error is 404-related
+  const is404Error = connectionStatus?.status === '404' || 
+                     connectionStatus?.message?.includes('404') ||
+                     connectionStatus?.message?.includes('Not Found');
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
@@ -68,8 +68,25 @@ const StrapiConnectionTest: React.FC = () => {
         </Alert>
       )}
       
+      {is404Error && (
+        <Alert variant="warning" className="mb-4 border-amber-500 bg-amber-50">
+          <Info className="h-4 w-4 text-amber-500" />
+          <AlertTitle className="text-amber-700">API Endpoint Not Found (404)</AlertTitle>
+          <AlertDescription className="text-amber-700">
+            <p className="mb-2">The Strapi API endpoint couldn't be found at <code className="bg-amber-100 px-1 py-0.5 rounded">{strapiUrl}/api</code></p>
+            <p className="mb-2">Possible solutions:</p>
+            <ol className="list-decimal list-inside text-sm space-y-1">
+              <li>Verify your Strapi URL in the .env file is correct</li>
+              <li>Make sure your Strapi instance is running</li>
+              <li>Check if your Strapi has a different API path structure</li>
+              <li>Confirm your Strapi deployment is complete and accessible</li>
+            </ol>
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <p className="text-gray-600 mb-4">
-        Test the connection to your Strapi CMS hosted on Railway. This will verify if your front-end 
+        Test the connection to your Strapi CMS. This will verify if your front-end 
         application can successfully connect to your Strapi instance.
       </p>
       

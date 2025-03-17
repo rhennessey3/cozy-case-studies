@@ -133,9 +133,23 @@ export const testStrapiConnection = async () => {
     console.log(`Testing connection to Strapi CMS at ${STRAPI_URL}`);
     console.log(`Frontend URL: ${FRONTEND_URL}`);
     
-    // First try to hit the root API endpoint to check if Strapi is reachable
+    // Try hitting multiple endpoints to diagnose specific issues
+    // First try without /api to see if the base URL is reachable
+    try {
+      await axios.get(STRAPI_URL, { 
+        timeout: 5000,
+        headers: {
+          'Accept': 'application/json',
+          'Origin': FRONTEND_URL
+        }
+      });
+    } catch (baseUrlError) {
+      console.log("Base URL not reachable, trying with /api path");
+    }
+    
+    // Now try the standard /api endpoint
     const response = await axios.get(`${STRAPI_URL}/api`, { 
-      timeout: 10000,  // 10 second timeout
+      timeout: 10000,
       headers: {
         'Accept': 'application/json',
         'Origin': FRONTEND_URL
@@ -176,7 +190,13 @@ export const testStrapiConnection = async () => {
       } else if (error.code === 'ECONNABORTED') {
         errorMessage = 'Connection timed out. Strapi CMS may be down or unreachable.';
       } else if (error.response?.status === 404) {
-        errorMessage = 'Strapi endpoint not found. Please check the URL configuration.';
+        // This is likely due to Strapi not being configured or the endpoint path being incorrect
+        errorMessage = `404 Not Found: The Strapi API endpoint was not found at ${STRAPI_URL}/api. This could be because:
+          1. The Strapi instance is not running
+          2. Strapi has a different API path
+          3. The URL format is incorrect (many Strapi Cloud instances use /api as their endpoint)
+          
+          Try checking if the URL is correct in your Strapi Cloud dashboard.`;
       } else if (error.response?.status === 403) {
         errorMessage = 'Access forbidden. Please check Strapi permissions.';
       }
