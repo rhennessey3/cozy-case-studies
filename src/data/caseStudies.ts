@@ -1,4 +1,3 @@
-
 import { StrapiCaseStudySection } from "@/types/strapi";
 
 export interface CaseStudy {
@@ -122,4 +121,3 @@ export const caseStudies: CaseStudy[] = [
     }
   }
 ];
-

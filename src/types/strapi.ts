@@ -46,11 +46,11 @@ export interface StrapiImage {
 export interface StrapiCaseStudy {
   title: string;
   slug: string;
-  summary: string;
-  description: string | null;
+  summary?: string; // Made optional
+  description?: string | null; // Made optional
   coverImage: StrapiImage;
-  category: string;
-  height: string | null;
+  category?: string; // Made optional
+  height?: string | null; // Made optional
   sections: StrapiCaseStudySection[];
   createdAt: string;
   updatedAt: string;

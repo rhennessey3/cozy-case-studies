@@ -45,10 +45,10 @@ const transformStrapiCaseStudy = (strapiData: StrapiResponse<StrapiCaseStudy>): 
       id: item.id.toString(),
       title: caseStudy.title,
       slug: caseStudy.slug,
-      summary: caseStudy.summary,
+      summary: caseStudy.summary || caseStudy.title, // Default to title if no summary
       description: caseStudy.description || undefined,
       coverImage: getImageUrl(caseStudy.coverImage),
-      category: caseStudy.category,
+      category: caseStudy.category || "Case Study", // Default category
       height: caseStudy.height || undefined,
       content,
       sections
