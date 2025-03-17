@@ -10,7 +10,7 @@ import {
   DialogClose
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, FileCode, Cog, Code, ExternalLink, Github, KeyRound } from 'lucide-react';
+import { AlertTriangle, FileCode, Cog, Code, ExternalLink, Github, KeyRound, Search } from 'lucide-react';
 
 interface CorsConfigDialogProps {
   frontendUrl: string;
@@ -77,6 +77,33 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
               Since your Strapi project is deployed via GitHub, you'll need to modify the CORS configuration in your repository:
             </p>
             
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
+              <h4 className="font-bold flex items-center mb-2 text-sm">
+                <Search className="h-4 w-4 mr-2 text-blue-600" />
+                Finding Your Actual Repository URL
+              </h4>
+              <p className="text-xs text-blue-800 mb-2">
+                Before cloning, you need to find the <strong>exact URL</strong> of your Strapi repository on GitHub:
+              </p>
+              <ol className="list-decimal pl-5 space-y-1 text-xs text-blue-800">
+                <li>Go to your <a href="https://railway.app/dashboard" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Railway dashboard</a></li>
+                <li>Select your Strapi project</li>
+                <li>Look for a "GitHub" section or a GitHub logo showing the repository connection</li>
+                <li>You should see the repository name (e.g., "yourusername/your-strapi-project")</li>
+                <li>Once you know your repository name, your clone URL will be:
+                  <div className="bg-gray-100 p-1 rounded-md mt-1 font-mono text-xs overflow-x-auto">
+                    https://github.com/[your-actual-username]/[your-actual-repo-name].git
+                  </div>
+                </li>
+                <li>Alternatively, if you have access to the repository on GitHub:
+                  <div className="mt-1">
+                    <a href="https://github.com?tab=repositories" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Go to your GitHub repositories</a>
+                  </div>
+                  <span className="block mt-1">Find your Strapi repository and click the green "Code" button to get the clone URL</span>
+                </li>
+              </ol>
+            </div>
+            
             <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-4">
               <h4 className="font-bold flex items-center mb-2 text-sm">
                 <KeyRound className="h-4 w-4 mr-2 text-amber-600" />
@@ -96,7 +123,7 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
                   <li>Generate the token and copy it</li>
                   <li>When cloning, use the token as your password:
                     <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
-                      git clone https://github.com/your-username/your-strapi-repo.git<br />
+                      git clone https://github.com/your-actual-username/your-actual-repo-name.git<br />
                       Username: your-github-username<br />
                       Password: your-personal-access-token
                     </div>
@@ -124,7 +151,7 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
                   <li>Add the SSH key to your GitHub account at <a href="https://github.com/settings/keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">GitHub → Settings → SSH and GPG keys</a></li>
                   <li>Clone using SSH instead:
                     <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
-                      git clone git@github.com:your-username/your-strapi-repo.git
+                      git clone git@github.com:your-actual-username/your-actual-repo-name.git
                     </div>
                   </li>
                 </ol>
@@ -133,12 +160,12 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
             
             <ol className="list-decimal pl-5 space-y-2 text-sm">
               <li>
-                After setting up GitHub authentication, clone your Strapi repository:
+                After setting up GitHub authentication and finding your repository URL, clone your Strapi repository:
                 <div className="bg-gray-100 p-2 rounded-md mt-1 mb-2 font-mono text-xs">
                   # For HTTPS with personal access token:<br />
-                  git clone https://github.com/your-username/your-strapi-repo.git<br /><br />
+                  git clone https://github.com/your-actual-username/your-actual-repo-name.git<br /><br />
                   # Or for SSH:<br />
-                  git clone git@github.com:your-username/your-strapi-repo.git
+                  git clone git@github.com:your-actual-username/your-actual-repo-name.git
                 </div>
               </li>
               <li>
