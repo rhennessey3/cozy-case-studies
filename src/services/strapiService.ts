@@ -4,9 +4,10 @@ import { StrapiResponse, StrapiCaseStudy, StrapiLegacyCaseStudyContent, StrapiCa
 import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
 import { toast } from '@/components/ui/use-toast';
 
-// You should replace this with your actual Strapi API URL
+// Get the Strapi API URL from environment variables
 const STRAPI_URL = import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337';
 const API_URL = `${STRAPI_URL}/api`;
+const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
 
 // Add debug mode to easily toggle verbose logging
 const DEBUG = import.meta.env.VITE_DEBUG_MODE === 'true' || true;
@@ -17,6 +18,7 @@ console.log('Strapi Configuration:');
 console.log(`VITE_STRAPI_API_URL env variable: ${import.meta.env.VITE_STRAPI_API_URL ? 'Set ✅' : 'Not set ❌'}`);
 console.log(`Using Strapi URL: ${STRAPI_URL}`);
 console.log(`API endpoint: ${API_URL}/case-studies`);
+console.log(`Frontend URL: ${FRONTEND_URL}`);
 console.log(`Debug mode: ${DEBUG ? 'Enabled ✅' : 'Disabled ❌'}`);
 console.log('==========================================');
 
@@ -129,12 +131,14 @@ const generateContentFromSections = (sections: StrapiCaseStudySection[] = []): a
 export const testStrapiConnection = async () => {
   try {
     console.log(`Testing connection to Strapi CMS at ${STRAPI_URL}`);
+    console.log(`Frontend URL: ${FRONTEND_URL}`);
     
     // First try to hit the root API endpoint to check if Strapi is reachable
     const response = await axios.get(`${STRAPI_URL}/api`, { 
       timeout: 10000,  // 10 second timeout
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Origin': FRONTEND_URL
       }
     });
     
@@ -165,11 +169,12 @@ export const testStrapiConnection = async () => {
       errorMessage = error.message;
       status = error.response?.status?.toString() || 'Network Error';
       
-      if (error.code === 'ECONNABORTED') {
+      // Check if this is a CORS error
+      if (error.code === 'ERR_NETWORK' || (error.message && error.message.includes('Network Error'))) {
+        errorMessage = `CORS Error: Your frontend (${FRONTEND_URL}) is not allowed to access the Strapi API. Please add your frontend URL to the CORS settings in Strapi.`;
+        status = 'CORS Error';
+      } else if (error.code === 'ECONNABORTED') {
         errorMessage = 'Connection timed out. Strapi CMS may be down or unreachable.';
-      } else if (error.code === 'ERR_NETWORK') {
-        errorMessage = 'Network error. This could be due to CORS restrictions, or the Strapi server is not accessible from your current location.';
-        status = 'Network Error';
       } else if (error.response?.status === 404) {
         errorMessage = 'Strapi endpoint not found. Please check the URL configuration.';
       } else if (error.response?.status === 403) {
@@ -198,7 +203,12 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
     if (DEBUG) console.log(`Fetching case studies from ${API_URL}/case-studies`);
     
     const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
-      `${API_URL}/case-studies?populate=coverImage,sections,sections.image`
+      `${API_URL}/case-studies?populate=coverImage,sections,sections.image`,
+      {
+        headers: {
+          'Origin': FRONTEND_URL
+        }
+      }
     );
     
     if (DEBUG) console.log(`Retrieved ${response.data.data.length} case studies from Strapi`);
@@ -214,7 +224,14 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
       console.log(`Error message: ${error.message}`);
       
       // Different error messages based on status code
-      if (status === 403) {
+      if (error.code === 'ERR_NETWORK' || (error.message && error.message.includes('Network Error'))) {
+        console.log('CORS Error: Your frontend is not allowed to access the Strapi API.');
+        toast({
+          title: "CORS Error",
+          description: `Add ${FRONTEND_URL} to allowed origins in Strapi CORS settings.`,
+          variant: "destructive"
+        });
+      } else if (status === 403) {
         console.log('Error 403: Check Strapi permissions. Make sure "find" permission is enabled for public role.');
         toast({
           title: "Permission Error",
@@ -256,7 +273,12 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
     if (DEBUG) console.log(`Fetching case study with slug "${slug}" from Strapi`);
     
     const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
-      `${API_URL}/case-studies?filters[slug][$eq]=${slug}&populate=coverImage,sections,sections.image`
+      `${API_URL}/case-studies?filters[slug][$eq]=${slug}&populate=coverImage,sections,sections.image`,
+      {
+        headers: {
+          'Origin': FRONTEND_URL
+        }
+      }
     );
     
     if (DEBUG) {
@@ -278,7 +300,13 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
       console.log(`Error message: ${error.message}`);
       
       // Different toast messages based on status code
-      if (status === 403) {
+      if (error.code === 'ERR_NETWORK' || (error.message && error.message.includes('Network Error'))) {
+        toast({
+          title: "CORS Error",
+          description: `Add ${FRONTEND_URL} to allowed origins in Strapi CORS settings.`,
+          variant: "destructive"
+        });
+      } else if (status === 403) {
         toast({
           title: "Permission Error",
           description: "Strapi returned a 403 Forbidden error. Please check permissions for case studies.",
