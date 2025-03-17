@@ -4,6 +4,7 @@ import { testStrapiConnection } from '@/services/strapiService';
 import { Button } from './ui/button';
 import { Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import CorsConfigDialog from './CorsConfigDialog';
 
 interface ConnectionStatus {
   success: boolean;
@@ -17,10 +18,12 @@ const StrapiConnectionTest: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus | null>(null);
   const [frontendUrl, setFrontendUrl] = useState<string>('');
+  const [strapiUrl, setStrapiUrl] = useState<string>('');
   
   useEffect(() => {
     // Get current frontend URL for CORS instructions
     setFrontendUrl(window.location.origin);
+    setStrapiUrl(import.meta.env.VITE_STRAPI_API_URL || 'https://your-strapi-url.com');
   }, []);
 
   const handleTestConnection = async () => {
@@ -50,7 +53,12 @@ const StrapiConnectionTest: React.FC = () => {
           <AlertTitle>CORS Error Detected</AlertTitle>
           <AlertDescription>
             Your Strapi API is blocking requests from your frontend application.
-            You need to configure CORS in your Strapi admin panel.
+            <div className="mt-2">
+              <CorsConfigDialog 
+                frontendUrl={frontendUrl || import.meta.env.VITE_FRONTEND_URL || window.location.origin} 
+                strapiUrl={strapiUrl} 
+              />
+            </div>
           </AlertDescription>
         </Alert>
       )}
@@ -96,10 +104,19 @@ const StrapiConnectionTest: React.FC = () => {
         <p>Your Strapi URL: {import.meta.env.VITE_STRAPI_API_URL || 'Not set'}</p>
         <p>Your Frontend URL: {frontendUrl || 'Unknown'}</p>
         
+        {!isCorsError && (
+          <div className="mt-2">
+            <CorsConfigDialog 
+              frontendUrl={frontendUrl || import.meta.env.VITE_FRONTEND_URL || window.location.origin} 
+              strapiUrl={strapiUrl} 
+            />
+          </div>
+        )}
+        
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
           <p className="font-medium text-blue-800">CORS Configuration Instructions:</p>
           <ol className="list-decimal pl-5 mt-1 text-blue-700">
-            <li>Log in to your Strapi admin panel at: <a href={`${import.meta.env.VITE_STRAPI_API_URL}/admin`} target="_blank" rel="noopener noreferrer" className="underline">Strapi Admin Panel</a></li>
+            <li>Log in to your Strapi admin panel at: <a href={`${strapiUrl}/admin`} target="_blank" rel="noopener noreferrer" className="underline">Strapi Admin Panel</a></li>
             <li>Go to Settings → Security → CORS</li>
             <li>Add your frontend URL (<code className="bg-blue-100 px-1">{frontendUrl}</code>) to the allowed origins</li>
             <li>Save your settings</li>
