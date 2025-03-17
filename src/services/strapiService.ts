@@ -1,13 +1,15 @@
+
 import axios from 'axios';
 import { StrapiResponse, StrapiCaseStudy, StrapiLegacyCaseStudyContent, StrapiCaseStudySection } from '../types/strapi';
 import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
+import { toast } from '@/components/ui/use-toast';
 
 // You should replace this with your actual Strapi API URL
 const STRAPI_URL = import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337';
 const API_URL = `${STRAPI_URL}/api`;
 
 // Add debug mode to easily toggle verbose logging
-const DEBUG = true;
+const DEBUG = import.meta.env.VITE_DEBUG_MODE === 'true' || true;
 
 // Log environment variable information on startup
 console.log('==========================================');
@@ -15,6 +17,7 @@ console.log('Strapi Configuration:');
 console.log(`VITE_STRAPI_API_URL env variable: ${import.meta.env.VITE_STRAPI_API_URL ? 'Set ✅' : 'Not set ❌'}`);
 console.log(`Using Strapi URL: ${STRAPI_URL}`);
 console.log(`API endpoint: ${API_URL}/case-studies`);
+console.log(`Debug mode: ${DEBUG ? 'Enabled ✅' : 'Disabled ❌'}`);
 console.log('==========================================');
 
 // Helper function to transform image URL
@@ -31,7 +34,7 @@ const getImageUrl = (image: any): string => {
 
 // Helper function to transform Strapi case study to our app's format
 const transformStrapiCaseStudy = (strapiData: StrapiResponse<StrapiCaseStudy>): CaseStudy[] => {
-  console.log("Raw Strapi data:", JSON.stringify(strapiData, null, 2));
+  if (DEBUG) console.log("Raw Strapi data:", JSON.stringify(strapiData, null, 2));
   
   return strapiData.data.map(item => {
     const caseStudy = item.attributes;
@@ -133,11 +136,42 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   } catch (error) {
     console.error('Error fetching case studies from Strapi:', error);
     
-    // Show more helpful error message
+    // Show more helpful error message and toast notification
     if (axios.isAxiosError(error)) {
-      console.log(`API request failed with status: ${error.response?.status}`);
+      const status = error.response?.status;
+      console.log(`API request failed with status: ${status}`);
       console.log(`Error message: ${error.message}`);
-      console.log('Check your Strapi API settings and permissions');
+      
+      // Different error messages based on status code
+      if (status === 403) {
+        console.log('Error 403: Check Strapi permissions. Make sure "find" permission is enabled for public role.');
+        toast({
+          title: "Permission Error",
+          description: "Strapi returned a 403 Forbidden error. Please check that public permissions are enabled for case studies.",
+          variant: "destructive"
+        });
+      } else if (status === 404) {
+        console.log('Error 404: Check that the collection type "case-studies" exists in Strapi');
+        toast({
+          title: "API Error",
+          description: "Could not find case studies in Strapi. Check your collection types.",
+          variant: "destructive"
+        });
+      } else if (error.code === 'ECONNREFUSED') {
+        console.log('Connection refused: Make sure Strapi is running at ' + STRAPI_URL);
+        toast({
+          title: "Connection Error",
+          description: `Could not connect to Strapi at ${STRAPI_URL}. Make sure the server is running.`,
+          variant: "destructive"
+        });
+      } else {
+        console.log('Check your Strapi API settings and permissions');
+        toast({
+          title: "API Error",
+          description: `Failed to fetch data from Strapi: ${error.message}`,
+          variant: "destructive"
+        });
+      }
     }
     
     console.log('Falling back to local case studies data');
@@ -166,11 +200,26 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
   } catch (error) {
     console.error(`Error fetching case study with slug ${slug} from Strapi:`, error);
     
-    // Show more helpful error message
+    // Show more helpful error message and toast notification
     if (axios.isAxiosError(error)) {
-      console.log(`API request failed with status: ${error.response?.status}`);
+      const status = error.response?.status;
+      console.log(`API request failed with status: ${status}`);
       console.log(`Error message: ${error.message}`);
-      console.log('Check your Strapi API settings and permissions');
+      
+      // Different toast messages based on status code
+      if (status === 403) {
+        toast({
+          title: "Permission Error",
+          description: "Strapi returned a 403 Forbidden error. Please check permissions for case studies.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "API Error",
+          description: `Failed to fetch case study: ${error.message}`,
+          variant: "destructive"
+        });
+      }
     }
     
     console.log(`Falling back to local case study with slug ${slug}`);
