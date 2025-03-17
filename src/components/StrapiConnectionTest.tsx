@@ -75,6 +75,16 @@ const StrapiConnectionTest: React.FC = () => {
           <li>Make sure your Railway deployment is active</li>
           <li>Check that your Strapi API URL is correct</li>
         </ul>
+        
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="font-medium text-blue-800">To configure CORS in Strapi:</p>
+          <ol className="list-decimal pl-5 mt-1 text-blue-700">
+            <li>Log in to your Strapi admin panel at: <a href={`${import.meta.env.VITE_STRAPI_API_URL}/admin`} target="_blank" rel="noopener noreferrer" className="underline">Strapi Admin Panel</a></li>
+            <li>Go to Settings → Security → CORS</li>
+            <li>Add your frontend origin URL (e.g., http://localhost:5173) to the allowed origins</li>
+            <li>Save your settings</li>
+          </ol>
+        </div>
       </div>
     </div>
   );
