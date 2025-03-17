@@ -5,6 +5,7 @@ import TopNavbar from '@/components/TopNavbar';
 import HeroSection from '@/components/sections/HeroSection';
 import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import ContactSection from '@/components/sections/ContactSection';
+import StrapiConnectionTest from '@/components/StrapiConnectionTest';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
@@ -16,6 +17,7 @@ const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showConnectionTest, setShowConnectionTest] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   
   useEffect(() => {
@@ -44,6 +46,12 @@ const Home = () => {
     };
 
     fetchCaseStudies();
+
+    // Check URL parameter for test mode
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('test-strapi') === 'true') {
+      setShowConnectionTest(true);
+    }
   }, []);
   
   return (
@@ -63,21 +71,29 @@ const Home = () => {
       >
         <ScrollArea className="h-full">
           <div className="min-h-full">
-            <HeroSection />
-            <section className="min-h-screen bg-white py-20 w-full">
-              {loading ? (
-                <div className="w-full px-4 md:px-6 lg:px-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
-                    {[1, 2, 3, 4, 5, 6].map((n) => (
-                      <Skeleton key={n} className="w-full h-64" />
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <CaseStudiesGrid caseStudies={caseStudies} />
-              )}
-            </section>
-            <ContactSection />
+            {showConnectionTest ? (
+              <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+                <StrapiConnectionTest />
+              </div>
+            ) : (
+              <>
+                <HeroSection />
+                <section className="min-h-screen bg-white py-20 w-full">
+                  {loading ? (
+                    <div className="w-full px-4 md:px-6 lg:px-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
+                        {[1, 2, 3, 4, 5, 6].map((n) => (
+                          <Skeleton key={n} className="w-full h-64" />
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <CaseStudiesGrid caseStudies={caseStudies} />
+                  )}
+                </section>
+                <ContactSection />
+              </>
+            )}
           </div>
         </ScrollArea>
       </div>

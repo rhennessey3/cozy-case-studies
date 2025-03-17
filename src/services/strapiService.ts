@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { StrapiResponse, StrapiCaseStudy, StrapiLegacyCaseStudyContent, StrapiCaseStudySection } from '../types/strapi';
 import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
@@ -120,6 +119,76 @@ const generateContentFromSections = (sections: StrapiCaseStudySection[] = []): a
   });
   
   return content;
+};
+
+/**
+ * Tests the connection to the Strapi CMS
+ * @returns A promise that resolves to an object with connection status information
+ */
+export const testStrapiConnection = async () => {
+  try {
+    console.log(`Testing connection to Strapi CMS at ${STRAPI_URL}`);
+    
+    // First try to hit the root API endpoint to check if Strapi is reachable
+    const response = await axios.get(`${STRAPI_URL}/api`, { 
+      timeout: 8000,  // 8 second timeout
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    // If we get here, connection was successful
+    console.log('✅ Successfully connected to Strapi CMS');
+    toast({
+      title: "Connection Successful",
+      description: `Connected to Strapi CMS at ${STRAPI_URL}`,
+      variant: "default"
+    });
+    
+    return {
+      success: true,
+      url: STRAPI_URL,
+      status: response.status,
+      statusText: response.statusText,
+      message: 'Successfully connected to Strapi CMS'
+    };
+  } catch (error) {
+    console.error('❌ Failed to connect to Strapi CMS:', error);
+    
+    let errorMessage = 'Unknown error occurred';
+    let status = 'Unknown';
+    let statusText = '';
+    
+    if (axios.isAxiosError(error)) {
+      statusText = error.message;
+      errorMessage = error.message;
+      status = error.response?.status?.toString() || 'Network Error';
+      
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Connection timed out. Strapi CMS may be down or unreachable.';
+      } else if (error.code === 'ERR_NETWORK') {
+        errorMessage = 'Network error. Please check your internet connection and the Strapi URL.';
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Strapi endpoint not found. Please check the URL configuration.';
+      } else if (error.response?.status === 403) {
+        errorMessage = 'Access forbidden. Please check Strapi permissions.';
+      }
+    }
+    
+    toast({
+      title: "Connection Failed",
+      description: errorMessage,
+      variant: "destructive"
+    });
+    
+    return {
+      success: false,
+      url: STRAPI_URL,
+      status,
+      statusText,
+      message: errorMessage
+    };
+  }
 };
 
 export const getCaseStudies = async (): Promise<CaseStudy[]> => {
