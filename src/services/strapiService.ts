@@ -10,13 +10,22 @@ const API_URL = `${STRAPI_URL}/api`;
 // Helper function to transform image URL
 const getImageUrl = (image: any): string => {
   if (!image?.data) return "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800";
-  return `${STRAPI_URL}${image.data.attributes.url}`;
+  
+  // Handle both relative and absolute URLs
+  const imageUrl = image.data.attributes.url;
+  if (imageUrl.startsWith('http')) {
+    return imageUrl;
+  }
+  return `${STRAPI_URL}${imageUrl}`;
 };
 
 // Helper function to transform Strapi case study to our app's format
 const transformStrapiCaseStudy = (strapiData: StrapiResponse<StrapiCaseStudy>): CaseStudy[] => {
+  console.log("Raw Strapi data:", JSON.stringify(strapiData, null, 2));
+  
   return strapiData.data.map(item => {
     const caseStudy = item.attributes;
+    console.log("Processing case study:", caseStudy.title);
     
     // Add a hero section if not present
     const heroSectionExists = caseStudy.sections && caseStudy.sections.some(s => s.__component === 'case-study.hero');
@@ -100,14 +109,31 @@ const generateContentFromSections = (sections: StrapiCaseStudySection[] = []): a
   return content;
 };
 
+// Add debug mode to easily toggle verbose logging
+const DEBUG = true;
+
 export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   try {
+    if (DEBUG) console.log(`Fetching case studies from ${API_URL}/case-studies`);
+    
     const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
       `${API_URL}/case-studies?populate=coverImage,sections,sections.image`
     );
+    
+    if (DEBUG) console.log(`Retrieved ${response.data.data.length} case studies from Strapi`);
+    
     return transformStrapiCaseStudy(response.data);
   } catch (error) {
     console.error('Error fetching case studies from Strapi:', error);
+    
+    // Show more helpful error message
+    if (axios.isAxiosError(error)) {
+      console.log(`API request failed with status: ${error.response?.status}`);
+      console.log(`Error message: ${error.message}`);
+      console.log('Check your Strapi API settings and permissions');
+    }
+    
+    console.log('Falling back to local case studies data');
     // Fallback to local case studies
     return localCaseStudies;
   }
@@ -115,13 +141,32 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
 
 export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | undefined> => {
   try {
+    if (DEBUG) console.log(`Fetching case study with slug "${slug}" from Strapi`);
+    
     const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
       `${API_URL}/case-studies?filters[slug][$eq]=${slug}&populate=coverImage,sections,sections.image`
     );
+    
+    if (DEBUG) {
+      console.log(`Retrieved case study data for slug "${slug}"`);
+      if (response.data.data.length === 0) {
+        console.log('No matching case study found in Strapi');
+      }
+    }
+    
     const caseStudies = transformStrapiCaseStudy(response.data);
     return caseStudies[0]; // Return the first (and should be only) matching case study
   } catch (error) {
     console.error(`Error fetching case study with slug ${slug} from Strapi:`, error);
+    
+    // Show more helpful error message
+    if (axios.isAxiosError(error)) {
+      console.log(`API request failed with status: ${error.response?.status}`);
+      console.log(`Error message: ${error.message}`);
+      console.log('Check your Strapi API settings and permissions');
+    }
+    
+    console.log(`Falling back to local case study with slug ${slug}`);
     // Fallback to local case study
     return localCaseStudies.find(study => study.slug === slug);
   }
