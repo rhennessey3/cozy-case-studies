@@ -14,13 +14,13 @@ const StrapiTestPage: React.FC = () => {
           <StrapiConnectionTest />
           
           <div className="mt-12 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Strapi Configuration Guide</h2>
+            <h2 className="text-xl font-bold mb-4">Strapi Cloud Configuration Guide</h2>
             <p className="mb-4">
-              To properly connect your frontend with Strapi, make sure you've set these environment variables in your Strapi project:
+              To properly connect your frontend with Strapi Cloud, make sure you've set these environment variables in your Strapi Cloud project:
             </p>
             <div className="bg-gray-100 p-4 rounded-md overflow-x-auto">
               <pre className="text-sm">
-                <code>{`// In Railway dashboard under Custom environment variables
+                <code>{`// In Strapi Cloud dashboard under Settings > Variables
 FRONTEND_URL=https://cozy-case-studies.vercel.app`}</code>
               </pre>
             </div>
@@ -35,7 +35,7 @@ VITE_FRONTEND_URL=${import.meta.env.VITE_FRONTEND_URL || 'Not set'}`}</code>
             </div>
             
             <p className="mt-4 text-gray-700">
-              After updating the environment variables in Railway, make sure to redeploy your Strapi application
+              After updating the environment variables in Strapi Cloud, make sure to redeploy your Strapi application
               for the changes to take effect.
             </p>
           </div>
