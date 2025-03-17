@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Dialog,
@@ -10,7 +9,7 @@ import {
   DialogClose
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, FileCode, Cog, Code, ExternalLink } from 'lucide-react';
+import { AlertTriangle, FileCode, Cog, Code, ExternalLink, Github } from 'lucide-react';
 
 interface CorsConfigDialogProps {
   frontendUrl: string;
@@ -70,41 +69,24 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
           
           <div className="border rounded-md p-4">
             <h3 className="font-bold flex items-center mb-2">
-              <FileCode className="h-5 w-5 mr-2 text-blue-600" />
-              Method 2: Editing config/middlewares.js
+              <Github className="h-5 w-5 mr-2 text-blue-600" />
+              Method 2: GitHub Repository Configuration
             </h3>
             <p className="text-sm mb-2">
-              If the admin panel method doesn't work, you'll need to modify the Strapi configuration file directly on Railway:
+              Since your Strapi project is deployed via GitHub, you'll need to modify the CORS configuration in your repository:
             </p>
             <ol className="list-decimal pl-5 space-y-2 text-sm">
               <li>
-                Access your Railway dashboard:
-                <div className="mt-1 mb-2">
-                  <a href="https://railway.app/dashboard" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline flex items-center">
-                    railway.app/dashboard <ExternalLink className="h-3 w-3 ml-1" />
-                  </a>
+                Clone your Strapi repository to your local machine:
+                <div className="bg-gray-100 p-2 rounded-md mt-1 mb-2 font-mono text-xs">
+                  git clone https://github.com/your-username/your-strapi-repo.git
                 </div>
               </li>
               <li>
-                Find and click on your Strapi project
+                Open the project in your code editor (like VS Code)
               </li>
               <li>
-                Under "Deployments", find your latest successful deployment and click on it
-              </li>
-              <li>
-                Click on the "Files" tab to access the file explorer
-                <div className="mt-1 mb-2">
-                  <img src="https://railway.app/brand/logotype-light.svg" alt="Railway Files Tab" className="h-6 my-1" />
-                  <div className="text-xs bg-gray-100 p-2 rounded my-1">
-                    Look for tabs like: Logs | Variables | <span className="font-bold">Files</span> | Settings
-                  </div>
-                </div>
-              </li>
-              <li>
-                Navigate to <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span>
-                <div className="text-xs text-gray-600 mt-1">
-                  (If you don't see a Files tab, you might need to redeploy with the "Source" deployment type instead of "Docker")
-                </div>
+                Find and edit the file: <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span>
               </li>
               <li>Modify the file to include your frontend URL in the CORS configuration:</li>
             </ol>
@@ -126,16 +108,25 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
                 </code>
               </pre>
             </div>
-            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-              <p className="text-sm text-yellow-800 flex items-center">
+            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-800 flex items-center">
                 <AlertTriangle className="h-4 w-4 mr-2" />
-                <strong>Note:</strong> If you don't see a Files tab in Railway, you may be using a Docker deployment. In this case, you'll need to:
+                <strong>GitHub Workflow:</strong> After making these changes:
               </p>
-              <ol className="list-decimal pl-5 mt-2 text-sm text-yellow-800">
-                <li>Clone your Strapi project repository</li>
-                <li>Make the changes locally</li>
-                <li>Push the changes back to your repository</li>
-                <li>Railway will automatically redeploy your application</li>
+              <ol className="list-decimal pl-5 mt-2 text-sm text-blue-800">
+                <li>Commit your changes to the repository:
+                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
+                    git add config/middlewares.js<br />
+                    git commit -m "Add CORS configuration for frontend"
+                  </div>
+                </li>
+                <li>Push the changes to GitHub:
+                  <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
+                    git push origin main
+                  </div>
+                </li>
+                <li>Railway will automatically deploy the new changes</li>
+                <li>Wait a few minutes for the deployment to complete</li>
               </ol>
             </div>
           </div>
