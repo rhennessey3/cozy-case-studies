@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 interface ConnectionStatus {
   success: boolean;
   url: string;
-  status: string;
+  status: string | number;
   statusText: string;
   message: string;
 }
@@ -20,7 +20,9 @@ const StrapiConnectionTest: React.FC = () => {
     setIsLoading(true);
     try {
       const result = await testStrapiConnection();
-      setConnectionStatus(result);
+      setConnectionStatus(result as ConnectionStatus);
+    } catch (error) {
+      console.error("Error in connection test:", error);
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +66,15 @@ const StrapiConnectionTest: React.FC = () => {
       
       <div className="mt-4 text-xs text-gray-500">
         <p>Your Strapi URL: {import.meta.env.VITE_STRAPI_API_URL || 'Not set'}</p>
+        <p className="mt-2">
+          <strong>Connection Troubleshooting:</strong>
+        </p>
+        <ul className="list-disc pl-5 mt-1">
+          <li>Check if your Strapi server is running and accessible</li>
+          <li>Verify that CORS is properly configured in your Strapi settings</li>
+          <li>Make sure your Railway deployment is active</li>
+          <li>Check that your Strapi API URL is correct</li>
+        </ul>
       </div>
     </div>
   );

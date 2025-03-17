@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { StrapiResponse, StrapiCaseStudy, StrapiLegacyCaseStudyContent, StrapiCaseStudySection } from '../types/strapi';
 import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
@@ -131,7 +132,7 @@ export const testStrapiConnection = async () => {
     
     // First try to hit the root API endpoint to check if Strapi is reachable
     const response = await axios.get(`${STRAPI_URL}/api`, { 
-      timeout: 8000,  // 8 second timeout
+      timeout: 10000,  // 10 second timeout
       headers: {
         'Accept': 'application/json'
       }
@@ -156,7 +157,7 @@ export const testStrapiConnection = async () => {
     console.error('❌ Failed to connect to Strapi CMS:', error);
     
     let errorMessage = 'Unknown error occurred';
-    let status = 'Unknown';
+    let status: string | number = 'Unknown';
     let statusText = '';
     
     if (axios.isAxiosError(error)) {
@@ -167,7 +168,8 @@ export const testStrapiConnection = async () => {
       if (error.code === 'ECONNABORTED') {
         errorMessage = 'Connection timed out. Strapi CMS may be down or unreachable.';
       } else if (error.code === 'ERR_NETWORK') {
-        errorMessage = 'Network error. Please check your internet connection and the Strapi URL.';
+        errorMessage = 'Network error. This could be due to CORS restrictions, or the Strapi server is not accessible from your current location.';
+        status = 'Network Error';
       } else if (error.response?.status === 404) {
         errorMessage = 'Strapi endpoint not found. Please check the URL configuration.';
       } else if (error.response?.status === 403) {
