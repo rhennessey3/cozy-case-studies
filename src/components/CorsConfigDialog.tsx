@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Dialog,
@@ -17,6 +18,11 @@ interface CorsConfigDialogProps {
 }
 
 const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapiUrl }) => {
+  // Extract the actual Railway domain from the URL for easier reading
+  const railwayDomain = strapiUrl.includes('railway.app') 
+    ? strapiUrl.split('//')[1] 
+    : strapiUrl.replace('https://', '');
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -44,9 +50,19 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
               Method 1: Using Strapi Admin Panel
             </h3>
             <ol className="list-decimal pl-5 space-y-2 text-sm">
-              <li>Log in to your Strapi admin panel at: <a href={`${strapiUrl}/admin`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{strapiUrl}/admin</a></li>
+              <li>Log in to your Strapi admin panel on Railway (note: use the URL from your browser, not the one below if they differ)
+                <div className="mt-1 mb-1">
+                  <a href={`${strapiUrl}/admin`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
+                    {strapiUrl}/admin
+                  </a>
+                </div>
+                <div className="text-gray-500 text-xs mt-1">
+                  If that URL doesn't work, try the Railway dashboard URL format:
+                  <span className="block mt-1 font-mono bg-gray-100 px-1 rounded break-all">[your-app-name].up.railway.app/admin</span>
+                </div>
+              </li>
               <li>Go to <span className="font-mono bg-gray-100 px-1 rounded">Settings → Security → CORS</span></li>
-              <li>Add your frontend URL to the allowed origins: <span className="font-mono bg-gray-100 px-1 rounded">{frontendUrl}</span></li>
+              <li>Add your frontend URL to the allowed origins: <span className="font-mono bg-gray-100 px-1 rounded break-all">{frontendUrl}</span></li>
               <li>Save your settings</li>
               <li>Wait a few minutes for the changes to propagate (especially on Railway deployments)</li>
             </ol>
@@ -61,7 +77,7 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
               If the admin panel method doesn't work, you may need to modify the Strapi configuration file directly:
             </p>
             <ol className="list-decimal pl-5 space-y-2 text-sm">
-              <li>Access your Strapi project files</li>
+              <li>Access your Strapi project files on Railway</li>
               <li>Open the file <span className="font-mono bg-gray-100 px-1 rounded">config/middlewares.js</span></li>
               <li>Find the <span className="font-mono bg-gray-100 px-1 rounded">strapi::cors</span> middleware configuration</li>
               <li>Modify it to include your frontend URL:</li>

@@ -42,6 +42,11 @@ const StrapiConnectionTest: React.FC = () => {
   const isCorsError = connectionStatus?.message?.includes('Network Error') || 
                       connectionStatus?.message?.toLowerCase().includes('cors') ||
                       connectionStatus?.statusText?.toLowerCase().includes('network error');
+  
+  // Extract the Railway app URL for display purposes
+  const railwayAppUrl = strapiUrl.includes('railway.app') 
+    ? strapiUrl 
+    : 'your-strapi-app.up.railway.app';
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
@@ -101,8 +106,8 @@ const StrapiConnectionTest: React.FC = () => {
       )}
       
       <div className="mt-4 text-xs text-gray-500">
-        <p>Your Strapi URL: {import.meta.env.VITE_STRAPI_API_URL || 'Not set'}</p>
-        <p>Your Frontend URL: {frontendUrl || 'Unknown'}</p>
+        <p className="break-all"><strong>Your Strapi URL:</strong> {import.meta.env.VITE_STRAPI_API_URL || 'Not set'}</p>
+        <p className="break-all"><strong>Your Frontend URL:</strong> {frontendUrl || 'Unknown'}</p>
         
         {!isCorsError && (
           <div className="mt-2">
@@ -112,28 +117,6 @@ const StrapiConnectionTest: React.FC = () => {
             />
           </div>
         )}
-        
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-          <p className="font-medium text-blue-800">CORS Configuration Instructions:</p>
-          <ol className="list-decimal pl-5 mt-1 text-blue-700">
-            <li>Log in to your Strapi admin panel at: <a href={`${strapiUrl}/admin`} target="_blank" rel="noopener noreferrer" className="underline">Strapi Admin Panel</a></li>
-            <li>Go to Settings → Security → CORS</li>
-            <li>Add your frontend URL (<code className="bg-blue-100 px-1">{frontendUrl}</code>) to the allowed origins</li>
-            <li>Save your settings</li>
-            <li>Wait a few minutes for the changes to propagate</li>
-            <li>Come back here and test the connection again</li>
-          </ol>
-        </div>
-        
-        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p className="font-medium text-yellow-800">Troubleshooting Tips:</p>
-          <ul className="list-disc pl-5 mt-1 text-yellow-700">
-            <li>Make sure to include the protocol (<code>https://</code>) in your frontend URL when adding to CORS settings</li>
-            <li>Strapi running on Railway may need a few minutes to update CORS settings</li>
-            <li>Check if your Strapi server is running and accessible</li>
-            <li>Verify that your Strapi API URL is correct</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
