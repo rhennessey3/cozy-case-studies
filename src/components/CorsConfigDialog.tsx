@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Dialog,
@@ -9,7 +10,7 @@ import {
   DialogClose
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, FileCode, Cog, Code, ExternalLink, Github } from 'lucide-react';
+import { AlertTriangle, FileCode, Cog, Code, ExternalLink, Github, KeyRound } from 'lucide-react';
 
 interface CorsConfigDialogProps {
   frontendUrl: string;
@@ -30,7 +31,7 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
           How to Fix CORS Issues
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center text-xl">
             <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
@@ -75,11 +76,69 @@ const CorsConfigDialog: React.FC<CorsConfigDialogProps> = ({ frontendUrl, strapi
             <p className="text-sm mb-2">
               Since your Strapi project is deployed via GitHub, you'll need to modify the CORS configuration in your repository:
             </p>
+            
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mb-4">
+              <h4 className="font-bold flex items-center mb-2 text-sm">
+                <KeyRound className="h-4 w-4 mr-2 text-amber-600" />
+                Setting up GitHub Authentication
+              </h4>
+              <p className="text-xs text-amber-800 mb-2">
+                GitHub no longer supports password authentication for Git operations. You need to use a personal access token or SSH key.
+              </p>
+              <div className="space-y-2 text-xs text-amber-800">
+                <p className="font-semibold">Option 1: Use a Personal Access Token (Recommended for beginners)</p>
+                <ol className="list-decimal pl-5 space-y-1">
+                  <li>Go to <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">GitHub → Settings → Developer settings → Personal access tokens</a></li>
+                  <li>Click "Generate new token" and select "Fine-grained tokens"</li>
+                  <li>Set an expiration date and give the token a name like "Strapi Project"</li>
+                  <li>Under Repository access, select the Strapi repository</li>
+                  <li>Under Permissions → Repository permissions, give "Contents" access: Read and write</li>
+                  <li>Generate the token and copy it</li>
+                  <li>When cloning, use the token as your password:
+                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs overflow-x-auto">
+                      git clone https://github.com/your-username/your-strapi-repo.git<br />
+                      Username: your-github-username<br />
+                      Password: your-personal-access-token
+                    </div>
+                  </li>
+                </ol>
+                
+                <p className="font-semibold mt-3">Option 2: Configure SSH (Best for developers)</p>
+                <ol className="list-decimal pl-5 space-y-1">
+                  <li>Check if you have an existing SSH key: <span className="font-mono bg-gray-100 px-1 rounded">ls -al ~/.ssh</span></li>
+                  <li>Generate a new SSH key if needed: <span className="font-mono bg-gray-100 px-1 rounded">ssh-keygen -t ed25519 -C "your_email@example.com"</span></li>
+                  <li>Add the key to the ssh-agent: 
+                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
+                      eval "$(ssh-agent -s)"<br />
+                      ssh-add ~/.ssh/id_ed25519
+                    </div>
+                  </li>
+                  <li>Copy your public key to clipboard:
+                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
+                      # On macOS:<br />
+                      pbcopy &lt; ~/.ssh/id_ed25519.pub<br />
+                      # On Windows (in PowerShell):<br />
+                      Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+                    </div>
+                  </li>
+                  <li>Add the SSH key to your GitHub account at <a href="https://github.com/settings/keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">GitHub → Settings → SSH and GPG keys</a></li>
+                  <li>Clone using SSH instead:
+                    <div className="bg-gray-100 p-1 rounded-md mt-1 mb-1 font-mono text-xs">
+                      git clone git@github.com:your-username/your-strapi-repo.git
+                    </div>
+                  </li>
+                </ol>
+              </div>
+            </div>
+            
             <ol className="list-decimal pl-5 space-y-2 text-sm">
               <li>
-                Clone your Strapi repository to your local machine:
+                After setting up GitHub authentication, clone your Strapi repository:
                 <div className="bg-gray-100 p-2 rounded-md mt-1 mb-2 font-mono text-xs">
-                  git clone https://github.com/your-username/your-strapi-repo.git
+                  # For HTTPS with personal access token:<br />
+                  git clone https://github.com/your-username/your-strapi-repo.git<br /><br />
+                  # Or for SSH:<br />
+                  git clone git@github.com:your-username/your-strapi-repo.git
                 </div>
               </li>
               <li>
