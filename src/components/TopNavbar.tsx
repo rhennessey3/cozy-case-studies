@@ -77,13 +77,13 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ className }) => {
             </div>
           </Link>
           <Link 
-            to="/case-study-editor" 
-            className={cn("text-lg hover:text-cyan-500 transition font-medium", getActiveClass('/case-study-editor'))}
+            to="/admin/case-studies" 
+            className={cn("text-lg hover:text-cyan-500 transition font-medium", getActiveClass('/admin'))}
             onClick={toggleMenu}
           >
             <div className="flex items-center">
-              <span className="material-icons mr-2">edit</span>
-              <span>Editor</span>
+              <span className="material-icons mr-2">admin_panel_settings</span>
+              <span>Admin</span>
             </div>
           </Link>
         </div>

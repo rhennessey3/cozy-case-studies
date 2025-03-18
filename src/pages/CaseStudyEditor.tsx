@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -123,7 +122,6 @@ const CaseStudyEditor = () => {
     setSaving(true);
     
     try {
-      // Create a case study object from the form data
       const caseStudyData = {
         title: form.title,
         slug: form.slug,
@@ -144,7 +142,6 @@ const CaseStudyEditor = () => {
       };
 
       if (slug) {
-        // Update existing case study
         const { data: caseStudyResult, error: caseStudyError } = await supabase
           .from('case_studies')
           .update(caseStudyData)
@@ -152,7 +149,6 @@ const CaseStudyEditor = () => {
           
         if (caseStudyError) throw caseStudyError;
         
-        // Find case study ID by slug
         const { data: caseStudyIdData, error: caseStudyIdError } = await supabase
           .from('case_studies')
           .select('id')
@@ -163,7 +159,6 @@ const CaseStudyEditor = () => {
         
         const caseStudyId = caseStudyIdData.id;
         
-        // Update case study content
         const { data: contentResult, error: contentError } = await supabase
           .from('case_study_content')
           .update(contentData)
@@ -173,7 +168,6 @@ const CaseStudyEditor = () => {
         
         toast.success('Case study updated successfully');
       } else {
-        // Create new case study
         const { data: newCaseStudy, error: caseStudyError } = await supabase
           .from('case_studies')
           .insert(caseStudyData)
@@ -182,7 +176,6 @@ const CaseStudyEditor = () => {
           
         if (caseStudyError) throw caseStudyError;
         
-        // Create case study content with the new case study ID
         const { data: contentResult, error: contentError } = await supabase
           .from('case_study_content')
           .insert({
@@ -220,11 +213,11 @@ const CaseStudyEditor = () => {
       results: '',
       conclusion: ''
     });
-    navigate('/case-study-editor');
+    navigate('/admin/case-studies');
   };
 
   const selectCaseStudy = (slug: string) => {
-    navigate(`/case-study-editor/${slug}`);
+    navigate(`/admin/case-studies/${slug}`);
   };
 
   return (
@@ -239,7 +232,7 @@ const CaseStudyEditor = () => {
         className={cn(
           "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out z-30",
           !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"),
-          isSmallScreen && "pt-16" // Add top padding for the TopNavbar
+          isSmallScreen && "pt-16"
         )}
       >
         <ScrollArea className="h-full">

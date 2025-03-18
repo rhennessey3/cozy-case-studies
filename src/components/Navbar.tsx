@@ -48,10 +48,10 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               <span>Work</span>
             </div>
           </Link>
-          <Link to="/case-study-editor" className={cn("text-sm hover:text-cyan-500 transition font-medium", getActiveClass('/case-study-editor'))}>
+          <Link to="/admin/case-studies" className={cn("text-sm hover:text-cyan-500 transition font-medium", getActiveClass('/admin'))}>
             <div className="flex flex-col items-center">
-              <span className="material-icons mb-1">edit</span>
-              <span>Editor</span>
+              <span className="material-icons mb-1">admin_panel_settings</span>
+              <span>Admin</span>
             </div>
           </Link>
         </div>
