@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,6 +15,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import Footer from '@/components/Footer';
 import { CaseStudy } from '@/data/caseStudies';
 import { getCaseStudies, getCaseStudyBySlug } from '@/services';
+import ImageUploader from '@/components/ImageUploader';
 
 const CaseStudyEditor = () => {
   const { slug } = useParams();
@@ -38,7 +40,14 @@ const CaseStudyEditor = () => {
     approach: '',
     solution: '',
     results: '',
-    conclusion: ''
+    conclusion: '',
+    // Additional fields for section images
+    introImage: '',
+    challengeImage: '',
+    approachImage: '',
+    solutionImage: '',
+    resultsImage: '',
+    conclusionImage: ''
   });
   
   useEffect(() => {
@@ -80,6 +89,40 @@ const CaseStudyEditor = () => {
         const data = await getCaseStudyBySlug(slug);
         if (data) {
           setCaseStudy(data);
+          
+          // Get section images if they exist
+          const { data: sectionsData, error: sectionsError } = await supabase
+            .from('case_study_sections')
+            .select('*')
+            .eq('case_study_id', data.id);
+            
+          let sectionImages = {
+            introImage: '',
+            challengeImage: '',
+            approachImage: '',
+            solutionImage: '',
+            resultsImage: '',
+            conclusionImage: ''
+          };
+          
+          if (!sectionsError && sectionsData) {
+            sectionsData.forEach(section => {
+              if (section.component === 'intro' && section.image_url) {
+                sectionImages.introImage = section.image_url;
+              } else if (section.component === 'challenge' && section.image_url) {
+                sectionImages.challengeImage = section.image_url;
+              } else if (section.component === 'approach' && section.image_url) {
+                sectionImages.approachImage = section.image_url;
+              } else if (section.component === 'solution' && section.image_url) {
+                sectionImages.solutionImage = section.image_url;
+              } else if (section.component === 'results' && section.image_url) {
+                sectionImages.resultsImage = section.image_url;
+              } else if (section.component === 'conclusion' && section.image_url) {
+                sectionImages.conclusionImage = section.image_url;
+              }
+            });
+          }
+          
           setForm({
             title: data.title,
             slug: data.slug,
@@ -93,7 +136,8 @@ const CaseStudyEditor = () => {
             approach: data.content.approach,
             solution: data.content.solution,
             results: data.content.results,
-            conclusion: data.content.conclusion
+            conclusion: data.content.conclusion,
+            ...sectionImages
           });
         }
       } catch (error) {
@@ -117,11 +161,16 @@ const CaseStudyEditor = () => {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUploaded = (field: string, imageUrl: string) => {
+    setForm(prev => ({ ...prev, [field]: imageUrl }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     
     try {
+      // Prepare case study data
       const caseStudyData = {
         title: form.title,
         slug: form.slug,
@@ -132,6 +181,7 @@ const CaseStudyEditor = () => {
         height: form.height || null
       };
       
+      // Prepare content data
       const contentData = {
         intro: form.intro,
         challenge: form.challenge,
@@ -141,7 +191,10 @@ const CaseStudyEditor = () => {
         conclusion: form.conclusion
       };
 
+      let caseStudyId;
+
       if (slug) {
+        // Update existing case study
         const { data: caseStudyResult, error: caseStudyError } = await supabase
           .from('case_studies')
           .update(caseStudyData)
@@ -149,6 +202,7 @@ const CaseStudyEditor = () => {
           
         if (caseStudyError) throw caseStudyError;
         
+        // Get case study ID
         const { data: caseStudyIdData, error: caseStudyIdError } = await supabase
           .from('case_studies')
           .select('id')
@@ -157,17 +211,17 @@ const CaseStudyEditor = () => {
           
         if (caseStudyIdError) throw caseStudyIdError;
         
-        const caseStudyId = caseStudyIdData.id;
+        caseStudyId = caseStudyIdData.id;
         
+        // Update content
         const { data: contentResult, error: contentError } = await supabase
           .from('case_study_content')
           .update(contentData)
           .eq('case_study_id', caseStudyId);
           
         if (contentError) throw contentError;
-        
-        toast.success('Case study updated successfully');
       } else {
+        // Create new case study
         const { data: newCaseStudy, error: caseStudyError } = await supabase
           .from('case_studies')
           .insert(caseStudyData)
@@ -176,21 +230,83 @@ const CaseStudyEditor = () => {
           
         if (caseStudyError) throw caseStudyError;
         
+        caseStudyId = newCaseStudy.id;
+        
+        // Create content
         const { data: contentResult, error: contentError } = await supabase
           .from('case_study_content')
           .insert({
             ...contentData,
-            case_study_id: newCaseStudy.id
+            case_study_id: caseStudyId
           });
           
         if (contentError) throw contentError;
-        
-        toast.success('Case study created successfully');
-        navigate(`/case-study-editor/${form.slug}`);
       }
-    } catch (error) {
+      
+      // Handle section images
+      const sectionImageFields = [
+        { name: 'introImage', component: 'intro' },
+        { name: 'challengeImage', component: 'challenge' },
+        { name: 'approachImage', component: 'approach' },
+        { name: 'solutionImage', component: 'solution' },
+        { name: 'resultsImage', component: 'results' },
+        { name: 'conclusionImage', component: 'conclusion' }
+      ];
+      
+      for (const field of sectionImageFields) {
+        const imageUrl = form[field.name as keyof typeof form] as string;
+        
+        // Check if section exists
+        const { data: existingSection, error: sectionQueryError } = await supabase
+          .from('case_study_sections')
+          .select('id')
+          .eq('case_study_id', caseStudyId)
+          .eq('component', field.component)
+          .single();
+          
+        if (sectionQueryError && !sectionQueryError.message.includes('No rows found')) {
+          console.error(`Error checking for section ${field.component}:`, sectionQueryError);
+          continue;
+        }
+        
+        if (existingSection) {
+          // Update existing section
+          const { error: updateSectionError } = await supabase
+            .from('case_study_sections')
+            .update({
+              image_url: imageUrl || null
+            })
+            .eq('id', existingSection.id);
+            
+          if (updateSectionError) {
+            console.error(`Error updating section ${field.component}:`, updateSectionError);
+          }
+        } else if (imageUrl) {
+          // Create new section
+          const { error: createSectionError } = await supabase
+            .from('case_study_sections')
+            .insert({
+              case_study_id: caseStudyId,
+              component: field.component,
+              image_url: imageUrl,
+              content: form[field.component as keyof typeof form] as string,
+              sort_order: sectionImageFields.indexOf(field) + 1
+            });
+            
+          if (createSectionError) {
+            console.error(`Error creating section ${field.component}:`, createSectionError);
+          }
+        }
+      }
+      
+      toast.success(slug ? 'Case study updated successfully' : 'Case study created successfully');
+      
+      if (!slug) {
+        navigate(`/admin/case-studies/${form.slug}`);
+      }
+    } catch (error: any) {
       console.error('Error saving case study:', error);
-      toast.error('Failed to save case study');
+      toast.error(`Failed to save case study: ${error.message}`);
     } finally {
       setSaving(false);
     }
@@ -211,7 +327,13 @@ const CaseStudyEditor = () => {
       approach: '',
       solution: '',
       results: '',
-      conclusion: ''
+      conclusion: '',
+      introImage: '',
+      challengeImage: '',
+      approachImage: '',
+      solutionImage: '',
+      resultsImage: '',
+      conclusionImage: ''
     });
     navigate('/admin/case-studies');
   };
@@ -296,6 +418,7 @@ const CaseStudyEditor = () => {
                         <TabsList className="mb-4">
                           <TabsTrigger value="basics">Basic Info</TabsTrigger>
                           <TabsTrigger value="content">Content</TabsTrigger>
+                          <TabsTrigger value="images">Section Images</TabsTrigger>
                         </TabsList>
                         
                         <TabsContent value="basics" className="space-y-4">
@@ -347,16 +470,11 @@ const CaseStudyEditor = () => {
                           </div>
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <label className="font-medium">Cover Image URL</label>
-                              <Input 
-                                name="coverImage" 
-                                value={form.coverImage} 
-                                onChange={handleChange} 
-                                placeholder="https://example.com/image.jpg"
-                                required
-                              />
-                            </div>
+                            <ImageUploader
+                              label="Cover Image"
+                              currentImageUrl={form.coverImage}
+                              onImageUploaded={(url) => handleImageUploaded('coverImage', url)}
+                            />
                             
                             <div className="space-y-2">
                               <label className="font-medium">Category</label>
@@ -452,6 +570,46 @@ const CaseStudyEditor = () => {
                               placeholder="Concluding thoughts"
                               required
                               rows={3}
+                            />
+                          </div>
+                        </TabsContent>
+                        
+                        <TabsContent value="images" className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <ImageUploader
+                              label="Introduction Image"
+                              currentImageUrl={form.introImage}
+                              onImageUploaded={(url) => handleImageUploaded('introImage', url)}
+                            />
+                            
+                            <ImageUploader
+                              label="Challenge Image"
+                              currentImageUrl={form.challengeImage}
+                              onImageUploaded={(url) => handleImageUploaded('challengeImage', url)}
+                            />
+                            
+                            <ImageUploader
+                              label="Approach Image"
+                              currentImageUrl={form.approachImage}
+                              onImageUploaded={(url) => handleImageUploaded('approachImage', url)}
+                            />
+                            
+                            <ImageUploader
+                              label="Solution Image"
+                              currentImageUrl={form.solutionImage}
+                              onImageUploaded={(url) => handleImageUploaded('solutionImage', url)}
+                            />
+                            
+                            <ImageUploader
+                              label="Results Image"
+                              currentImageUrl={form.resultsImage}
+                              onImageUploaded={(url) => handleImageUploaded('resultsImage', url)}
+                            />
+                            
+                            <ImageUploader
+                              label="Conclusion Image"
+                              currentImageUrl={form.conclusionImage}
+                              onImageUploaded={(url) => handleImageUploaded('conclusionImage', url)}
                             />
                           </div>
                         </TabsContent>
