@@ -101,7 +101,7 @@ const Navbar = ({
   };
 
   return <>
-      <div className={cn("fixed left-0 top-0 w-[280px] bg-white transition-transform duration-300 ease-in-out h-screen overflow-y-auto shadow-md z-50", drawerOpen ? "translate-x-0" : "translate-x-[-280px]")} id="flyoutDrawer">
+      <div className={cn("fixed left-0 top-0 w-[364px] bg-white transition-transform duration-300 ease-in-out h-screen overflow-y-auto shadow-md z-50", drawerOpen ? "translate-x-0" : "translate-x-[-364px]")} id="flyoutDrawer">
         <div className="flex flex-col gap-6 pt-20 pb-8 h-full px-6">
           <nav className="flex flex-col gap-2 flex-1">
             <button type="button" onClick={() => handleNavigation('/')} className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md mx-[51px]">

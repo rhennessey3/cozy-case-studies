@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
@@ -6,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
-import { getCaseStudies } from '@/services'; // Changed from @/services/strapiService to @/services
+import { getCaseStudies } from '@/services'; // Changed from @/services/strapiService to @/services'
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
@@ -56,7 +55,7 @@ const CaseStudiesLanding = () => {
       <div 
         className={cn(
           "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out z-30",
-          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[5.95rem]"),
+          !isSmallScreen && (isDrawerOpen ? "pl-[364px]" : "pl-[5.95rem]"),
           isSmallScreen && "pt-16" // Add top padding for the TopNavbar
         )}
       >
