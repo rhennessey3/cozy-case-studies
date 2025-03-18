@@ -9,7 +9,127 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      case_studies: {
+        Row: {
+          category: string
+          cover_image: string
+          created_at: string
+          description: string | null
+          height: string | null
+          id: string
+          slug: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          cover_image: string
+          created_at?: string
+          description?: string | null
+          height?: string | null
+          id?: string
+          slug: string
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_image?: string
+          created_at?: string
+          description?: string | null
+          height?: string | null
+          id?: string
+          slug?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      case_study_content: {
+        Row: {
+          approach: string
+          case_study_id: string
+          challenge: string
+          conclusion: string
+          id: string
+          intro: string
+          results: string
+          solution: string
+        }
+        Insert: {
+          approach: string
+          case_study_id: string
+          challenge: string
+          conclusion: string
+          id?: string
+          intro: string
+          results: string
+          solution: string
+        }
+        Update: {
+          approach?: string
+          case_study_id?: string
+          challenge?: string
+          conclusion?: string
+          id?: string
+          intro?: string
+          results?: string
+          solution?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_content_case_study_id_fkey"
+            columns: ["case_study_id"]
+            isOneToOne: false
+            referencedRelation: "case_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_study_sections: {
+        Row: {
+          case_study_id: string
+          component: string
+          content: string | null
+          id: string
+          image_url: string | null
+          metadata: Json | null
+          sort_order: number
+          title: string | null
+        }
+        Insert: {
+          case_study_id: string
+          component: string
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          metadata?: Json | null
+          sort_order?: number
+          title?: string | null
+        }
+        Update: {
+          case_study_id?: string
+          component?: string
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          metadata?: Json | null
+          sort_order?: number
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_sections_case_study_id_fkey"
+            columns: ["case_study_id"]
+            isOneToOne: false
+            referencedRelation: "case_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,6 +1,6 @@
 
 import { StrapiCaseStudySection } from '@/types/strapi';
-import { STRAPI_URL, DEBUG } from './config';
+import { DEBUG } from './config';
 
 // Helper function to transform image URL
 export const getImageUrl = (image: any): string => {
@@ -11,7 +11,7 @@ export const getImageUrl = (image: any): string => {
   if (imageUrl.startsWith('http')) {
     return imageUrl;
   }
-  return `${STRAPI_URL}${imageUrl}`;
+  return imageUrl;
 };
 
 // Helper to generate legacy content structure from modular sections

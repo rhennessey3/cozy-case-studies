@@ -1,79 +1,219 @@
 
-import axios from 'axios';
-import { StrapiResponse, StrapiCaseStudy } from '@/types/strapi';
-import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
+import { supabase } from '@/integrations/supabase/client';
+import { CaseStudy } from '@/data/caseStudies';
+import { getImageUrl, generateContentFromSections } from './utils';
+import { DEBUG, FRONTEND_URL } from './config';
 import { toast } from '@/components/ui/use-toast';
-import { API_URL, FRONTEND_URL, DEBUG } from './config';
-import { transformStrapiCaseStudy } from './transform';
-import { displayConnectionError } from './config';
 
+/**
+ * Fetches all case studies from Supabase
+ * @returns A promise that resolves to an array of case studies
+ */
 export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   try {
-    if (DEBUG) console.log(`Fetching case studies from ${API_URL}/case-studies`);
+    if (DEBUG) console.log('Fetching case studies from Supabase');
     
-    const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
-      `${API_URL}/case-studies?populate=coverImage,sections,sections.image`,
-      {
-        headers: {
-          'Origin': FRONTEND_URL
-        }
-      }
-    );
+    // Fetch case studies from Supabase
+    const { data: caseStudiesData, error: caseStudiesError } = await supabase
+      .from('case_studies')
+      .select('*')
+      .order('created_at', { ascending: false });
     
-    if (DEBUG) console.log(`Retrieved ${response.data.data.length} case studies from Strapi`);
-    
-    return transformStrapiCaseStudy(response.data);
-  } catch (error) {
-    console.error('Error fetching case studies from Strapi:', error);
-    
-    // Show more helpful error message and toast notification
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status;
-      console.log(`API request failed with status: ${status}`);
-      console.log(`Error message: ${error.message}`);
-      
-      // Different error messages based on status code
-      displayConnectionError(error);
+    if (caseStudiesError) {
+      throw caseStudiesError;
     }
     
+    if (!caseStudiesData || caseStudiesData.length === 0) {
+      console.log('No case studies found in Supabase');
+      return [];
+    }
+    
+    if (DEBUG) console.log(`Retrieved ${caseStudiesData.length} case studies from Supabase`);
+    
+    // Fetch case study content for all case studies
+    const { data: contentData, error: contentError } = await supabase
+      .from('case_study_content')
+      .select('*');
+    
+    if (contentError) {
+      throw contentError;
+    }
+    
+    // Transform Supabase data to our app's format
+    const caseStudies = await Promise.all(caseStudiesData.map(async (study) => {
+      // Find matching content
+      const content = contentData?.find(c => c.case_study_id === study.id);
+      
+      // Fetch sections if they exist
+      const { data: sectionsData } = await supabase
+        .from('case_study_sections')
+        .select('*')
+        .eq('case_study_id', study.id)
+        .order('sort_order', { ascending: true });
+      
+      // Map sections to the expected format
+      const sections = sectionsData?.map(section => ({
+        id: section.id,
+        __component: section.component,
+        casestudytitle: section.title,
+        content: section.content,
+        image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
+        objectiveheading: section.metadata?.objectiveheading,
+        objectiveparagraph: section.metadata?.objectiveparagraph,
+        approachheading: section.metadata?.approachheading,
+        approachparagraph: section.metadata?.approachparagraph,
+        resultsheading: section.metadata?.resultsheading,
+        resultsparagraph: section.metadata?.resultsparagraph
+      })) || [];
+      
+      return {
+        id: study.id,
+        title: study.title,
+        slug: study.slug,
+        summary: study.summary,
+        description: study.description || '',
+        coverImage: study.cover_image,
+        category: study.category,
+        height: study.height || undefined,
+        content: content ? {
+          intro: content.intro || '',
+          challenge: content.challenge || '',
+          approach: content.approach || '',
+          solution: content.solution || '',
+          results: content.results || '',
+          conclusion: content.conclusion || ''
+        } : {
+          intro: '',
+          challenge: '',
+          approach: '',
+          solution: '',
+          results: '',
+          conclusion: ''
+        },
+        sections
+      };
+    }));
+    
+    return caseStudies;
+  } catch (error) {
+    console.error('Error fetching case studies from Supabase:', error);
+    
+    if (error instanceof Error) {
+      toast({
+        title: "Database Error",
+        description: `Failed to fetch data from Supabase: ${error.message}`,
+        variant: "destructive"
+      });
+    }
+    
+    // Import local case studies as a fallback
+    const { caseStudies: localCaseStudies } = await import('@/data/caseStudies');
     console.log('Falling back to local case studies data');
-    // Fallback to local case studies
     return localCaseStudies;
   }
 };
 
+/**
+ * Fetches a single case study by slug from Supabase
+ * @param slug The slug of the case study to fetch
+ * @returns A promise that resolves to a case study or undefined if not found
+ */
 export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | undefined> => {
   try {
-    if (DEBUG) console.log(`Fetching case study with slug "${slug}" from Strapi`);
+    if (DEBUG) console.log(`Fetching case study with slug "${slug}" from Supabase`);
     
-    const response = await axios.get<StrapiResponse<StrapiCaseStudy>>(
-      `${API_URL}/case-studies?filters[slug][$eq]=${slug}&populate=coverImage,sections,sections.image`,
-      {
-        headers: {
-          'Origin': FRONTEND_URL
-        }
-      }
-    );
+    // Fetch the case study by slug
+    const { data: caseStudiesData, error: caseStudiesError } = await supabase
+      .from('case_studies')
+      .select('*')
+      .eq('slug', slug)
+      .single();
     
-    if (DEBUG) {
-      console.log(`Retrieved case study data for slug "${slug}"`);
-      if (response.data.data.length === 0) {
-        console.log('No matching case study found in Strapi');
-      }
+    if (caseStudiesError) {
+      throw caseStudiesError;
     }
     
-    const caseStudies = transformStrapiCaseStudy(response.data);
-    return caseStudies[0]; // Return the first (and should be only) matching case study
+    if (!caseStudiesData) {
+      console.log(`No case study found with slug "${slug}" in Supabase`);
+      return undefined;
+    }
+    
+    // Fetch the case study content
+    const { data: contentData, error: contentError } = await supabase
+      .from('case_study_content')
+      .select('*')
+      .eq('case_study_id', caseStudiesData.id)
+      .single();
+    
+    if (contentError && contentError.code !== 'PGRST116') { // PGRST116 is "row not found" error
+      throw contentError;
+    }
+    
+    // Fetch sections if they exist
+    const { data: sectionsData } = await supabase
+      .from('case_study_sections')
+      .select('*')
+      .eq('case_study_id', caseStudiesData.id)
+      .order('sort_order', { ascending: true });
+    
+    // Map sections to the expected format
+    const sections = sectionsData?.map(section => ({
+      id: section.id,
+      __component: section.component,
+      casestudytitle: section.title,
+      content: section.content,
+      image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
+      objectiveheading: section.metadata?.objectiveheading,
+      objectiveparagraph: section.metadata?.objectiveparagraph,
+      approachheading: section.metadata?.approachheading,
+      approachparagraph: section.metadata?.approachparagraph,
+      resultsheading: section.metadata?.resultsheading,
+      resultsparagraph: section.metadata?.resultsparagraph
+    })) || [];
+    
+    // Create the case study object
+    const caseStudy: CaseStudy = {
+      id: caseStudiesData.id,
+      title: caseStudiesData.title,
+      slug: caseStudiesData.slug,
+      summary: caseStudiesData.summary,
+      description: caseStudiesData.description || '',
+      coverImage: caseStudiesData.cover_image,
+      category: caseStudiesData.category,
+      height: caseStudiesData.height || undefined,
+      content: contentData ? {
+        intro: contentData.intro || '',
+        challenge: contentData.challenge || '',
+        approach: contentData.approach || '',
+        solution: contentData.solution || '',
+        results: contentData.results || '',
+        conclusion: contentData.conclusion || ''
+      } : {
+        intro: '',
+        challenge: '',
+        approach: '',
+        solution: '',
+        results: '',
+        conclusion: ''
+      },
+      sections
+    };
+    
+    return caseStudy;
   } catch (error) {
-    console.error(`Error fetching case study with slug ${slug} from Strapi:`, error);
+    console.error(`Error fetching case study with slug ${slug} from Supabase:`, error);
     
-    // Show more helpful error message and toast notification
-    if (axios.isAxiosError(error)) {
-      displayConnectionError(error);
+    if (error instanceof Error) {
+      toast({
+        title: "Database Error",
+        description: `Failed to fetch case study: ${error.message}`,
+        variant: "destructive"
+      });
     }
     
+    // Import local case studies as a fallback
+    const { caseStudies: localCaseStudies } = await import('@/data/caseStudies');
     console.log(`Falling back to local case study with slug ${slug}`);
-    // Fallback to local case study
     return localCaseStudies.find(study => study.slug === slug);
   }
 };
