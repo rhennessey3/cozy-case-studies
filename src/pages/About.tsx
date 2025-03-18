@@ -46,14 +46,7 @@ const About = () => {
           <section className="bg-[#221F26] text-white">
             <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div className="rounded-lg overflow-hidden">
-                  <img 
-                    src="/lovable-uploads/3051eed2-7c1a-48bc-a7b3-18314dc8dc70.png" 
-                    alt="Professional headshot" 
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
-                
+                {/* Content now on the left */}
                 <div className="flex flex-col space-y-8">
                   <div>
                     <h4 className="text-xl mb-2">Hi, I'm Sarah.</h4>
@@ -73,6 +66,15 @@ const About = () => {
                   <div className="pt-4">
                     <h3 className="font-serif italic text-2xl">Sarah Johnson</h3>
                   </div>
+                </div>
+                
+                {/* Photo now on the right */}
+                <div className="rounded-lg overflow-hidden">
+                  <img 
+                    src="/lovable-uploads/3051eed2-7c1a-48bc-a7b3-18314dc8dc70.png" 
+                    alt="Professional headshot" 
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
               </div>
             </div>
