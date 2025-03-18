@@ -1,18 +1,23 @@
 
 import React from 'react';
 import TopNavbar from '@/components/TopNavbar';
+import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DatabaseConnectionTest from '@/components/DatabaseConnectionTest';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Settings, FileText, Info } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/lib/utils';
 
 const DatabaseTestPage: React.FC = () => {
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <TopNavbar />
-      <div className="container mx-auto py-12 px-4">
+      {isSmallScreen ? <TopNavbar /> : <Navbar />}
+      <div className={cn("container mx-auto py-12 px-4", !isSmallScreen && "ml-[4.5rem]")}>
         <h1 className="text-3xl font-bold mb-4 text-center">Database Connection Test</h1>
         <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
           This page helps you test the connection to your Supabase database.

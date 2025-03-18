@@ -9,7 +9,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 
 const About = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const isSmallScreen = useMediaQuery('(max-width: 1000px)');
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
   
   useEffect(() => {
     const handleBodyClassChange = () => {

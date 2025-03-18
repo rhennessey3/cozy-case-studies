@@ -15,7 +15,7 @@ const CaseStudiesLanding = () => {
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const isSmallScreen = useMediaQuery('(max-width: 1000px)');
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
   
   useEffect(() => {
     const handleBodyClassChange = () => {
