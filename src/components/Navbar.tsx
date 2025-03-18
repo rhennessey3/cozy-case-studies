@@ -115,21 +115,21 @@ const Navbar = ({
             <button 
               type="button" 
               onClick={() => handleNavigation('/')} 
-              className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
+              className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
             >
               Home
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigation('/about')} 
-              className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
+              className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
             >
               About
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigation('/case-studies')} 
-              className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
+              className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
             >
               Case Studies
             </button>
