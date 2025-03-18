@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
@@ -46,7 +47,7 @@ const About = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="flex flex-col space-y-8">
                   <div>
-                    <h4 className="text-xl mb-2">Hi, I'm Sarah.</h4>
+                    <h4 className="text-xl mb-2">Hi, I'm Rick.</h4>
                     
                     <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#6ECCC8]">
                       I bridge the gap between design, code, marketing, sales and end users.
@@ -55,10 +56,6 @@ const About = () => {
                     <p className="text-lg text-[#C8C8C9] leading-relaxed">
                       10 years of experience in product management and UX strategy. My work focuses on user-driven product development that balances business needs with real-world usability.
                     </p>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <h3 className="font-serif italic text-2xl">Sarah Johnson</h3>
                   </div>
                 </div>
                 
