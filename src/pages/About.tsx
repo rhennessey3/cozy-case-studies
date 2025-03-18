@@ -42,7 +42,7 @@ const About = () => {
         )}
       >
         <ScrollArea className="h-full">
-          <section className="bg-[#221F26] text-white">
+          <section className="bg-[#221F26] text-white relative overflow-hidden">
             <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="flex flex-col space-y-8">
@@ -58,15 +58,15 @@ const About = () => {
                     </p>
                   </div>
                 </div>
-                
-                <div className="rounded-lg overflow-hidden">
-                  <img 
-                    src="/lovable-uploads/3051eed2-7c1a-48bc-a7b3-18314dc8dc70.png" 
-                    alt="Professional headshot" 
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
               </div>
+            </div>
+            
+            <div className="absolute right-0 bottom-0 md:w-1/2 h-full">
+              <img 
+                src="/lovable-uploads/3051eed2-7c1a-48bc-a7b3-18314dc8dc70.png" 
+                alt="Professional headshot" 
+                className="w-full h-full object-cover"
+              />
             </div>
           </section>
           
