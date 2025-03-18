@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
-import { getCaseStudies } from '@/services';
+import { getCaseStudies } from '@/services/strapiService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
@@ -14,8 +14,7 @@ const CaseStudiesLanding = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   
   useEffect(() => {
     const handleBodyClassChange = () => {
@@ -34,12 +33,10 @@ const CaseStudiesLanding = () => {
   useEffect(() => {
     const fetchCaseStudies = async () => {
       try {
-        setLoading(true);
         const data = await getCaseStudies();
         setCaseStudies(data);
       } catch (error) {
         console.error('Failed to fetch case studies:', error);
-        setError(error instanceof Error ? error : new Error('Unknown error'));
       } finally {
         setLoading(false);
       }
@@ -59,7 +56,7 @@ const CaseStudiesLanding = () => {
       <div 
         className={cn(
           "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out z-30",
-          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"),
+          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[5.175rem]"),
           isSmallScreen && "pt-16" // Add top padding for the TopNavbar
         )}
       >
@@ -77,7 +74,7 @@ const CaseStudiesLanding = () => {
                   ))}
                 </div>
               ) : (
-                <CaseStudiesGrid caseStudies={caseStudies} isLoading={loading} error={error} />
+                <CaseStudiesGrid caseStudies={caseStudies} />
               )}
             </div>
           </section>
