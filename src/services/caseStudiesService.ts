@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudy } from '@/data/caseStudies';
 import { toast } from '@/components/ui/use-toast';
+import { StrapiCaseStudySection } from '@/types/strapi';
 
 // Debug mode to toggle verbose logging
 const DEBUG = true;
@@ -61,14 +62,29 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
           __component: section.component,
           casestudytitle: section.title,
           content: section.content,
-          image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
-          objectiveheading: metadata.objectiveheading,
-          objectiveparagraph: metadata.objectiveparagraph,
-          approachheading: metadata.approachheading,
-          approachparagraph: metadata.approachparagraph,
-          resultsheading: metadata.resultsheading,
-          resultsparagraph: metadata.resultsparagraph
-        };
+          image: section.image_url ? { 
+            data: { 
+              id: 0, // Providing default id to match the type
+              attributes: { 
+                url: section.image_url,
+                width: 800, // Default width
+                height: 600, // Default height
+                formats: {
+                  thumbnail: { url: section.image_url },
+                  small: { url: section.image_url },
+                  medium: { url: section.image_url },
+                  large: { url: section.image_url }
+                }
+              } 
+            } 
+          } : null,
+          objectiveheading: metadata.objectiveheading || '',
+          objectiveparagraph: metadata.objectiveparagraph || '',
+          approachheading: metadata.approachheading || '',
+          approachparagraph: metadata.approachparagraph || '',
+          resultsheading: metadata.resultsheading || '',
+          resultsparagraph: metadata.resultsparagraph || ''
+        } as StrapiCaseStudySection;
       }) || [];
       
       return {
@@ -96,7 +112,7 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
           conclusion: ''
         },
         sections
-      };
+      } as CaseStudy;
     }));
     
     return caseStudies;
@@ -170,18 +186,33 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
         __component: section.component,
         casestudytitle: section.title,
         content: section.content,
-        image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
-        objectiveheading: metadata.objectiveheading,
-        objectiveparagraph: metadata.objectiveparagraph,
-        approachheading: metadata.approachheading,
-        approachparagraph: metadata.approachparagraph,
-        resultsheading: metadata.resultsheading,
-        resultsparagraph: metadata.resultsparagraph
-      };
+        image: section.image_url ? { 
+          data: { 
+            id: 0, // Default id to match type
+            attributes: { 
+              url: section.image_url,
+              width: 800, // Default width
+              height: 600, // Default height
+              formats: {
+                thumbnail: { url: section.image_url },
+                small: { url: section.image_url },
+                medium: { url: section.image_url },
+                large: { url: section.image_url }
+              }
+            } 
+          } 
+        } : null,
+        objectiveheading: metadata.objectiveheading || '',
+        objectiveparagraph: metadata.objectiveparagraph || '',
+        approachheading: metadata.approachheading || '',
+        approachparagraph: metadata.approachparagraph || '',
+        resultsheading: metadata.resultsheading || '',
+        resultsparagraph: metadata.resultsparagraph || ''
+      } as StrapiCaseStudySection;
     }) || [];
     
     // Create the case study object
-    const caseStudy: CaseStudy = {
+    const caseStudy = {
       id: caseStudiesData.id,
       title: caseStudiesData.title,
       slug: caseStudiesData.slug,
@@ -206,7 +237,7 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
         conclusion: ''
       },
       sections
-    };
+    } as CaseStudy;
     
     return caseStudy;
   } catch (error) {
