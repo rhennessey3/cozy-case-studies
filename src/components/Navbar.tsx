@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
@@ -110,8 +109,8 @@ const Navbar = ({
         aria-hidden={!drawerOpen}
         data-drawer-state={drawerOpen ? "open" : "closed"}
       >
-        <div className="navigation-drawer-content flex flex-col gap-6 pt-20 pb-8 h-full px-6">
-          <nav className="navigation-menu flex flex-col gap-2 flex-1 items-center w-full" aria-label="Main navigation">
+        <div className="navigation-drawer-content flex flex-col justify-center h-full px-6">
+          <nav className="navigation-menu flex flex-col gap-4 items-center w-full" aria-label="Main navigation">
             <button 
               type="button" 
               onClick={() => handleNavigation('/')} 
