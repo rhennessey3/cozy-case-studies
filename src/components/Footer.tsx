@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#231f20] text-white py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="border-t border-gray-700 pt-6 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
           <p className="text-sm mb-3">Design & Code with love</p>
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" width="162" height="35" fill="none">
