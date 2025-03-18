@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { BookOpen, GraduationCap, Heart, Users } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import AboutSection from '@/components/AboutSection';
 
 const About = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -41,18 +42,46 @@ const About = () => {
         )}
       >
         <ScrollArea className="h-full">
-          {/* About Content */}
+          {/* About Hero Section */}
+          <section className="bg-[#221F26] text-white">
+            <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="rounded-lg overflow-hidden">
+                  <img 
+                    src="/lovable-uploads/0f9f2e02-4186-40ca-a4e5-6519d4ff7ea2.png" 
+                    alt="Professional headshot" 
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+                
+                <div className="flex flex-col space-y-8">
+                  <div>
+                    <h4 className="text-xl mb-2">Hi, I'm Sarah.</h4>
+                    
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#6ECCC8]">
+                      I bridge the gap between design, code, marketing, sales and end users.
+                    </h1>
+                    
+                    <p className="text-lg text-[#C8C8C9] leading-relaxed">
+                      At my core, I'm a product strategist at the intersection of product design, 
+                      development, sales, and marketing. I help end users love products. 
+                      I help clients explore end-user problems and guide teams to solutions. 
+                      I currently live in San Francisco but available to travel, work in-house or remote.
+                    </p>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <h3 className="font-serif italic text-2xl">Sarah Johnson</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          {/* Values Section */}
           <section className="min-h-screen bg-white py-20">
             <div className="container mx-auto max-w-6xl px-4">
               <div className="text-center mb-16">
-                <h1 className="text-4xl md:text-5xl font-bold mb-6 text-cozy-900">About Us</h1>
-                <p className="text-xl text-cozy-700 max-w-3xl mx-auto">
-                  We are a team of passionate designers and developers dedicated to creating meaningful digital experiences that make a difference.
-                </p>
-              </div>
-              
-              {/* Values Section */}
-              <div className="mb-16">
                 <h2 className="text-2xl md:text-3xl font-bold mb-8 text-cozy-900 text-center">Our Values</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                   <div className="bg-white p-6 rounded-xl shadow-sm border border-cozy-100">
@@ -98,6 +127,9 @@ const About = () => {
               </div>
             </div>
           </section>
+          
+          {/* About Approach Section */}
+          <AboutSection />
         </ScrollArea>
       </div>
     </div>
