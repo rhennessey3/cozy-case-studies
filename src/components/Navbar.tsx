@@ -116,23 +116,32 @@ const Navbar = ({
               <button 
                 type="button" 
                 onClick={() => handleNavigation('/')} 
-                className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
+                className="nav-item-home text-left text-gray-900 transition-colors py-3 px-4 cursor-pointer rounded-md w-full relative group"
               >
-                Home
+                <span className="relative inline-block">
+                  Home
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-cozy-600 transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
               </button>
               <button 
                 type="button" 
                 onClick={() => handleNavigation('/about')} 
-                className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
+                className="nav-item-about text-left text-gray-900 transition-colors py-3 px-4 cursor-pointer rounded-md w-full relative group"
               >
-                About
+                <span className="relative inline-block">
+                  About
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-cozy-600 transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
               </button>
               <button 
                 type="button" 
                 onClick={() => handleNavigation('/case-studies')} 
-                className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
+                className="nav-item-case-studies text-left text-gray-900 transition-colors py-3 px-4 cursor-pointer rounded-md w-full relative group"
               >
-                Case Studies
+                <span className="relative inline-block">
+                  Case Studies
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-cozy-600 transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
               </button>
             </nav>
           </div>

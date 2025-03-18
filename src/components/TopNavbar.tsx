@@ -71,24 +71,33 @@ const TopNavbar = ({ className }: TopNavbarProps) => {
         <div className="flex flex-col p-6 space-y-4">
           <Button 
             variant="ghost" 
-            className="justify-start text-lg font-medium" 
+            className="justify-start text-lg font-medium relative group" 
             onClick={() => handleNavigation('/')}
           >
-            Home
+            <span className="relative inline-block">
+              Home
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-cozy-600 transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+            </span>
           </Button>
           <Button 
             variant="ghost" 
-            className="justify-start text-lg font-medium" 
+            className="justify-start text-lg font-medium relative group" 
             onClick={() => handleNavigation('/about')}
           >
-            About
+            <span className="relative inline-block">
+              About
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-cozy-600 transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+            </span>
           </Button>
           <Button 
             variant="ghost" 
-            className="justify-start text-lg font-medium" 
+            className="justify-start text-lg font-medium relative group" 
             onClick={() => handleNavigation('/case-studies')}
           >
-            Case Studies
+            <span className="relative inline-block">
+              Case Studies
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-cozy-600 transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+            </span>
           </Button>
         </div>
       </div>
