@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
-import { getCaseStudies } from '@/services/strapiService';
+import { getCaseStudies } from '@/services'; // Changed from strapiService to the index export
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
