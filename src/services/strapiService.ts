@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { StrapiResponse, StrapiCaseStudy, StrapiLegacyCaseStudyContent, StrapiCaseStudySection } from '../types/strapi';
 import { caseStudies as localCaseStudies, CaseStudy } from '@/data/caseStudies';
@@ -125,7 +124,7 @@ const generateContentFromSections = (sections: StrapiCaseStudySection[] = []): a
 };
 
 /**
- * Tests the connection to the Strapi CMS
+ * Tests the basic connection to the Strapi CMS without requiring specific content types
  * @returns A promise that resolves to an object with connection status information
  */
 export const testStrapiConnection = async () => {
@@ -133,21 +132,8 @@ export const testStrapiConnection = async () => {
     console.log(`Testing connection to Strapi CMS at ${STRAPI_URL}`);
     console.log(`Frontend URL: ${FRONTEND_URL}`);
     
-    // Try hitting multiple endpoints to diagnose specific issues
-    // First try without /api to see if the base URL is reachable
-    try {
-      await axios.get(STRAPI_URL, { 
-        timeout: 5000,
-        headers: {
-          'Accept': 'application/json',
-          'Origin': FRONTEND_URL
-        }
-      });
-    } catch (baseUrlError) {
-      console.log("Base URL not reachable, trying with /api path");
-    }
-    
-    // Now try the standard /api endpoint
+    // First try the simplest connection to the root API endpoint
+    // This doesn't require any content types to be set up
     const response = await axios.get(`${STRAPI_URL}/api`, { 
       timeout: 10000,
       headers: {
@@ -156,8 +142,17 @@ export const testStrapiConnection = async () => {
       }
     });
     
-    // If we get here, connection was successful
+    // If we get here, basic connection was successful
     console.log('✅ Successfully connected to Strapi CMS');
+    
+    // Let's check if the server returned any useful info about available endpoints
+    console.log('Available Strapi API endpoints:', response.data);
+    
+    let message = 'Successfully connected to Strapi CMS';
+    if (response.data && response.data.data) {
+      message += '. Server is responding properly.';
+    }
+    
     toast({
       title: "Connection Successful",
       description: `Connected to Strapi CMS at ${STRAPI_URL}`,
@@ -169,7 +164,7 @@ export const testStrapiConnection = async () => {
       url: STRAPI_URL,
       status: response.status,
       statusText: response.statusText,
-      message: 'Successfully connected to Strapi CMS'
+      message: message
     };
   } catch (error) {
     console.error('❌ Failed to connect to Strapi CMS:', error);
