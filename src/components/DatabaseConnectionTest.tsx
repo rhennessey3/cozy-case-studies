@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { testDatabaseConnection } from '@/services';
 import { Button } from './ui/button';
 import { Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 interface ConnectionStatus {
   success: boolean;
@@ -21,9 +20,29 @@ const DatabaseConnectionTest: React.FC = () => {
     setIsLoading(true);
     try {
       const result = await testDatabaseConnection();
-      setConnectionStatus(result as ConnectionStatus);
+      
+      // Create a proper ConnectionStatus object from the boolean result
+      const statusObj: ConnectionStatus = {
+        success: Boolean(result),
+        url: 'Supabase Database',
+        status: Boolean(result) ? 200 : 500,
+        statusText: Boolean(result) ? 'OK' : 'Failed',
+        message: Boolean(result) 
+          ? 'Successfully connected to the database!' 
+          : 'Failed to connect to the database. Please check your configuration.'
+      };
+      
+      setConnectionStatus(statusObj);
     } catch (error) {
       console.error("Error in connection test:", error);
+      // Handle error by setting connection status to failed
+      setConnectionStatus({
+        success: false,
+        url: 'Supabase Database',
+        status: 500,
+        statusText: 'Error',
+        message: error instanceof Error ? error.message : 'An unknown error occurred'
+      });
     } finally {
       setIsLoading(false);
     }
