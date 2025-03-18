@@ -99,62 +99,6 @@ const About = () => {
               <Separator className="mb-16 bg-gray-200" />
             </div>
           </section>
-          
-          {/* Skills Section */}
-          <section className="py-16 px-4 bg-white">
-            <div className="container mx-auto max-w-6xl">
-              <div className="text-center mb-12">
-                <p className="text-gray-600 mb-2">chops</p>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-800">Skills</h2>
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">98%</h3>
-                  <p className="text-gray-600">CRM</p>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">95%</h3>
-                  <p className="text-gray-600">Strategy</p>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">78%</h3>
-                  <p className="text-gray-600">HTML / CSS</p>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">75%</h3>
-                  <p className="text-gray-600">Javascript</p>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">95%</h3>
-                  <p className="text-gray-600">Analytics</p>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">95%</h3>
-                  <p className="text-gray-600">Interactive prototyping</p>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">89%</h3>
-                  <p className="text-gray-600">Sketch | Figma</p>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-5xl font-bold text-gray-800 mb-1">85%</h3>
-                  <p className="text-gray-600">Human Centered Design</p>
-                </div>
-              </div>
-              
-              <Separator className="bg-gray-200" />
-            </div>
-          </section>
         </ScrollArea>
       </div>
     </div>
