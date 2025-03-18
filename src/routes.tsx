@@ -6,8 +6,7 @@ import About from './pages/About';
 import CaseStudiesLanding from './pages/CaseStudiesLanding';
 import CaseStudyDetail from './pages/CaseStudyDetail';
 import NotFound from './pages/NotFound';
-import StrapiTestPage from './pages/StrapiTestPage';
-import StrapiConfigPage from './pages/StrapiConfigPage';
+import DatabaseTestPage from './pages/DatabaseTestPage';
 
 const routes = createBrowserRouter([
   {
@@ -31,12 +30,8 @@ const routes = createBrowserRouter([
     element: <CaseStudyDetail />,
   },
   {
-    path: '/strapi-test',
-    element: <StrapiTestPage />,
-  },
-  {
-    path: '/strapi-config',
-    element: <StrapiConfigPage />,
+    path: '/database-test',
+    element: <DatabaseTestPage />,
   },
   {
     path: '*',

@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
-import { getCaseStudies } from '@/services/strapiService';
+import { getCaseStudies } from '@/services';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
@@ -14,6 +14,7 @@ const CaseStudiesLanding = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   
   useEffect(() => {
@@ -33,10 +34,12 @@ const CaseStudiesLanding = () => {
   useEffect(() => {
     const fetchCaseStudies = async () => {
       try {
+        setLoading(true);
         const data = await getCaseStudies();
         setCaseStudies(data);
       } catch (error) {
         console.error('Failed to fetch case studies:', error);
+        setError(error instanceof Error ? error : new Error('Unknown error'));
       } finally {
         setLoading(false);
       }
@@ -74,7 +77,7 @@ const CaseStudiesLanding = () => {
                   ))}
                 </div>
               ) : (
-                <CaseStudiesGrid caseStudies={caseStudies} />
+                <CaseStudiesGrid caseStudies={caseStudies} isLoading={loading} error={error} />
               )}
             </div>
           </section>

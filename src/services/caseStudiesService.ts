@@ -1,10 +1,10 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudy } from '@/data/caseStudies';
-import { getImageUrl, generateContentFromSections } from './utils';
-import { DEBUG, FRONTEND_URL } from './config';
 import { toast } from '@/components/ui/use-toast';
-import { StrapiCaseStudySection } from '@/types/strapi';
+
+// Debug mode to toggle verbose logging
+const DEBUG = true;
 
 /**
  * Fetches all case studies from Supabase
@@ -57,7 +57,7 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
         const metadata = section.metadata as Record<string, string> || {};
         
         return {
-          id: Number(section.id), // Convert string ID to number
+          id: Number(section.id),
           __component: section.component,
           casestudytitle: section.title,
           content: section.content,
@@ -68,7 +68,7 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
           approachparagraph: metadata.approachparagraph,
           resultsheading: metadata.resultsheading,
           resultsparagraph: metadata.resultsparagraph
-        } as StrapiCaseStudySection;
+        };
       }) || [];
       
       return {
@@ -96,7 +96,7 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
           conclusion: ''
         },
         sections
-      } as CaseStudy;
+      };
     }));
     
     return caseStudies;
@@ -166,7 +166,7 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
       const metadata = section.metadata as Record<string, string> || {};
       
       return {
-        id: Number(section.id), // Convert string ID to number
+        id: Number(section.id),
         __component: section.component,
         casestudytitle: section.title,
         content: section.content,
@@ -177,7 +177,7 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
         approachparagraph: metadata.approachparagraph,
         resultsheading: metadata.resultsheading,
         resultsparagraph: metadata.resultsparagraph
-      } as StrapiCaseStudySection;
+      };
     }) || [];
     
     // Create the case study object
@@ -224,5 +224,72 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
     const { caseStudies: localCaseStudies } = await import('@/data/caseStudies');
     console.log(`Falling back to local case study with slug ${slug}`);
     return localCaseStudies.find(study => study.slug === slug);
+  }
+};
+
+/**
+ * Tests the connection to the Supabase database
+ * @returns A promise that resolves to an object with connection status information
+ */
+export const testDatabaseConnection = async () => {
+  try {
+    console.log(`Testing connection to Supabase database`);
+    
+    // Try to fetch a count of case studies as a simple test
+    const { count, error } = await supabase
+      .from('case_studies')
+      .select('*', { count: 'exact', head: true });
+    
+    if (error) {
+      throw error;
+    }
+    
+    // If we get here, connection was successful
+    console.log('✅ Successfully connected to Supabase database');
+    toast({
+      title: "Connection Successful",
+      description: `Connected to Supabase database with ${count} case studies`,
+      variant: "default"
+    });
+    
+    return {
+      success: true,
+      status: 200,
+      statusText: "OK",
+      message: 'Successfully connected to Supabase database',
+      url: 'Supabase'
+    };
+  } catch (error) {
+    console.error('❌ Failed to connect to Supabase database:', error);
+    
+    let errorMessage = 'Unknown error occurred';
+    let status: string | number = 'Unknown';
+    let statusText = '';
+    
+    if (error instanceof Error) {
+      statusText = error.message;
+      errorMessage = error.message;
+      status = 'Error';
+      
+      if (error.message.includes('fetch failed')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (error.message.includes('JWT')) {
+        errorMessage = 'Authentication error. Please check your Supabase API key.';
+      }
+    }
+    
+    toast({
+      title: "Connection Failed",
+      description: errorMessage,
+      variant: "destructive"
+    });
+    
+    return {
+      success: false,
+      status,
+      statusText,
+      message: errorMessage,
+      url: 'Supabase'
+    };
   }
 };
