@@ -29,7 +29,14 @@ const CaseStudyDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <TopNavbar />
-      <CaseStudyHero caseStudy={caseStudy} />
+      <CaseStudyHero 
+        title={caseStudy.title}
+        coverImage={caseStudy.coverImage}
+        category={caseStudy.category}
+        objective={caseStudy.content.challenge}
+        approach={caseStudy.content.approach}
+        results={caseStudy.content.results}
+      />
       <CaseStudyIntro caseStudy={caseStudy} />
       <CaseStudyContent caseStudy={caseStudy} />
       <Footer />
