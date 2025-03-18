@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
@@ -114,21 +115,21 @@ const Navbar = ({
             <button 
               type="button" 
               onClick={() => handleNavigation('/')} 
-              className="nav-item-home text-center text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
+              className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
             >
               Home
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigation('/about')} 
-              className="nav-item-about text-center text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
+              className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
             >
               About
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigation('/case-studies')} 
-              className="nav-item-case-studies text-center text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
+              className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
             >
               Case Studies
             </button>
