@@ -4,6 +4,7 @@ import { CaseStudy } from '@/data/caseStudies';
 import { getImageUrl, generateContentFromSections } from './utils';
 import { DEBUG, FRONTEND_URL } from './config';
 import { toast } from '@/components/ui/use-toast';
+import { StrapiCaseStudySection } from '@/types/strapi';
 
 /**
  * Fetches all case studies from Supabase
@@ -52,19 +53,23 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
         .order('sort_order', { ascending: true });
       
       // Map sections to the expected format
-      const sections = sectionsData?.map(section => ({
-        id: section.id,
-        __component: section.component,
-        casestudytitle: section.title,
-        content: section.content,
-        image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
-        objectiveheading: section.metadata?.objectiveheading,
-        objectiveparagraph: section.metadata?.objectiveparagraph,
-        approachheading: section.metadata?.approachheading,
-        approachparagraph: section.metadata?.approachparagraph,
-        resultsheading: section.metadata?.resultsheading,
-        resultsparagraph: section.metadata?.resultsparagraph
-      })) || [];
+      const sections = sectionsData?.map(section => {
+        const metadata = section.metadata as Record<string, string> || {};
+        
+        return {
+          id: Number(section.id), // Convert string ID to number
+          __component: section.component,
+          casestudytitle: section.title,
+          content: section.content,
+          image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
+          objectiveheading: metadata.objectiveheading,
+          objectiveparagraph: metadata.objectiveparagraph,
+          approachheading: metadata.approachheading,
+          approachparagraph: metadata.approachparagraph,
+          resultsheading: metadata.resultsheading,
+          resultsparagraph: metadata.resultsparagraph
+        } as StrapiCaseStudySection;
+      }) || [];
       
       return {
         id: study.id,
@@ -91,7 +96,7 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
           conclusion: ''
         },
         sections
-      };
+      } as CaseStudy;
     }));
     
     return caseStudies;
@@ -157,19 +162,23 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
       .order('sort_order', { ascending: true });
     
     // Map sections to the expected format
-    const sections = sectionsData?.map(section => ({
-      id: section.id,
-      __component: section.component,
-      casestudytitle: section.title,
-      content: section.content,
-      image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
-      objectiveheading: section.metadata?.objectiveheading,
-      objectiveparagraph: section.metadata?.objectiveparagraph,
-      approachheading: section.metadata?.approachheading,
-      approachparagraph: section.metadata?.approachparagraph,
-      resultsheading: section.metadata?.resultsheading,
-      resultsparagraph: section.metadata?.resultsparagraph
-    })) || [];
+    const sections = sectionsData?.map(section => {
+      const metadata = section.metadata as Record<string, string> || {};
+      
+      return {
+        id: Number(section.id), // Convert string ID to number
+        __component: section.component,
+        casestudytitle: section.title,
+        content: section.content,
+        image: section.image_url ? { data: { attributes: { url: section.image_url } } } : null,
+        objectiveheading: metadata.objectiveheading,
+        objectiveparagraph: metadata.objectiveparagraph,
+        approachheading: metadata.approachheading,
+        approachparagraph: metadata.approachparagraph,
+        resultsheading: metadata.resultsheading,
+        resultsparagraph: metadata.resultsparagraph
+      } as StrapiCaseStudySection;
+    }) || [];
     
     // Create the case study object
     const caseStudy: CaseStudy = {
