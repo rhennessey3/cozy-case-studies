@@ -7,14 +7,14 @@ import CaseStudyHero from '@/components/case-study/CaseStudyHero';
 import CaseStudyIntro from '@/components/case-study/CaseStudyIntro';
 import CaseStudyContent from '@/components/case-study/CaseStudyContent';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCaseStudyBySlug } from '@/services/strapiService';
+import { getCaseStudyBySlug } from '@/services/strapiService';
 
 const CaseStudyDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   
   const { data: caseStudy, isLoading, error } = useQuery({
     queryKey: ['caseStudy', slug],
-    queryFn: () => fetchCaseStudyBySlug(slug || ''),
+    queryFn: () => getCaseStudyBySlug(slug || ''),
     enabled: !!slug
   });
 
