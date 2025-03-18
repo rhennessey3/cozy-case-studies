@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Separator } from '@/components/ui/separator';
 import ContactSection from '@/components/sections/ContactSection';
+import Footer from '@/components/Footer';
 
 const About = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -102,6 +103,8 @@ const About = () => {
           {/* Contact Section */}
           <ContactSection />
           
+          {/* Footer */}
+          <Footer />
         </ScrollArea>
       </div>
     </div>
