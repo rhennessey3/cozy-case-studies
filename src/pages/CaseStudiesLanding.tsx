@@ -56,7 +56,7 @@ const CaseStudiesLanding = () => {
       <div 
         className={cn(
           "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out z-30",
-          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[5.175rem]"),
+          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[5.95rem]"),
           isSmallScreen && "pt-16" // Add top padding for the TopNavbar
         )}
       >
