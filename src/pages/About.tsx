@@ -4,9 +4,9 @@ import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { BookOpen, GraduationCap, Heart, Users } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import AboutSection from '@/components/AboutSection';
+import { Separator } from '@/components/ui/separator';
 
 const About = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -70,52 +70,90 @@ const About = () => {
             </div>
           </section>
           
-          <section className="min-h-screen bg-white py-20">
-            <div className="container mx-auto max-w-6xl px-4">
-              <div className="text-center mb-16">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8 text-cozy-900 text-center">Our Values</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  <div className="bg-white p-6 rounded-xl shadow-sm border border-cozy-100">
-                    <div className="w-12 h-12 bg-cozy-100 rounded-full flex items-center justify-center mb-4 text-cozy-800">
-                      <Users className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 text-cozy-900">Collaboration</h3>
-                    <p className="text-cozy-700">
-                      We believe the best solutions emerge from diverse perspectives working together toward a common goal.
-                    </p>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-xl shadow-sm border border-cozy-100">
-                    <div className="w-12 h-12 bg-cozy-100 rounded-full flex items-center justify-center mb-4 text-cozy-800">
-                      <BookOpen className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 text-cozy-900">Continuous Learning</h3>
-                    <p className="text-cozy-700">
-                      Our industry evolves rapidly, and we embrace the opportunity to grow and adapt alongside it.
-                    </p>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-xl shadow-sm border border-cozy-100">
-                    <div className="w-12 h-12 bg-cozy-100 rounded-full flex items-center justify-center mb-4 text-cozy-800">
-                      <Heart className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 text-cozy-900">Empathy</h3>
-                    <p className="text-cozy-700">
-                      Understanding the needs, motivations, and pain points of users is fundamental to our design process.
-                    </p>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-xl shadow-sm border border-cozy-100">
-                    <div className="w-12 h-12 bg-cozy-100 rounded-full flex items-center justify-center mb-4 text-cozy-800">
-                      <GraduationCap className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 text-cozy-900">Excellence</h3>
-                    <p className="text-cozy-700">
-                      We are committed to quality in everything we do, from the smallest details to the overall vision.
-                    </p>
-                  </div>
+          {/* Experience Statistics Section */}
+          <section className="py-16 px-4 bg-white">
+            <div className="container mx-auto max-w-6xl">
+              <Separator className="mb-16 bg-gray-200" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4 mb-16">
+                <div className="text-center md:text-left">
+                  <h2 className="text-6xl font-bold text-gray-800">10</h2>
+                  <p className="text-gray-600">Years Experience</p>
+                </div>
+                
+                <div className="text-center md:text-left">
+                  <h2 className="text-6xl font-bold text-gray-800">4</h2>
+                  <p className="text-gray-600">years remote<br />management experience</p>
+                </div>
+                
+                <div className="text-center md:text-left">
+                  <h2 className="text-6xl font-bold text-gray-800">6570+</h2>
+                  <p className="text-gray-600">Project<br />Management<br />Hours</p>
+                </div>
+                
+                <div className="text-center md:text-left">
+                  <h2 className="text-6xl font-bold text-gray-800">6210</h2>
+                  <p className="text-gray-600">Business<br />Analyst<br />Hours</p>
                 </div>
               </div>
+              
+              <Separator className="mb-16 bg-gray-200" />
+            </div>
+          </section>
+          
+          {/* Skills Section */}
+          <section className="py-16 px-4 bg-white">
+            <div className="container mx-auto max-w-6xl">
+              <div className="text-center mb-12">
+                <p className="text-gray-600 mb-2">chops</p>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-800">Skills</h2>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">98%</h3>
+                  <p className="text-gray-600">CRM</p>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">95%</h3>
+                  <p className="text-gray-600">Strategy</p>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">78%</h3>
+                  <p className="text-gray-600">HTML / CSS</p>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">75%</h3>
+                  <p className="text-gray-600">Javascript</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">95%</h3>
+                  <p className="text-gray-600">Analytics</p>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">95%</h3>
+                  <p className="text-gray-600">Interactive prototyping</p>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">89%</h3>
+                  <p className="text-gray-600">Sketch | Figma</p>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-5xl font-bold text-gray-800 mb-1">85%</h3>
+                  <p className="text-gray-600">Human Centered Design</p>
+                </div>
+              </div>
+              
+              <Separator className="bg-gray-200" />
             </div>
           </section>
           
