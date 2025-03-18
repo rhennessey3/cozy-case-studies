@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Separator } from '@/components/ui/separator';
+import ContactSection from '@/components/sections/ContactSection';
 
 const About = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -97,6 +98,9 @@ const About = () => {
               </div>
             </div>
           </section>
+          
+          {/* Contact Section */}
+          <ContactSection />
           
           {/* Add padding at the bottom to ensure Footer visibility */}
           <div className="h-20"></div>
