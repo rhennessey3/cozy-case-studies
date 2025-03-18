@@ -9,6 +9,7 @@ import { CaseStudy } from '@/data/caseStudies';
 import { getCaseStudies } from '@/services'; // Changed from strapiService to the index export
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import Footer from '@/components/Footer';
 
 const CaseStudiesLanding = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -78,6 +79,7 @@ const CaseStudiesLanding = () => {
               )}
             </div>
           </section>
+          <Footer />
         </ScrollArea>
       </div>
     </div>
