@@ -26,7 +26,7 @@ const About = () => {
   }, []);
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {isSmallScreen ? (
         <TopNavbar className="fixed top-0 left-0 right-0 z-50" />
       ) : (
@@ -40,7 +40,7 @@ const About = () => {
           isSmallScreen && "pt-16"
         )}
       >
-        <ScrollArea className="h-full">
+        <ScrollArea className="h-full pb-20">
           <section className="bg-[#221F26] text-white relative overflow-hidden pt-8 md:pt-10">
             <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -97,6 +97,9 @@ const About = () => {
               </div>
             </div>
           </section>
+          
+          {/* Add padding at the bottom to ensure Footer visibility */}
+          <div className="h-20"></div>
         </ScrollArea>
       </div>
     </div>
