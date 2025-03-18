@@ -74,8 +74,6 @@ const About = () => {
           {/* Experience Statistics Section */}
           <section className="py-16 px-4 bg-white">
             <div className="container mx-auto max-w-6xl">
-              <Separator className="mb-16 bg-gray-200" />
-              
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4">
                 <div className="text-center md:text-left">
                   <h2 className="text-6xl font-bold text-gray-800">10</h2>
