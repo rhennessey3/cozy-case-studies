@@ -106,7 +106,7 @@ const ContactSection = () => {
   };
   
   return (
-    <section className="bg-background py-12">
+    <section className="bg-[#f5f5f5] py-12">
       <div className="container mx-auto max-w-4xl px-4">
         <h2 className="text-4xl font-bold mb-8">Contact Us</h2>
         <form className="space-y-5" onSubmit={handleSubmit}>

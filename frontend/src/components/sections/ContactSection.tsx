@@ -5,7 +5,7 @@ import { Send } from 'lucide-react';
 
 const ContactSection = () => {
   return (
-    <section className="py-20 bg-cozy-50">
+    <section className="py-20 bg-[#f5f5f5]">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-cozy-900">Get in Touch</h2>
