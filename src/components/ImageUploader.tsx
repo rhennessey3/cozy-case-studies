@@ -30,24 +30,6 @@ const ImageUploader = ({ onImageUploaded, currentImageUrl, label = 'Image' }: Im
     setUploading(true);
     
     try {
-      // Check if we need to create the bucket first
-      const { data: bucketData, error: bucketError } = await supabase
-        .storage
-        .getBucket('case-study-images');
-      
-      if (bucketError && bucketError.message.includes('not found')) {
-        // Create the bucket if it doesn't exist
-        const { error: createBucketError } = await supabase
-          .storage
-          .createBucket('case-study-images', { public: true });
-          
-        if (createBucketError) {
-          throw createBucketError;
-        }
-      } else if (bucketError) {
-        throw bucketError;
-      }
-      
       // Upload the file
       const { error: uploadError } = await supabase.storage
         .from('case-study-images')
