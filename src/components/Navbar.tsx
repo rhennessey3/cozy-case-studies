@@ -101,29 +101,54 @@ const Navbar = ({
   };
 
   return <>
-      <div className={cn("fixed left-0 top-0 w-[364px] bg-white transition-transform duration-300 ease-in-out h-screen overflow-y-auto shadow-md z-50", drawerOpen ? "translate-x-0" : "translate-x-[-364px]")} id="flyoutDrawer">
-        <div className="flex flex-col gap-6 pt-20 pb-8 h-full px-6">
-          <nav className="flex flex-col gap-2 flex-1">
-            <button type="button" onClick={() => handleNavigation('/')} className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md mx-[51px]">
+      <div 
+        className={cn("fixed left-0 top-0 w-[364px] bg-white transition-transform duration-300 ease-in-out h-screen overflow-y-auto shadow-md z-50", 
+          drawerOpen ? "translate-x-0" : "translate-x-[-364px]")} 
+        id="flyoutDrawer"
+        aria-label="Navigation drawer"
+        role="navigation"
+        aria-hidden={!drawerOpen}
+        data-drawer-state={drawerOpen ? "open" : "closed"}
+      >
+        <div className="navigation-drawer-content flex flex-col gap-6 pt-20 pb-8 h-full px-6">
+          <nav className="navigation-menu flex flex-col gap-2 flex-1" aria-label="Main navigation">
+            <button 
+              type="button" 
+              onClick={() => handleNavigation('/')} 
+              className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md mx-[51px]"
+            >
               Home
             </button>
-            <button type="button" onClick={() => handleNavigation('/about')} className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[66px]">
+            <button 
+              type="button" 
+              onClick={() => handleNavigation('/about')} 
+              className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[66px]"
+            >
               About
             </button>
-            <button type="button" onClick={() => handleNavigation('/case-studies')} className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[67px]">
+            <button 
+              type="button" 
+              onClick={() => handleNavigation('/case-studies')} 
+              className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[67px]"
+            >
               Case Studies
             </button>
           </nav>
         </div>
       </div>
       
-      <div className="fixed left-0 top-0 bottom-0 flex flex-col items-center w-[5.95rem] z-[9999] bg-white shadow-sm" id="toggleButtonContainer">
-        <div className="flex flex-col items-center justify-between h-full py-6">
+      <div 
+        className="sidebar-container fixed left-0 top-0 bottom-0 flex flex-col items-center w-[5.95rem] z-[9999] bg-white shadow-sm" 
+        id="toggleButtonContainer"
+        aria-label="Sidebar container"
+      >
+        <div className="sidebar-content flex flex-col items-center justify-between h-full py-6">
           <svg 
             ref={logoRef}
             xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 53.34 71.44" 
-            className="h-9.6 w-9.6 md:h-11.52 md:w-11.52"
+            className="logo h-9.6 w-9.6 md:h-11.52 md:w-11.52"
+            aria-label="Company logo"
           >
             <defs>
               <style>
@@ -154,10 +179,10 @@ const Navbar = ({
           <HamburgerIcon 
             isOpen={drawerOpen} 
             onClick={toggleDrawer} 
-            className="text-cozy-800 hover:text-cozy-600 transition-colors" 
+            className="menu-toggle text-cozy-800 hover:text-cozy-600 transition-colors" 
           />
           
-          <div className="w-8 h-8"></div> {/* Empty div to balance the layout */}
+          <div className="sidebar-spacer w-8 h-8" aria-hidden="true"></div> {/* Empty div to balance the layout */}
         </div>
       </div>
     </>;
