@@ -41,7 +41,7 @@ const About = () => {
           isSmallScreen && "pt-16"
         )}
       >
-        <ScrollArea className="h-full pb-20">
+        <ScrollArea className="h-full">
           <section className="bg-[#221F26] text-white relative overflow-hidden pt-8 md:pt-10">
             <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -102,8 +102,6 @@ const About = () => {
           {/* Contact Section */}
           <ContactSection />
           
-          {/* Add padding at the bottom to ensure Footer visibility */}
-          <div className="h-20"></div>
         </ScrollArea>
       </div>
     </div>
