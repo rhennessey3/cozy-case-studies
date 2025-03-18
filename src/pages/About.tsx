@@ -5,7 +5,6 @@ import TopNavbar from '@/components/TopNavbar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import AboutSection from '@/components/AboutSection';
 import { Separator } from '@/components/ui/separator';
 
 const About = () => {
@@ -156,8 +155,6 @@ const About = () => {
               <Separator className="bg-gray-200" />
             </div>
           </section>
-          
-          <AboutSection />
         </ScrollArea>
       </div>
     </div>
