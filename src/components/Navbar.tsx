@@ -111,7 +111,7 @@ const Navbar = ({
         data-drawer-state={drawerOpen ? "open" : "closed"}
       >
         <div className="navigation-drawer-content flex items-center justify-center h-full">
-          <div className="w-full px-6">
+          <div className="w-full px-6 pl-[5.95rem]">
             <nav className="navigation-menu flex flex-col gap-4 items-center w-full" aria-label="Main navigation">
               <button 
                 type="button" 
