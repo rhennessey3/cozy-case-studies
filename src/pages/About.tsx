@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
@@ -38,15 +37,13 @@ const About = () => {
         className={cn(
           "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out",
           !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"),
-          isSmallScreen && "pt-16" // Add top padding for the TopNavbar
+          isSmallScreen && "pt-16"
         )}
       >
         <ScrollArea className="h-full">
-          {/* About Hero Section */}
           <section className="bg-[#221F26] text-white">
             <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                {/* Content now on the left */}
                 <div className="flex flex-col space-y-8">
                   <div>
                     <h4 className="text-xl mb-2">Hi, I'm Sarah.</h4>
@@ -56,10 +53,7 @@ const About = () => {
                     </h1>
                     
                     <p className="text-lg text-[#C8C8C9] leading-relaxed">
-                      At my core, I'm a product strategist at the intersection of product design, 
-                      development, sales, and marketing. I help end users love products. 
-                      I help clients explore end-user problems and guide teams to solutions. 
-                      I currently live in San Francisco but available to travel, work in-house or remote.
+                      10 years of experience in product management and UX strategy. My work focuses on user-driven product development that balances business needs with real-world usability.
                     </p>
                   </div>
                   
@@ -68,7 +62,6 @@ const About = () => {
                   </div>
                 </div>
                 
-                {/* Photo now on the right */}
                 <div className="rounded-lg overflow-hidden">
                   <img 
                     src="/lovable-uploads/3051eed2-7c1a-48bc-a7b3-18314dc8dc70.png" 
@@ -80,7 +73,6 @@ const About = () => {
             </div>
           </section>
           
-          {/* Values Section */}
           <section className="min-h-screen bg-white py-20">
             <div className="container mx-auto max-w-6xl px-4">
               <div className="text-center mb-16">
@@ -130,7 +122,6 @@ const About = () => {
             </div>
           </section>
           
-          {/* About Approach Section */}
           <AboutSection />
         </ScrollArea>
       </div>
