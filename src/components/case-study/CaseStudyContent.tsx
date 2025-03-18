@@ -8,7 +8,6 @@ import UserFlowSection from './UserFlowSection';
 import IterationSection from './IterationSection';
 import PrototypingSection from './PrototypingSection';
 import ContactSection from '@/components/sections/ContactSection';
-import Footer from '@/components/Footer';
 import DynamicSection from './DynamicSection';
 import CaseStudyHero from './CaseStudyHero';
 
@@ -45,7 +44,6 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
           ))}
         
         <ContactSection />
-        <Footer />
       </>
     );
   }
@@ -68,7 +66,6 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
       <IterationSection caseStudy={caseStudy} />
       <PrototypingSection caseStudy={caseStudy} />
       <ContactSection />
-      <Footer />
     </>
   );
 };

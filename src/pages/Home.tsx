@@ -6,7 +6,6 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
 import AboutSection from '@/components/AboutSection';
 import ContactSection from '@/components/sections/ContactSection';
-import Footer from '@/components/Footer';
 
 const Home: React.FC = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -20,7 +19,6 @@ const Home: React.FC = () => {
             <HeroSection />
             <AboutSection />
             <ContactSection />
-            <Footer />
           </div>
         </div>
       ) : (
@@ -29,7 +27,6 @@ const Home: React.FC = () => {
           <HeroSection />
           <AboutSection />
           <ContactSection />
-          <Footer />
         </>
       )}
     </div>
