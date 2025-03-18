@@ -2,9 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import gsap from 'gsap';
+import HamburgerIcon from './HamburgerIcon';
 
 interface TopNavbarProps {
   className?: string;
@@ -59,9 +58,7 @@ const TopNavbar = ({ className }: TopNavbarProps) => {
           </svg>
         </div>
         
-        <Button variant="ghost" size="icon" onClick={toggleMenu} aria-label={menuOpen ? "Close menu" : "Open menu"}>
-          {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </Button>
+        <HamburgerIcon isOpen={menuOpen} onClick={toggleMenu} />
       </div>
       
       {/* Mobile menu overlay */}
