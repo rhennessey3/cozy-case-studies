@@ -27,7 +27,7 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
         height === "tall" ? "masonry-item-tall" : ""
       )}
     >
-      <Link to={`/case-study/${slug}`} className="block relative h-full">
+      <Link to={`/case-studies/${slug}`} className="block relative h-full">
         <div className="relative aspect-video overflow-hidden h-full">
           <img 
             src={coverImage} 
