@@ -111,25 +111,25 @@ const Navbar = ({
         data-drawer-state={drawerOpen ? "open" : "closed"}
       >
         <div className="navigation-drawer-content flex flex-col gap-6 pt-20 pb-8 h-full px-6">
-          <nav className="navigation-menu flex flex-col gap-2 flex-1" aria-label="Main navigation">
+          <nav className="navigation-menu flex flex-col gap-2 flex-1 items-center w-full" aria-label="Main navigation">
             <button 
               type="button" 
               onClick={() => handleNavigation('/')} 
-              className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md mx-[51px]"
+              className="nav-item-home text-center text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
             >
               Home
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigation('/about')} 
-              className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[66px]"
+              className="nav-item-about text-center text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
             >
               About
             </button>
             <button 
               type="button" 
               onClick={() => handleNavigation('/case-studies')} 
-              className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[67px]"
+              className="nav-item-case-studies text-center text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md w-3/4"
             >
               Case Studies
             </button>
