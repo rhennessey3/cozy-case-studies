@@ -110,30 +110,32 @@ const Navbar = ({
         aria-hidden={!drawerOpen}
         data-drawer-state={drawerOpen ? "open" : "closed"}
       >
-        <div className="navigation-drawer-content flex flex-col justify-center h-full px-6">
-          <nav className="navigation-menu flex flex-col gap-4 items-center w-full" aria-label="Main navigation">
-            <button 
-              type="button" 
-              onClick={() => handleNavigation('/')} 
-              className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
-            >
-              Home
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigation('/about')} 
-              className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
-            >
-              About
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigation('/case-studies')} 
-              className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
-            >
-              Case Studies
-            </button>
-          </nav>
+        <div className="navigation-drawer-content flex items-center justify-center h-full">
+          <div className="w-full px-6">
+            <nav className="navigation-menu flex flex-col gap-4 items-center w-full" aria-label="Main navigation">
+              <button 
+                type="button" 
+                onClick={() => handleNavigation('/')} 
+                className="nav-item-home text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
+              >
+                Home
+              </button>
+              <button 
+                type="button" 
+                onClick={() => handleNavigation('/about')} 
+                className="nav-item-about text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
+              >
+                About
+              </button>
+              <button 
+                type="button" 
+                onClick={() => handleNavigation('/case-studies')} 
+                className="nav-item-case-studies text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 px-4 cursor-pointer hover:bg-gray-50 rounded-md w-full"
+              >
+                Case Studies
+              </button>
+            </nav>
+          </div>
         </div>
       </div>
       
