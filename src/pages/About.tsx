@@ -48,7 +48,7 @@ const About = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="rounded-lg overflow-hidden">
                   <img 
-                    src="/lovable-uploads/0f9f2e02-4186-40ca-a4e5-6519d4ff7ea2.png" 
+                    src="/lovable-uploads/3051eed2-7c1a-48bc-a7b3-18314dc8dc70.png" 
                     alt="Professional headshot" 
                     className="w-full h-auto object-cover"
                   />
