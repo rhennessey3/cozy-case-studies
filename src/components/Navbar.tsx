@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import HamburgerIcon from './HamburgerIcon';
+import AnimatedMenuIcon from './AnimatedMenuIcon';
 import { 
   Sheet,
   SheetContent,
@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
         <Sheet>
           <SheetTrigger asChild>
             <div>
-              <HamburgerIcon 
+              <AnimatedMenuIcon 
                 isOpen={isMenuOpen} 
                 onClick={toggleMenu} 
                 className="cursor-pointer"
