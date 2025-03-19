@@ -3,7 +3,6 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ImageUploader from '@/components/ImageUploader';
 import { CaseStudyForm } from '@/types/caseStudy';
 
@@ -47,29 +46,6 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
                 placeholder="Enter URL slug (e.g., my-case-study)"
               />
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="height">Height</Label>
-            <Select
-              name="height"
-              value={form.height}
-              onValueChange={(value) => {
-                const event = {
-                  target: { name: 'height', value }
-                } as React.ChangeEvent<HTMLInputElement>;
-                handleChange(event);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a height" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="normal">Normal</SelectItem>
-                <SelectItem value="large">Large</SelectItem>
-                <SelectItem value="extra-large">Extra Large</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           
           <div className="space-y-2">
