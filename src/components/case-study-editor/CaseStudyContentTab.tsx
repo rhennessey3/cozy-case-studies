@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -29,6 +28,17 @@ interface CaseStudyContentTabProps {
     carouselItem3Title?: string;
     carouselItem3Content?: string;
     carouselItem3Image?: string;
+    fourParaTitle?: string;
+    fourParaSubtitle?: string;
+    fourPara1Title?: string;
+    fourPara1Content?: string;
+    fourPara2Title?: string;
+    fourPara2Content?: string;
+    fourPara3Title?: string;
+    fourPara3Content?: string;
+    fourPara4Title?: string;
+    fourPara4Content?: string;
+    fourParaImage?: string;
   };
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
@@ -236,7 +246,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
         </div>
       </Card>
 
-      {/* New Carousel Card */}
       <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
         <h2 className="text-xl font-bold mb-6">Case Study Carousel</h2>
         
@@ -252,7 +261,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
           />
         </div>
         
-        {/* First Carousel Item */}
         <div className="border border-gray-200 rounded-lg p-4 mb-6">
           <h3 className="font-semibold mb-4">Carousel Item 1</h3>
           
@@ -290,7 +298,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
           </div>
         </div>
         
-        {/* Second Carousel Item */}
         <div className="border border-gray-200 rounded-lg p-4 mb-6">
           <h3 className="font-semibold mb-4">Carousel Item 2</h3>
           
@@ -328,7 +335,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
           </div>
         </div>
         
-        {/* Third Carousel Item */}
         <div className="border border-gray-200 rounded-lg p-4">
           <h3 className="font-semibold mb-4">Carousel Item 3</h3>
           
@@ -364,6 +370,162 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
               currentImageUrl={form.carouselItem3Image}
             />
           </div>
+        </div>
+      </Card>
+
+      <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
+        <h2 className="text-xl font-bold mb-6">Four Small Paragraphs with Photo</h2>
+        
+        <div className="space-y-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="fourParaTitle" className="text-gray-500">Section Title</Label>
+              <Input 
+                id="fourParaTitle" 
+                name="fourParaTitle" 
+                value={form.fourParaTitle || '4 Small Paragraphs'} 
+                onChange={handleContentChange} 
+                placeholder="4 Small Paragraphs"
+                className="bg-gray-50 border-gray-200"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="fourParaSubtitle" className="text-gray-500">Section Subtitle</Label>
+              <Input 
+                id="fourParaSubtitle" 
+                name="fourParaSubtitle" 
+                value={form.fourParaSubtitle || 'With Photo'} 
+                onChange={handleContentChange} 
+                placeholder="With Photo"
+                className="bg-gray-50 border-gray-200"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="border border-gray-200 rounded-lg p-4 mb-4">
+          <h3 className="font-semibold mb-4">Paragraph 1</h3>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="fourPara1Title" className="text-gray-500">Paragraph Title</Label>
+            <Input 
+              id="fourPara1Title" 
+              name="fourPara1Title" 
+              value={form.fourPara1Title || 'Paragraph 1'} 
+              onChange={handleContentChange} 
+              placeholder="Paragraph 1"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="fourPara1Content" className="text-gray-500">Paragraph Content</Label>
+            <Textarea 
+              id="fourPara1Content" 
+              name="fourPara1Content" 
+              value={form.fourPara1Content || ''} 
+              onChange={handleContentChange} 
+              placeholder="Enter content for the first paragraph"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+        </div>
+        
+        <div className="border border-gray-200 rounded-lg p-4 mb-4">
+          <h3 className="font-semibold mb-4">Paragraph 2</h3>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="fourPara2Title" className="text-gray-500">Paragraph Title</Label>
+            <Input 
+              id="fourPara2Title" 
+              name="fourPara2Title" 
+              value={form.fourPara2Title || 'Paragraph 2'} 
+              onChange={handleContentChange} 
+              placeholder="Paragraph 2"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="fourPara2Content" className="text-gray-500">Paragraph Content</Label>
+            <Textarea 
+              id="fourPara2Content" 
+              name="fourPara2Content" 
+              value={form.fourPara2Content || ''} 
+              onChange={handleContentChange} 
+              placeholder="Enter content for the second paragraph"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+        </div>
+        
+        <div className="border border-gray-200 rounded-lg p-4 mb-4">
+          <h3 className="font-semibold mb-4">Paragraph 3</h3>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="fourPara3Title" className="text-gray-500">Paragraph Title</Label>
+            <Input 
+              id="fourPara3Title" 
+              name="fourPara3Title" 
+              value={form.fourPara3Title || 'Paragraph 3'} 
+              onChange={handleContentChange} 
+              placeholder="Paragraph 3"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="fourPara3Content" className="text-gray-500">Paragraph Content</Label>
+            <Textarea 
+              id="fourPara3Content" 
+              name="fourPara3Content" 
+              value={form.fourPara3Content || ''} 
+              onChange={handleContentChange} 
+              placeholder="Enter content for the third paragraph"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+        </div>
+        
+        <div className="border border-gray-200 rounded-lg p-4 mb-6">
+          <h3 className="font-semibold mb-4">Paragraph 4</h3>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="fourPara4Title" className="text-gray-500">Paragraph Title</Label>
+            <Input 
+              id="fourPara4Title" 
+              name="fourPara4Title" 
+              value={form.fourPara4Title || 'Paragraph 4'} 
+              onChange={handleContentChange} 
+              placeholder="Paragraph 4"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="fourPara4Content" className="text-gray-500">Paragraph Content</Label>
+            <Textarea 
+              id="fourPara4Content" 
+              name="fourPara4Content" 
+              value={form.fourPara4Content || ''} 
+              onChange={handleContentChange} 
+              placeholder="Enter content for the fourth paragraph"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <Label className="text-gray-500">Section Image</Label>
+          <ImageUploader 
+            onImageUploaded={(url) => handleImageUploaded('fourParaImage', url)} 
+            currentImageUrl={form.fourParaImage}
+            label="Four Paragraphs Image"
+          />
         </div>
       </Card>
     </div>

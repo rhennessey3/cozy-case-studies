@@ -25,7 +25,7 @@ export interface CaseStudyForm {
   subhead?: string;
   introductionParagraph?: string;
   alignmentImage?: string;
-  // New carousel fields
+  // Carousel fields
   carouselTitle?: string;
   carouselItem1Title?: string;
   carouselItem1Content?: string;
@@ -36,6 +36,18 @@ export interface CaseStudyForm {
   carouselItem3Title?: string;
   carouselItem3Content?: string;
   carouselItem3Image?: string;
+  // Four paragraphs section
+  fourParaTitle?: string;
+  fourParaSubtitle?: string;
+  fourPara1Title?: string;
+  fourPara1Content?: string;
+  fourPara2Title?: string;
+  fourPara2Content?: string;
+  fourPara3Title?: string;
+  fourPara3Content?: string;
+  fourPara4Title?: string;
+  fourPara4Content?: string;
+  fourParaImage?: string;
 }
 
 export const initialFormState: CaseStudyForm = {
@@ -62,7 +74,7 @@ export const initialFormState: CaseStudyForm = {
   subhead: '',
   introductionParagraph: '',
   alignmentImage: '',
-  // Initialize new carousel fields
+  // Carousel fields with defaults
   carouselTitle: '3 Column Slider',
   carouselItem1Title: 'Planning',
   carouselItem1Content: '',
@@ -72,5 +84,17 @@ export const initialFormState: CaseStudyForm = {
   carouselItem2Image: '',
   carouselItem3Title: 'Results',
   carouselItem3Content: '',
-  carouselItem3Image: ''
+  carouselItem3Image: '',
+  // Four paragraphs section with defaults
+  fourParaTitle: '4 Small Paragraphs',
+  fourParaSubtitle: 'With Photo',
+  fourPara1Title: 'Paragraph 1',
+  fourPara1Content: '',
+  fourPara2Title: 'Paragraph 2',
+  fourPara2Content: '',
+  fourPara3Title: 'Paragraph 3',
+  fourPara3Content: '',
+  fourPara4Title: 'Paragraph 4',
+  fourPara4Content: '',
+  fourParaImage: ''
 };

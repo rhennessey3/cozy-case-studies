@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -248,6 +247,76 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
         }
       }
       
+      // Handle four paragraphs section if it exists
+      if (form.fourParaTitle || form.fourParaSubtitle || 
+          form.fourPara1Title || form.fourPara1Content || 
+          form.fourPara2Title || form.fourPara2Content || 
+          form.fourPara3Title || form.fourPara3Content || 
+          form.fourPara4Title || form.fourPara4Content || 
+          form.fourParaImage) {
+        
+        // Check if four paragraphs section exists
+        const { data: existingFourParaSection, error: fourParaSectionQueryError } = await supabase
+          .from('case_study_sections')
+          .select('id')
+          .eq('case_study_id', caseStudyId)
+          .eq('component', 'fourParagraphs')
+          .single();
+          
+        const fourParaData = {
+          case_study_id: caseStudyId,
+          component: 'fourParagraphs',
+          title: form.fourParaTitle || '4 Small Paragraphs',
+          content: '',
+          subhead: form.fourParaSubtitle || 'With Photo',
+          image_url: form.fourParaImage || null,
+          sort_order: 9, // After carousel section
+          metadata: {
+            paragraphs: [
+              {
+                title: form.fourPara1Title || 'Paragraph 1',
+                content: form.fourPara1Content || ''
+              },
+              {
+                title: form.fourPara2Title || 'Paragraph 2',
+                content: form.fourPara2Content || ''
+              },
+              {
+                title: form.fourPara3Title || 'Paragraph 3',
+                content: form.fourPara3Content || ''
+              },
+              {
+                title: form.fourPara4Title || 'Paragraph 4',
+                content: form.fourPara4Content || ''
+              }
+            ]
+          }
+        };
+        
+        if (fourParaSectionQueryError && !fourParaSectionQueryError.message.includes('No rows found')) {
+          console.error('Error checking for four paragraphs section:', fourParaSectionQueryError);
+        } else if (existingFourParaSection) {
+          // Update existing four paragraphs section
+          const { error: updateFourParaError } = await supabase
+            .from('case_study_sections')
+            .update(fourParaData)
+            .eq('id', existingFourParaSection.id);
+            
+          if (updateFourParaError) {
+            console.error('Error updating four paragraphs section:', updateFourParaError);
+          }
+        } else {
+          // Create new four paragraphs section
+          const { error: createFourParaError } = await supabase
+            .from('case_study_sections')
+            .insert(fourParaData);
+            
+          if (createFourParaError) {
+            console.error('Error creating four paragraphs section:', createFourParaError);
+          }
+        }
+      }
+      
       toast.success(slug ? 'Case study updated successfully' : 'Case study created successfully');
       
       if (!slug) {
@@ -263,3 +332,4 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
 
   return { saving, handleSubmit };
 };
+
