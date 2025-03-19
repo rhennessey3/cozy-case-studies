@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
 import { AuthProvider } from "./contexts/AuthContext";
-import "./App.css";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +15,7 @@ const App = () => (
       <TooltipProvider>
         <AuthProvider>
           <div className="flex flex-col min-h-screen">
-            <div className="flex-grow transition-transform duration-300 ease-in-out">
+            <div className="flex-grow">
               <AppRoutes />
             </div>
           </div>
