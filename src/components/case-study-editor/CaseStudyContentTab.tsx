@@ -3,6 +3,7 @@ import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
 
 interface CaseStudyContentTabProps {
   form: {
@@ -22,48 +23,48 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
 }) => {
   return (
     <div className="space-y-8">
-      <div className="p-6 bg-white rounded-lg border border-gray-200">
+      <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
         <h2 className="text-xl font-bold mb-6">Case Study Introduction</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="space-y-2">
-            <Label htmlFor="challenge" className="text-gray-500">The Problem</Label>
+            <Label htmlFor="challenge" className="text-gray-500">Subhead</Label>
             <Input 
               id="challenge" 
               name="challenge" 
               value={form.challenge} 
               onChange={handleContentChange} 
-              placeholder="The Problem"
+              placeholder="Challenge"
               className="bg-gray-50 border-gray-200"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="approach" className="text-gray-500">The Strategy</Label>
+            <Label htmlFor="approach" className="text-gray-500">Subhead two</Label>
             <Input 
               id="approach" 
               name="approach" 
               value={form.approach} 
               onChange={handleContentChange} 
-              placeholder="The Strategy"
+              placeholder="Lorem Ipsum Lorem Ipsum"
               className="bg-gray-50 border-gray-200"
             />
           </div>
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="intro-content" className="text-gray-500">Case Study Introduction</Label>
+          <Label htmlFor="intro-content" className="text-gray-500">Case Study Introduction Paragraph</Label>
           <Textarea 
             id="intro-content" 
             name="intro" 
             value={form.intro} 
             onChange={handleContentChange} 
-            placeholder="Case Study Introduction goes here"
+            placeholder="s simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."
             className="bg-gray-50 border-gray-200 w-full"
             rows={6}
           />
         </div>
-      </div>
+      </Card>
       
       <div className="p-6 bg-white rounded-lg border border-gray-200">
         <h2 className="text-xl font-bold mb-6">Case Study Content</h2>
