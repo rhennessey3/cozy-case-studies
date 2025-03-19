@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -50,76 +49,27 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select
-                name="category"
-                value={form.category}
-                onValueChange={(value) => {
-                  const event = {
-                    target: { name: 'category', value }
-                  } as React.ChangeEvent<HTMLInputElement>;
-                  handleChange(event);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="web-design">Web Design</SelectItem>
-                  <SelectItem value="mobile-app">Mobile App</SelectItem>
-                  <SelectItem value="branding">Branding</SelectItem>
-                  <SelectItem value="ui-ux">UI/UX</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="height">Height</Label>
-              <Select
-                name="height"
-                value={form.height}
-                onValueChange={(value) => {
-                  const event = {
-                    target: { name: 'height', value }
-                  } as React.ChangeEvent<HTMLInputElement>;
-                  handleChange(event);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a height" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="normal">Normal</SelectItem>
-                  <SelectItem value="large">Large</SelectItem>
-                  <SelectItem value="extra-large">Extra Large</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
           <div className="space-y-2">
-            <Label htmlFor="summary">Summary</Label>
-            <Textarea
-              id="summary"
-              name="summary"
-              value={form.summary}
-              onChange={handleChange}
-              placeholder="Enter a brief summary"
-              rows={2}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Enter a detailed description"
-              rows={4}
-            />
+            <Label htmlFor="height">Height</Label>
+            <Select
+              name="height"
+              value={form.height}
+              onValueChange={(value) => {
+                const event = {
+                  target: { name: 'height', value }
+                } as React.ChangeEvent<HTMLInputElement>;
+                handleChange(event);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a height" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="normal">Normal</SelectItem>
+                <SelectItem value="large">Large</SelectItem>
+                <SelectItem value="extra-large">Extra Large</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="space-y-2">
