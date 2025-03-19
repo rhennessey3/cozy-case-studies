@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Github, Dribbble, Linkedin, Phone, Menu } from 'lucide-react';
+import { Github, Dribbble, Linkedin, Phone } from 'lucide-react';
+import HamburgerIcon from './HamburgerIcon';
 
 interface NavbarProps {
   className?: string;
@@ -59,13 +59,11 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
       
       {/* Middle section with menu button */}
       <div className="flex flex-col items-center">
-        <button 
-          className="flex flex-col items-center space-y-1 text-xs text-gray-500 hover:text-black transition-colors"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <Menu size={20} />
-          <span className="uppercase font-bold tracking-widest rotate-90">Menu</span>
-        </button>
+        <HamburgerIcon 
+          isOpen={isMenuOpen} 
+          onClick={() => setIsMenuOpen(!isMenuOpen)} 
+          className="cursor-pointer"
+        />
       </div>
       
       {/* Bottom section with social icons */}
@@ -106,3 +104,4 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
 };
 
 export default Navbar;
+
