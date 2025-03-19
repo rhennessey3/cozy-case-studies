@@ -14,12 +14,15 @@ import CaseStudySidebar from '@/components/case-study-editor/CaseStudySidebar';
 import CaseStudyBasicInfoTab from '@/components/case-study-editor/CaseStudyBasicInfoTab';
 import CaseStudyContentTab from '@/components/case-study-editor/CaseStudyContentTab';
 import { useCaseStudyEditor } from '@/hooks/use-case-study-editor';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const CaseStudyEditor = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
+  const { isAuthenticated, logout } = useAuth();
   
   const {
     loading,
@@ -32,6 +35,11 @@ const CaseStudyEditor = () => {
     handleSubmit,
     createNewCaseStudy
   } = useCaseStudyEditor(slug);
+  
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/admin/login" />;
+  }
   
   useEffect(() => {
     const handleBodyClassChange = () => {
@@ -46,6 +54,12 @@ const CaseStudyEditor = () => {
       observer.disconnect();
     };
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login');
+    toast('Logged out successfully');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -85,6 +99,12 @@ const CaseStudyEditor = () => {
                         View Live
                       </Button>
                     )}
+                    <Button
+                      variant="outline"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
                   </div>
                 </div>
               </div>
