@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -33,8 +34,8 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
   };
 
   return (
-    <nav className={cn("fixed left-0 top-0 h-screen z-50 bg-white w-32 border-r border-gray-100 flex flex-col justify-between py-6 transition-all duration-300 ease-in-out hidden md:flex", className)}>
-      {/* Top section with logo */}
+    <nav className={cn("fixed left-0 top-0 h-screen z-50 bg-white w-[4.5rem] border-r border-gray-100 flex flex-col justify-between py-6 transition-all duration-300 ease-in-out hidden md:flex", className)}>
+      {/* Chest: Top section with logo */}
       <div className="flex justify-center">
         <Link to="/" className="text-2xl font-bold text-center">
           <div className="h-12 w-12 bg-black flex items-center justify-center">
@@ -66,7 +67,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
         </Link>
       </div>
       
-      {/* Middle section with menu button */}
+      {/* Chest: Middle section with menu button */}
       <div className="flex flex-col items-center">
         <Sheet>
           <SheetTrigger asChild>
@@ -78,7 +79,8 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               />
             </div>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 ml-32 w-64 border-l border-gray-200">
+          {/* Drawer: Sheet content that slides out from under the chest */}
+          <SheetContent side="left" className="p-0 border-l border-gray-200">
             <div className="flex flex-col h-full py-8 px-6">
               <h3 className="text-xl font-semibold mb-6">Menu</h3>
               <nav className="flex flex-col space-y-4">
@@ -112,7 +114,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
         </Sheet>
       </div>
       
-      {/* Bottom section with social icons */}
+      {/* Chest: Bottom section with social icons */}
       <div className="flex flex-col items-center space-y-6">
         <a 
           href="https://linkedin.com" 
