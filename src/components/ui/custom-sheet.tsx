@@ -50,7 +50,7 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       <div className="flex items-center justify-center h-full">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-start w-full">
           {children}
         </div>
       </div>
