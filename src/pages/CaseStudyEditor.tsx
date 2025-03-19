@@ -13,7 +13,6 @@ import Footer from '@/components/Footer';
 import CaseStudySidebar from '@/components/case-study-editor/CaseStudySidebar';
 import CaseStudyBasicInfoTab from '@/components/case-study-editor/CaseStudyBasicInfoTab';
 import CaseStudyContentTab from '@/components/case-study-editor/CaseStudyContentTab';
-import CaseStudyImagesTab from '@/components/case-study-editor/CaseStudyImagesTab';
 import { useCaseStudyEditor } from '@/hooks/use-case-study-editor';
 
 const CaseStudyEditor = () => {
@@ -111,7 +110,6 @@ const CaseStudyEditor = () => {
                         <TabsList className="mb-4">
                           <TabsTrigger value="basics">Basic Info</TabsTrigger>
                           <TabsTrigger value="content">Content</TabsTrigger>
-                          <TabsTrigger value="images">Section Images</TabsTrigger>
                         </TabsList>
                         
                         <TabsContent value="basics">
@@ -126,13 +124,7 @@ const CaseStudyEditor = () => {
                           <CaseStudyContentTab 
                             form={form} 
                             handleContentChange={handleContentChange} 
-                          />
-                        </TabsContent>
-                        
-                        <TabsContent value="images">
-                          <CaseStudyImagesTab 
-                            form={form} 
-                            handleImageUploaded={handleImageUploaded} 
+                            handleImageUploaded={handleImageUploaded}
                           />
                         </TabsContent>
                       </Tabs>
