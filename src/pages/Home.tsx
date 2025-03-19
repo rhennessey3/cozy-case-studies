@@ -15,7 +15,7 @@ const Home: React.FC = () => {
       {isDesktop ? (
         <div className="flex">
           <Navbar />
-          <div className="flex-1 ml-[5.95rem]">
+          <div className="flex-1">
             <HeroSection />
             <AboutSection />
             <ContactSection />
