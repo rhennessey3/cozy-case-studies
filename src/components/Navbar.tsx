@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -24,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
   };
 
   return (
-    <nav className={cn("fixed left-0 top-0 h-screen z-50 bg-white w-16 border-r border-gray-100 flex flex-col justify-between py-6 transition-all duration-300 ease-in-out hidden md:flex", className)}>
+    <nav className={cn("fixed left-0 top-0 h-screen z-50 bg-white w-32 border-r border-gray-100 flex flex-col justify-between py-6 transition-all duration-300 ease-in-out hidden md:flex", className)}>
       {/* Top section with logo */}
       <div className="flex justify-center">
         <Link to="/" className="text-2xl font-bold text-center">
@@ -104,4 +105,3 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
 };
 
 export default Navbar;
-
