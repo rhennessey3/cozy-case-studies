@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Github, Dribbble, Phone } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import HamburgerIcon from './HamburgerIcon';
 
 interface NavbarProps {
@@ -67,24 +67,8 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
         />
       </div>
       
-      {/* Bottom section with social icons */}
+      {/* Bottom section with social icons - removed Github and Dribbble */}
       <div className="flex flex-col items-center space-y-6">
-        <a 
-          href="https://github.com" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="bg-black text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
-        >
-          <Github size={20} />
-        </a>
-        <a 
-          href="https://dribbble.com" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="bg-black text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
-        >
-          <Dribbble size={20} />
-        </a>
         <a 
           href="https://linkedin.com" 
           target="_blank" 
