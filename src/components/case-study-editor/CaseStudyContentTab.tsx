@@ -27,38 +27,38 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="space-y-2">
-            <Label htmlFor="challenge" className="text-gray-500">Subhead</Label>
+            <Label htmlFor="challenge" className="text-gray-500">The Problem</Label>
             <Input 
               id="challenge" 
               name="challenge" 
               value={form.challenge} 
               onChange={handleContentChange} 
-              placeholder="Challenge"
+              placeholder="The Problem"
               className="bg-gray-50 border-gray-200"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="approach" className="text-gray-500">Subhead two</Label>
+            <Label htmlFor="approach" className="text-gray-500">The Strategy</Label>
             <Input 
               id="approach" 
               name="approach" 
               value={form.approach} 
               onChange={handleContentChange} 
-              placeholder="Approach"
+              placeholder="The Strategy"
               className="bg-gray-50 border-gray-200"
             />
           </div>
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="intro-content" className="text-gray-500">Case Study Introduction Paragraph</Label>
+          <Label htmlFor="intro-content" className="text-gray-500">Case Study Introduction</Label>
           <Textarea 
             id="intro-content" 
             name="intro" 
             value={form.intro} 
             onChange={handleContentChange} 
-            placeholder="Enter your introduction paragraph here..."
+            placeholder="Case Study Introduction goes here"
             className="bg-gray-50 border-gray-200 w-full"
             rows={6}
           />
@@ -70,38 +70,38 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
         
         <div className="grid grid-cols-1 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="solution-content" className="text-gray-500">Solution</Label>
+            <Label htmlFor="solution-content" className="text-gray-500">The Solution</Label>
             <Textarea 
               id="solution-content" 
               name="solution" 
               value={form.solution} 
               onChange={handleContentChange} 
-              placeholder="Enter your solution content here..."
+              placeholder="The Solution description goes here"
               className="bg-gray-50 border-gray-200"
               rows={4}
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="results" className="text-gray-500">Results</Label>
+            <Label htmlFor="results" className="text-gray-500">The Results</Label>
             <Input 
               id="results" 
               name="results" 
               value={form.results} 
               onChange={handleContentChange} 
-              placeholder="Results"
+              placeholder="The Results"
               className="bg-gray-50 border-gray-200"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="conclusion-content" className="text-gray-500">Conclusion</Label>
+            <Label htmlFor="conclusion-content" className="text-gray-500">Final Outcome</Label>
             <Textarea 
               id="conclusion-content" 
               name="conclusion" 
               value={form.conclusion} 
               onChange={handleContentChange} 
-              placeholder="Enter your conclusion here..."
+              placeholder="Final Outcome description goes here"
               className="bg-gray-50 border-gray-200"
               rows={4}
             />
