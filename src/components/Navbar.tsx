@@ -3,6 +3,11 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import HamburgerIcon from './HamburgerIcon';
+import { 
+  Sheet,
+  SheetContent,
+  SheetTrigger
+} from "@/components/ui/sheet";
 
 interface NavbarProps {
   className?: string;
@@ -21,6 +26,10 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
       return 'text-black font-bold';
     }
     return 'text-gray-700';
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
@@ -59,11 +68,48 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
       
       {/* Middle section with menu button */}
       <div className="flex flex-col items-center">
-        <HamburgerIcon 
-          isOpen={isMenuOpen} 
-          onClick={() => setIsMenuOpen(!isMenuOpen)} 
-          className="cursor-pointer"
-        />
+        <Sheet>
+          <SheetTrigger asChild>
+            <div>
+              <HamburgerIcon 
+                isOpen={isMenuOpen} 
+                onClick={toggleMenu} 
+                className="cursor-pointer"
+              />
+            </div>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 ml-32 w-64 border-l border-gray-200">
+            <div className="flex flex-col h-full py-8 px-6">
+              <h3 className="text-xl font-semibold mb-6">Menu</h3>
+              <nav className="flex flex-col space-y-4">
+                <Link 
+                  to="/" 
+                  className={cn("text-base transition-colors hover:text-black", getActiveClass('/'))}
+                >
+                  Home
+                </Link>
+                <Link 
+                  to="/about" 
+                  className={cn("text-base transition-colors hover:text-black", getActiveClass('/about'))}
+                >
+                  About
+                </Link>
+                <Link 
+                  to="/case-studies" 
+                  className={cn("text-base transition-colors hover:text-black", getActiveClass('/case-studies'))}
+                >
+                  Case Studies
+                </Link>
+                <Link 
+                  to="/contact" 
+                  className={cn("text-base transition-colors hover:text-black", getActiveClass('/contact'))}
+                >
+                  Contact
+                </Link>
+              </nav>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
       
       {/* Bottom section with social icons - removed Github and Dribbble */}

@@ -15,6 +15,7 @@ const HamburgerIcon: React.FC<HamburgerIconProps> = ({ isOpen, onClick, classNam
       onClick={onClick} 
       className={cn("hamburger-icon", isOpen ? "is-active" : "", className)}
       aria-label={isOpen ? "Close menu" : "Open menu"}
+      type="button"
     >
       {isOpen ? (
         // X icon for when menu is open

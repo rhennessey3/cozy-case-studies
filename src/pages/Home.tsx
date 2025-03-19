@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-hidden">
       {isDesktop ? (
         <div className="flex">
           <Navbar />
