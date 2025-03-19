@@ -65,50 +65,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
           />
         </div>
       </Card>
-      
-      <div className="p-6 bg-white rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-6">Case Study Content</h2>
-        
-        <div className="grid grid-cols-1 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="solution-content" className="text-gray-500">The Solution</Label>
-            <Textarea 
-              id="solution-content" 
-              name="solution" 
-              value={form.solution} 
-              onChange={handleContentChange} 
-              placeholder="The Solution description goes here"
-              className="bg-gray-50 border-gray-200"
-              rows={4}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="results" className="text-gray-500">The Results</Label>
-            <Input 
-              id="results" 
-              name="results" 
-              value={form.results} 
-              onChange={handleContentChange} 
-              placeholder="The Results"
-              className="bg-gray-50 border-gray-200"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="conclusion-content" className="text-gray-500">Final Outcome</Label>
-            <Textarea 
-              id="conclusion-content" 
-              name="conclusion" 
-              value={form.conclusion} 
-              onChange={handleContentChange} 
-              placeholder="Final Outcome description goes here"
-              className="bg-gray-50 border-gray-200"
-              rows={4}
-            />
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
