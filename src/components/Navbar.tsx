@@ -89,7 +89,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           href="https://linkedin.com" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="bg-black text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
+          className="hover:text-gray-800 transition-colors"
         >
           <svg 
             width="20" 
@@ -100,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           >
             <path
               d="M9 0C4.02975 0 0 4.02975 0 9C0 13.9702 4.02975 18 9 18C13.9702 18 18 13.9702 18 9C18 4.02975 13.9702 0 9 0ZM7.5 12H6V7.5H7.5V12ZM6.75 6.83175C6.29475 6.83175 5.925 6.45975 5.925 6C5.925 5.541 6.294 5.16825 6.75 5.16825C7.206 5.16825 7.575 5.541 7.575 6C7.575 6.45975 7.20525 6.83175 6.75 6.83175ZM12.75 12H11.2515V9.85425C11.2515 8.4435 9.75 8.56275 9.75 9.85425V12H8.25V7.5H9.75V8.31975C10.404 7.10775 12.75 7.01775 12.75 9.48075V12Z"
-              fill="white"
+              fill="black"
             />
           </svg>
         </a>
