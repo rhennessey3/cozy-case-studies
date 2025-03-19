@@ -25,6 +25,17 @@ export interface CaseStudyForm {
   subhead?: string;
   introductionParagraph?: string;
   alignmentImage?: string;
+  // New carousel fields
+  carouselTitle?: string;
+  carouselItem1Title?: string;
+  carouselItem1Content?: string;
+  carouselItem1Image?: string;
+  carouselItem2Title?: string;
+  carouselItem2Content?: string;
+  carouselItem2Image?: string;
+  carouselItem3Title?: string;
+  carouselItem3Content?: string;
+  carouselItem3Image?: string;
 }
 
 export const initialFormState: CaseStudyForm = {
@@ -50,5 +61,16 @@ export const initialFormState: CaseStudyForm = {
   alignment: 'left',
   subhead: '',
   introductionParagraph: '',
-  alignmentImage: ''
+  alignmentImage: '',
+  // Initialize new carousel fields
+  carouselTitle: '3 Column Slider',
+  carouselItem1Title: 'Planning',
+  carouselItem1Content: '',
+  carouselItem1Image: '',
+  carouselItem2Title: 'Development',
+  carouselItem2Content: '',
+  carouselItem2Image: '',
+  carouselItem3Title: 'Results',
+  carouselItem3Content: '',
+  carouselItem3Image: ''
 };

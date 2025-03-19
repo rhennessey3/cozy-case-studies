@@ -187,6 +187,67 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
         }
       }
       
+      // Handle carousel section if it exists
+      if (form.carouselTitle || form.carouselItem1Title || form.carouselItem2Title || form.carouselItem3Title) {
+        // Check if carousel section exists
+        const { data: existingCarouselSection, error: carouselSectionQueryError } = await supabase
+          .from('case_study_sections')
+          .select('id')
+          .eq('case_study_id', caseStudyId)
+          .eq('component', 'carousel')
+          .single();
+          
+        const carouselData = {
+          case_study_id: caseStudyId,
+          component: 'carousel',
+          title: form.carouselTitle || '3 Column Slider',
+          content: '', // We'll store the carousel items in metadata
+          sort_order: 8, // After alignment section
+          metadata: {
+            items: [
+              {
+                title: form.carouselItem1Title || 'Planning',
+                content: form.carouselItem1Content || '',
+                image: form.carouselItem1Image || null
+              },
+              {
+                title: form.carouselItem2Title || 'Development',
+                content: form.carouselItem2Content || '',
+                image: form.carouselItem2Image || null
+              },
+              {
+                title: form.carouselItem3Title || 'Results',
+                content: form.carouselItem3Content || '',
+                image: form.carouselItem3Image || null
+              }
+            ]
+          }
+        };
+        
+        if (carouselSectionQueryError && !carouselSectionQueryError.message.includes('No rows found')) {
+          console.error('Error checking for carousel section:', carouselSectionQueryError);
+        } else if (existingCarouselSection) {
+          // Update existing carousel section
+          const { error: updateCarouselError } = await supabase
+            .from('case_study_sections')
+            .update(carouselData)
+            .eq('id', existingCarouselSection.id);
+            
+          if (updateCarouselError) {
+            console.error('Error updating carousel section:', updateCarouselError);
+          }
+        } else {
+          // Create new carousel section
+          const { error: createCarouselError } = await supabase
+            .from('case_study_sections')
+            .insert(carouselData);
+            
+          if (createCarouselError) {
+            console.error('Error creating carousel section:', createCarouselError);
+          }
+        }
+      }
+      
       toast.success(slug ? 'Case study updated successfully' : 'Case study created successfully');
       
       if (!slug) {

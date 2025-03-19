@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,16 @@ interface CaseStudyContentTabProps {
     subhead?: string;
     introductionParagraph?: string;
     alignmentImage?: string;
+    carouselTitle?: string;
+    carouselItem1Title?: string;
+    carouselItem1Content?: string;
+    carouselItem1Image?: string;
+    carouselItem2Title?: string;
+    carouselItem2Content?: string;
+    carouselItem2Image?: string;
+    carouselItem3Title?: string;
+    carouselItem3Content?: string;
+    carouselItem3Image?: string;
   };
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
@@ -222,6 +233,137 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
             onImageUploaded={(url) => handleImageUploaded('alignmentImage', url)} 
             currentImageUrl={form.alignmentImage}
           />
+        </div>
+      </Card>
+
+      {/* New Carousel Card */}
+      <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
+        <h2 className="text-xl font-bold mb-6">Case Study Carousel</h2>
+        
+        <div className="space-y-2 mb-6">
+          <Label htmlFor="carouselTitle" className="text-gray-500">Carousel Title</Label>
+          <Input 
+            id="carouselTitle" 
+            name="carouselTitle" 
+            value={form.carouselTitle || '3 Column Slider'} 
+            onChange={handleContentChange} 
+            placeholder="3 Column Slider"
+            className="bg-gray-50 border-gray-200"
+          />
+        </div>
+        
+        {/* First Carousel Item */}
+        <div className="border border-gray-200 rounded-lg p-4 mb-6">
+          <h3 className="font-semibold mb-4">Carousel Item 1</h3>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="carouselItem1Title" className="text-gray-500">Item Title</Label>
+            <Input 
+              id="carouselItem1Title" 
+              name="carouselItem1Title" 
+              value={form.carouselItem1Title || 'Planning'} 
+              onChange={handleContentChange} 
+              placeholder="Planning"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="carouselItem1Content" className="text-gray-500">Item Content</Label>
+            <Textarea 
+              id="carouselItem1Content" 
+              name="carouselItem1Content" 
+              value={form.carouselItem1Content || ''} 
+              onChange={handleContentChange} 
+              placeholder="Enter content for the first carousel item"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-gray-500">Item Image</Label>
+            <ImageUploader 
+              onImageUploaded={(url) => handleImageUploaded('carouselItem1Image', url)} 
+              currentImageUrl={form.carouselItem1Image}
+            />
+          </div>
+        </div>
+        
+        {/* Second Carousel Item */}
+        <div className="border border-gray-200 rounded-lg p-4 mb-6">
+          <h3 className="font-semibold mb-4">Carousel Item 2</h3>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="carouselItem2Title" className="text-gray-500">Item Title</Label>
+            <Input 
+              id="carouselItem2Title" 
+              name="carouselItem2Title" 
+              value={form.carouselItem2Title || 'Development'} 
+              onChange={handleContentChange} 
+              placeholder="Development"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="carouselItem2Content" className="text-gray-500">Item Content</Label>
+            <Textarea 
+              id="carouselItem2Content" 
+              name="carouselItem2Content" 
+              value={form.carouselItem2Content || ''} 
+              onChange={handleContentChange} 
+              placeholder="Enter content for the second carousel item"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-gray-500">Item Image</Label>
+            <ImageUploader 
+              onImageUploaded={(url) => handleImageUploaded('carouselItem2Image', url)} 
+              currentImageUrl={form.carouselItem2Image}
+            />
+          </div>
+        </div>
+        
+        {/* Third Carousel Item */}
+        <div className="border border-gray-200 rounded-lg p-4">
+          <h3 className="font-semibold mb-4">Carousel Item 3</h3>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="carouselItem3Title" className="text-gray-500">Item Title</Label>
+            <Input 
+              id="carouselItem3Title" 
+              name="carouselItem3Title" 
+              value={form.carouselItem3Title || 'Results'} 
+              onChange={handleContentChange} 
+              placeholder="Results"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2 mb-4">
+            <Label htmlFor="carouselItem3Content" className="text-gray-500">Item Content</Label>
+            <Textarea 
+              id="carouselItem3Content" 
+              name="carouselItem3Content" 
+              value={form.carouselItem3Content || ''} 
+              onChange={handleContentChange} 
+              placeholder="Enter content for the third carousel item"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-gray-500">Item Image</Label>
+            <ImageUploader 
+              onImageUploaded={(url) => handleImageUploaded('carouselItem3Image', url)} 
+              currentImageUrl={form.carouselItem3Image}
+            />
+          </div>
         </div>
       </Card>
     </div>
