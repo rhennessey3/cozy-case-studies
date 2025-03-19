@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import HamburgerIcon from './HamburgerIcon';
+import AnimatedMenuIcon from './AnimatedMenuIcon';
 import { Github, Dribbble, Linkedin, Phone } from 'lucide-react';
 
 interface TopNavbarProps {
@@ -64,7 +64,7 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ className }) => {
         </div>
       </Link>
       
-      <HamburgerIcon isOpen={isMenuOpen} onClick={toggleMenu} />
+      <AnimatedMenuIcon isOpen={isMenuOpen} onClick={toggleMenu} />
       
       <div className={cn(
         "fixed inset-0 bg-white z-40 transition-transform duration-300 ease-in-out",
