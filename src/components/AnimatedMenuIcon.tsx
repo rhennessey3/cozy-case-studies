@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface AnimatedMenuIconProps {
@@ -37,7 +37,10 @@ const AnimatedMenuIcon: React.FC<AnimatedMenuIconProps> = ({ isOpen, onClick, cl
               x="0px" 
               y="0px"
               viewBox="0 0 820 864" 
-              style={{ enableBackground: 'new 0 0 820 864' }}
+              style={{ 
+                // Fixed TypeScript error by using proper camelCase property name
+                enableBackground: 'new 0 0 820 864' as any
+              }}
               preserveAspectRatio="xMidYMid meet"
               className={cn(
                 "absolute w-[120px] transition-transform duration-200 ease-[cubic-bezier(0.175,0.885,0.32,1.575)] delay-[2s] -ml-[9px]",
