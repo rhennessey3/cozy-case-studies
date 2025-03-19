@@ -85,7 +85,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           </SheetTrigger>
           {/* Drawer: Sheet content that slides out from under the chest */}
           <SheetContent side="left" className="p-0 border-l border-gray-200">
-            <div className="flex flex-col h-full py-8 px-6">
+            <div className="text-center">
               <h3 className="text-xl font-semibold mb-6">Menu</h3>
               <nav className="flex flex-col space-y-4">
                 <Link 
