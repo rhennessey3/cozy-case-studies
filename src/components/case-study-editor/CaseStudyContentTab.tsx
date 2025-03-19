@@ -23,11 +23,11 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
   return (
     <div className="space-y-8">
       <div className="p-6 bg-white rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-6">Case Study Header</h2>
+        <h2 className="text-xl font-bold mb-6">Case Study Introduction</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="space-y-2">
-            <Label htmlFor="challenge" className="text-gray-500">Subhead One</Label>
+            <Label htmlFor="challenge" className="text-gray-500">Subhead</Label>
             <Input 
               id="challenge" 
               name="challenge" 
@@ -39,20 +39,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="challenge-content" className="text-gray-500">Subhead One Paragraph</Label>
-            <Textarea 
-              id="challenge-content" 
-              name="intro" 
-              value={form.intro} 
-              onChange={handleContentChange} 
-              placeholder="Enter your content here..."
-              className="bg-gray-50 border-gray-200"
-              rows={3}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="approach" className="text-gray-500">Subhead Two</Label>
+            <Label htmlFor="approach" className="text-gray-500">Subhead two</Label>
             <Input 
               id="approach" 
               name="approach" 
@@ -62,22 +49,41 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
               className="bg-gray-50 border-gray-200"
             />
           </div>
-          
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="intro-content" className="text-gray-500">Case Study Introduction Paragraph</Label>
+          <Textarea 
+            id="intro-content" 
+            name="intro" 
+            value={form.intro} 
+            onChange={handleContentChange} 
+            placeholder="Enter your introduction paragraph here..."
+            className="bg-gray-50 border-gray-200 w-full"
+            rows={6}
+          />
+        </div>
+      </div>
+      
+      <div className="p-6 bg-white rounded-lg border border-gray-200">
+        <h2 className="text-xl font-bold mb-6">Case Study Content</h2>
+        
+        <div className="grid grid-cols-1 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="approach-content" className="text-gray-500">Subhead Two Paragraph</Label>
+            <Label htmlFor="solution-content" className="text-gray-500">Solution</Label>
             <Textarea 
-              id="approach-content" 
+              id="solution-content" 
               name="solution" 
               value={form.solution} 
               onChange={handleContentChange} 
-              placeholder="Enter your content here..."
+              placeholder="Enter your solution content here..."
               className="bg-gray-50 border-gray-200"
-              rows={3}
+              rows={4}
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="results" className="text-gray-500">Subhead Three</Label>
+            <Label htmlFor="results" className="text-gray-500">Results</Label>
             <Input 
               id="results" 
               name="results" 
@@ -89,34 +95,17 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="results-content" className="text-gray-500">Subhead Three Paragraph</Label>
+            <Label htmlFor="conclusion-content" className="text-gray-500">Conclusion</Label>
             <Textarea 
-              id="results-content" 
+              id="conclusion-content" 
               name="conclusion" 
               value={form.conclusion} 
               onChange={handleContentChange} 
-              placeholder="Enter your content here..."
+              placeholder="Enter your conclusion here..."
               className="bg-gray-50 border-gray-200"
-              rows={3}
+              rows={4}
             />
           </div>
-        </div>
-      </div>
-      
-      <div className="space-y-6">
-        <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-6 bg-blue-500 rounded"></div>
-            <h3 className="text-lg font-semibold">Additional Content</h3>
-          </div>
-          <Textarea 
-            name="intro" 
-            value={form.intro} 
-            onChange={handleContentChange} 
-            placeholder="Additional content text"
-            rows={3}
-            className="border-gray-300"
-          />
         </div>
       </div>
     </div>
