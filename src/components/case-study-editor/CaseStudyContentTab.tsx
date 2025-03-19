@@ -24,6 +24,91 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
   return (
     <div className="space-y-8">
       <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
+        <h2 className="text-xl font-bold mb-6">Case Study Header</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="space-y-2">
+            <Label htmlFor="subhead-one" className="text-gray-500">Subhead One</Label>
+            <Input 
+              id="subhead-one" 
+              name="challenge" 
+              value={form.challenge} 
+              onChange={handleContentChange} 
+              placeholder="Challenge"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="subhead-one-paragraph" className="text-gray-500">Subhead One Paragraph</Label>
+            <Textarea 
+              id="subhead-one-paragraph" 
+              name="intro" 
+              value={form.intro} 
+              onChange={handleContentChange} 
+              placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="space-y-2">
+            <Label htmlFor="subhead-two" className="text-gray-500">Subhead Two</Label>
+            <Input 
+              id="subhead-two" 
+              name="approach" 
+              value={form.approach} 
+              onChange={handleContentChange} 
+              placeholder="Approach"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="subhead-two-paragraph" className="text-gray-500">Subhead Two Paragraph</Label>
+            <Textarea 
+              id="subhead-two-paragraph" 
+              name="solution" 
+              value={form.solution} 
+              onChange={handleContentChange} 
+              placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="subhead-three" className="text-gray-500">Subhead Three</Label>
+            <Input 
+              id="subhead-three" 
+              name="results" 
+              value={form.results} 
+              onChange={handleContentChange} 
+              placeholder="Results"
+              className="bg-gray-50 border-gray-200"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="subhead-three-paragraph" className="text-gray-500">Subhead Three Paragraph</Label>
+            <Textarea 
+              id="subhead-three-paragraph" 
+              name="conclusion" 
+              value={form.conclusion} 
+              onChange={handleContentChange} 
+              placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
+              className="bg-gray-50 border-gray-200"
+              rows={3}
+            />
+          </div>
+        </div>
+      </Card>
+      
+      <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
         <h2 className="text-xl font-bold mb-6">Case Study Introduction</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
