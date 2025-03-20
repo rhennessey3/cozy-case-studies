@@ -37,9 +37,11 @@ const CaseStudyDetail: React.FC = () => {
     },
     enabled: !!slug,
     retry: isAdminRoute ? 0 : 1, // Don't retry in admin mode
-    onError: (err) => {
-      console.error('Error loading case study:', err);
-      toast.error(`Failed to load case study: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    meta: {
+      onError: (err: any) => {
+        console.error('Error loading case study:', err);
+        toast.error(`Failed to load case study: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
     }
   });
 
