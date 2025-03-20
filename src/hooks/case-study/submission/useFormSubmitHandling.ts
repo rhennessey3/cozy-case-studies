@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { processBasicInfo } from './processors/basicInfoProcessor';
 import { processContentData } from './processors/contentDataProcessor';
-import { processCustomSectionsFromProcessor } from './processors/customSectionsProcessor';
+import { processCustomSections } from './processors/customSectionsProcessor';
 import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
 
 const LOCAL_CASE_STUDIES_KEY = 'local_case_studies';
@@ -54,7 +54,6 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
   }
 };
 
-// Special function to handle database operations in local auth mode
 const processLocalDatabase = async (form: CaseStudyForm, isNew: boolean, slug?: string) => {
   const caseStudyId = isNew 
     ? "local-" + Date.now() 
@@ -207,7 +206,7 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         
         await processSectionImages(form, caseStudyId);
         
-        await processCustomSectionsFromProcessor(form, caseStudyId);
+        await processCustomSections(form, caseStudyId);
         
         toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
         

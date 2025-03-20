@@ -7,13 +7,7 @@ import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
 
 const LOCAL_CASE_STUDIES_KEY = 'local_case_studies';
 
-type CaseStudiesState = {
-  id: string;
-  title: string;
-  slug: string;
-  category: string;
-  created_at: string;
-}[];
+type CaseStudiesState = CaseStudy[];
 
 export const useFetchCaseStudies = () => {
   const [caseStudies, setCaseStudies] = useState<CaseStudiesState>([]);
@@ -35,12 +29,24 @@ export const useFetchCaseStudies = () => {
         try {
           const localCaseStudies = JSON.parse(localCaseStudiesString);
           
-          // Format the local case studies to match the expected state structure
+          // Format the local case studies to match the expected CaseStudy structure
           const formattedLocalCaseStudies = localCaseStudies.map((cs: any) => ({
             id: cs.id,
             title: cs.title,
             slug: cs.slug,
             category: cs.category || 'Uncategorized',
+            summary: cs.summary || '',
+            description: cs.description || '',
+            coverImage: cs.coverImage || '',
+            height: cs.height || '',
+            content: cs.content || {
+              intro: '',
+              challenge: '',
+              approach: '',
+              solution: '',
+              results: '',
+              conclusion: ''
+            },
             created_at: cs.created_at || new Date().toISOString()
           }));
           
@@ -62,15 +68,35 @@ export const useFetchCaseStudies = () => {
     try {
       const { data, error } = await supabase
         .from('case_studies')
-        .select('id, title, slug, category, created_at')
+        .select('id, title, slug, category, summary, description, cover_image, height, created_at')
         .order('created_at', { ascending: false });
         
       if (error) {
         console.error('Error fetching case studies:', error);
         toast.error('Failed to fetch case studies');
         setCaseStudies([]);
-      } else {
-        setCaseStudies(data || []);
+      } else if (data) {
+        // Format Supabase response to match CaseStudy type
+        const formattedCaseStudies = data.map(item => ({
+          id: item.id,
+          title: item.title,
+          slug: item.slug,
+          category: item.category || 'Uncategorized',
+          summary: item.summary || '',
+          description: item.description || '',
+          coverImage: item.cover_image || '',
+          height: item.height || '',
+          content: {
+            intro: '',
+            challenge: '',
+            approach: '',
+            solution: '',
+            results: '',
+            conclusion: ''
+          }
+        }));
+        
+        setCaseStudies(formattedCaseStudies);
       }
     } catch (error) {
       console.error('Exception fetching case studies:', error);
