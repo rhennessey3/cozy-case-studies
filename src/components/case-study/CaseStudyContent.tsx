@@ -8,7 +8,6 @@ import UserFlowSection from './UserFlowSection';
 import IterationSection from './IterationSection';
 import PrototypingSection from './PrototypingSection';
 import ContactSection from '@/components/sections/ContactSection';
-import DynamicSection from './DynamicSection';
 import CaseStudyHero from './CaseStudyHero';
 
 interface CaseStudyContentProps {
@@ -16,39 +15,6 @@ interface CaseStudyContentProps {
 }
 
 const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
-  // Find hero section data if it exists in sections
-  const heroSection = caseStudy.sections?.find(section => section.__component === 'case-study.hero');
-  
-  // If we have the new modular sections, use them
-  if (caseStudy.sections && caseStudy.sections.length > 0) {
-    return (
-      <>
-        {/* Display Hero section */}
-        <CaseStudyHero 
-          title={heroSection?.casestudytitle || caseStudy.title}
-          coverImage={caseStudy.coverImage}
-          category={caseStudy.category}
-          objective={heroSection?.objectiveparagraph || caseStudy.content.challenge}
-          approach={heroSection?.approachparagraph || caseStudy.content.approach}
-          results={heroSection?.resultsparagraph || caseStudy.content.results}
-          objectiveHeading={heroSection?.objectiveheading || "Objective"}
-          approachHeading={heroSection?.approachheading || "Approach"}
-          resultsHeading={heroSection?.resultsheading || "Results"}
-        />
-
-        {/* Display dynamic sections from Strapi */}
-        {caseStudy.sections
-          .filter(section => section.__component !== 'case-study.hero') // Skip hero section as it's already displayed
-          .map((section, index) => (
-            <DynamicSection key={section.id || index} section={section} />
-          ))}
-        
-        <ContactSection />
-      </>
-    );
-  }
-  
-  // Fallback to the original structure
   return (
     <>
       <CaseStudyHero 

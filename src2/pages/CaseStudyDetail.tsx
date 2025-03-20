@@ -3,11 +3,9 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import TopNavbar from '@/components/TopNavbar';
 import Footer from '@/components/Footer';
-import CaseStudyHero from '@/components/case-study/CaseStudyHero';
-import CaseStudyIntro from '@/components/case-study/CaseStudyIntro';
 import CaseStudyContent from '@/components/case-study/CaseStudyContent';
 import { useQuery } from '@tanstack/react-query';
-import { getCaseStudyBySlug } from '@/services/strapiService';
+import { getCaseStudyBySlug } from '@/services/caseStudiesService';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,7 +28,7 @@ const CaseStudyDetail: React.FC = () => {
         <div className="text-center p-8">
           <Loader2 className="h-12 w-12 animate-spin text-cozy-500 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold text-cozy-700 mb-2">Loading Case Study</h2>
-          <p className="text-cozy-500">Fetching data from Strapi CMS...</p>
+          <p className="text-cozy-500">Fetching data...</p>
         </div>
       </div>
     );
@@ -47,7 +45,7 @@ const CaseStudyDetail: React.FC = () => {
             <AlertDescription>
               {error instanceof Error 
                 ? error.message 
-                : "We couldn't load this case study. It may not exist or there was a connection issue with our CMS."}
+                : "We couldn't load this case study. It may not exist or there was a connection issue."}
             </AlertDescription>
           </Alert>
           
@@ -58,16 +56,6 @@ const CaseStudyDetail: React.FC = () => {
             <Button asChild>
               <Link to="/case-studies">View All Case Studies</Link>
             </Button>
-          </div>
-          
-          <div className="mt-8 p-6 border rounded-lg bg-white max-w-xl">
-            <h3 className="text-lg font-semibold mb-2">Troubleshooting Tips</h3>
-            <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-              <li>Check that the case study slug is correct</li>
-              <li>Verify Strapi CMS is online at {import.meta.env.VITE_STRAPI_API_URL || 'your configured URL'}</li>
-              <li>Ensure CORS is properly configured in Strapi to allow requests from {window.location.origin}</li>
-              <li>Check that the case study exists in Strapi and is published</li>
-            </ul>
           </div>
         </div>
         <Footer />
