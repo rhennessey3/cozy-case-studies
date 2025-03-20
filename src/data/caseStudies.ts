@@ -17,7 +17,6 @@ export interface CaseStudy {
     results: string;
     conclusion: string;
   };
-  sections?: StrapiCaseStudySection[];
 }
 
 export const caseStudies: CaseStudy[] = [
