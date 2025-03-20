@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 
 interface CaseStudyEditorHeaderProps {
   headingText: string;
-  onCreateNew: () => void;
   onViewLive: () => void;
   onLogout: () => void;
   showViewLive: boolean;

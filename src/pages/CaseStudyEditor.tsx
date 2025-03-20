@@ -78,7 +78,6 @@ const CaseStudyEditor = () => {
     <CaseStudyEditorLayout>
       <CaseStudyEditorHeader 
         headingText={getHeadingText()}
-        onCreateNew={createNewCaseStudy}
         onViewLive={handleViewLive}
         onLogout={handleLogout}
         showViewLive={!!slug && slug !== 'new'}

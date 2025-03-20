@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
@@ -18,12 +18,20 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
   onCreateNew
 }) => {
   const navigate = useNavigate();
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
 
   const selectCaseStudy = (slug: string) => {
     // Only navigate if the current slug is different
     if (slug !== currentSlug) {
       navigate(`/admin/case-studies/${slug}`);
     }
+  };
+
+  const handleCreateNew = () => {
+    setIsCreatingNew(true);
+    onCreateNew();
+    // Reset the state after a delay to provide visual feedback
+    setTimeout(() => setIsCreatingNew(false), 300);
   };
 
   return (
@@ -33,7 +41,7 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
         <Button 
           variant="ghost" 
           size="sm" 
-          onClick={onCreateNew}
+          onClick={handleCreateNew}
           className="h-8 w-8 p-0"
           title="Create new case study"
         >
@@ -42,7 +50,13 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
       </div>
       
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
-        {caseStudies.length === 0 ? (
+        {isCreatingNew && (
+          <div className="p-2 rounded bg-gray-200 font-medium animate-pulse">
+            <div className="truncate">New Case Study</div>
+          </div>
+        )}
+        
+        {caseStudies.length === 0 && !isCreatingNew ? (
           <div className="text-sm text-gray-500 italic p-2">
             No case studies found
           </div>
