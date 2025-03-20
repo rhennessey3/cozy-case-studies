@@ -19,29 +19,48 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
   // Check session status on mount
   useEffect(() => {
     const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSessionChecked(true);
-      
-      // If not authenticated through Supabase but our context says we are,
-      // sign in with the admin credentials
-      if (!data.session && isAuthenticated) {
-        try {
-          console.log('Attempting to sign in with admin credentials:', ADMIN_EMAIL);
-          // Sign in as the admin user (this is a workaround for the demo)
-          const { error } = await supabase.auth.signInWithPassword({
-            email: ADMIN_EMAIL,
-            password: ADMIN_PASSWORD
-          });
-          
-          if (error) {
-            console.error('Failed to sign in with admin credentials:', error);
-            toast.error(`Authentication error: ${error.message}`);
-          } else {
-            console.log('Signed in with admin credentials successfully');
+      try {
+        const { data } = await supabase.auth.getSession();
+        const isSupabaseAuthenticated = !!data.session;
+        
+        console.log('Session check:', isSupabaseAuthenticated ? 'Authenticated with Supabase' : 'Not authenticated with Supabase');
+        
+        // If not authenticated through Supabase but our context says we are,
+        // sign in with the admin credentials
+        if (!isSupabaseAuthenticated && isAuthenticated) {
+          try {
+            console.log('Session mismatch detected. Attempting to sign in with admin credentials...');
+            
+            // Sign out first to clear any potential bad state
+            await supabase.auth.signOut();
+            
+            // Sign in as the admin user
+            const { data: signInData, error } = await supabase.auth.signInWithPassword({
+              email: ADMIN_EMAIL,
+              password: ADMIN_PASSWORD
+            });
+            
+            if (error) {
+              console.error('Failed to sign in with admin credentials:', error);
+              toast.error(`Authentication error: ${error.message}`, {
+                id: 'auth-error', // Using an ID to prevent duplicate toasts
+                duration: 5000,
+              });
+            } else if (signInData.session) {
+              console.log('Signed in with admin credentials successfully');
+              toast.success('Authentication restored', {
+                id: 'auth-success',
+                duration: 3000,
+              });
+            }
+          } catch (error) {
+            console.error('Exception during sign in with admin credentials:', error);
           }
-        } catch (error) {
-          console.error('Exception during sign in with admin credentials:', error);
         }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setSessionChecked(true);
       }
     };
     
@@ -57,11 +76,14 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
       const { data: sessionData } = await supabase.auth.getSession();
       
       if (!sessionData.session) {
-        // If not authenticated, try to sign in with admin credentials
+        // If not authenticated with Supabase, try to sign in
         if (isAuthenticated) {
           try {
             console.log('Attempting to authenticate before save operation');
-            // Use signInWithPassword directly for the most reliable auth approach
+            // Sign out first to ensure clean state
+            await supabase.auth.signOut();
+            
+            // Use signInWithPassword for the most reliable auth approach
             const { data, error } = await supabase.auth.signInWithPassword({
               email: ADMIN_EMAIL,
               password: ADMIN_PASSWORD
@@ -69,7 +91,7 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
             
             if (error) {
               console.error('Authentication error:', error);
-              throw error;
+              throw new Error(`Authentication failed: ${error.message}`);
             }
             
             if (!data.session) {
@@ -98,6 +120,8 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
         setSaving(false);
         return;
       }
+      
+      console.log('Authentication verified, proceeding with save operation');
       
       // Process the case study submission in steps
       const { caseStudyId } = await processBasicInfo(form, slug);

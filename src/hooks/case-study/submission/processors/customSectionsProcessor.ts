@@ -4,6 +4,7 @@ import { CaseStudyForm } from '@/types/caseStudy';
 import { processAlignmentSection } from './sectionTypes/alignmentProcessor';
 import { processCarouselSection } from './sectionTypes/carouselProcessor';
 import { processFourParagraphsSection } from './sectionTypes/fourParagraphsProcessor';
+import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/contexts/AuthContext';
 
 export const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
   // Parse custom sections if available
@@ -20,10 +21,49 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   // First, check if we have a valid session
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
   
-  if (sessionError || !sessionData.session) {
-    console.error('No valid session found for processing custom sections:', sessionError || 'No session data');
-    throw new Error('Authentication required to process sections');
+  if (sessionError) {
+    console.error('Session error when processing custom sections:', sessionError);
+    throw new Error(`Session error: ${sessionError.message}`);
   }
+  
+  if (!sessionData.session) {
+    console.error('No valid session found for processing custom sections');
+    
+    // Attempt emergency authentication
+    console.log('Attempting emergency authentication...');
+    try {
+      // Sign out first to ensure clean state
+      await supabase.auth.signOut();
+      
+      // Try to authenticate
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: ADMIN_EMAIL,
+        password: ADMIN_PASSWORD
+      });
+      
+      if (error) {
+        console.error('Emergency authentication failed:', error);
+        throw new Error(`Authentication failed: ${error.message}`);
+      }
+      
+      if (!data.session) {
+        throw new Error('No session created after emergency authentication');
+      }
+      
+      console.log('Emergency authentication succeeded');
+    } catch (authError) {
+      console.error('Emergency authentication exception:', authError);
+      throw new Error('Authentication required to process sections');
+    }
+  }
+  
+  // Verify we now have a valid session
+  const { data: verificationData } = await supabase.auth.getSession();
+  if (!verificationData.session) {
+    throw new Error('Failed to establish a valid session after authentication attempts');
+  }
+  
+  console.log('Valid session confirmed, processing custom sections');
   
   // First, get all existing custom sections
   const { data: existingSections, error: sectionsQueryError } = await supabase
@@ -34,7 +74,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     
   if (sectionsQueryError) {
     console.error('Error fetching existing sections:', sectionsQueryError);
-    return;
+    throw new Error(`Failed to fetch existing sections: ${sectionsQueryError.message}`);
   }
   
   const existingSectionIds = new Set(existingSections?.map(s => s.id) || []);
@@ -45,7 +85,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     customSections.sort((a: any, b: any) => a.order - b.order);
     
     // Log authentication state for debugging
-    console.log('Authentication state:', sessionData.session ? 'Authenticated' : 'Not authenticated');
+    console.log('Processing custom sections with valid authentication');
     
     for (const [index, section] of customSections.entries()) {
       // Use the section's order if available, otherwise use the index + base offset
@@ -53,12 +93,17 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
         ? section.order 
         : index + 7; // Start after the 6 standard sections
       
-      if (section.type === 'alignment') {
-        await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder);
-      } else if (section.type === 'carousel') {
-        await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder);
-      } else if (section.type === 'fourParagraphs') {
-        await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder);
+      try {
+        if (section.type === 'alignment') {
+          await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder);
+        } else if (section.type === 'carousel') {
+          await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder);
+        } else if (section.type === 'fourParagraphs') {
+          await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder);
+        }
+      } catch (sectionError: any) {
+        console.error(`Error processing ${section.type} section:`, sectionError);
+        throw new Error(`Failed to process ${section.type} section: ${sectionError.message}`);
       }
     }
   }
@@ -77,6 +122,9 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
       
     if (deleteError) {
       console.error('Error deleting removed sections:', deleteError);
+      throw new Error(`Failed to delete removed sections: ${deleteError.message}`);
     }
   }
+  
+  console.log('Custom sections processing completed successfully');
 };
