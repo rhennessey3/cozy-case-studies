@@ -9,7 +9,6 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
   let caseStudyId: string | undefined;
   
   if (isNew) {
-    // Create a new case study - use the correct property names that match the database schema
     const { data, error } = await supabase
       .from('case_studies')
       .insert({
@@ -17,7 +16,7 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
         slug: form.slug,
         summary: form.summary,
         description: form.description,
-        cover_image: form.coverImage, // Fixed: coverImage -> cover_image
+        cover_image: form.coverImage,
         category: form.category,
         height: form.height
       })
@@ -31,7 +30,6 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
     
     caseStudyId = data.id;
   } else {
-    // Update existing case study with correct property names
     const { error } = await supabase
       .from('case_studies')
       .update({
@@ -39,7 +37,7 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
         slug: form.slug,
         summary: form.summary,
         description: form.description,
-        cover_image: form.coverImage, // Fixed: coverImage -> cover_image
+        cover_image: form.coverImage,
         category: form.category,
         height: form.height
       })
@@ -50,7 +48,6 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
       throw new Error('Failed to update case study');
     }
     
-    // Fetch the case study ID based on the slug
     const { data, error: fetchError } = await supabase
       .from('case_studies')
       .select('id')
@@ -69,7 +66,6 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
 };
 
 const processContentData = async (form: CaseStudyForm, caseStudyId: string, isNew: boolean) => {
-  // Upsert content data (intro, challenge, approach, etc.)
   const { data: contentData, error: contentError } = await supabase
     .from('case_study_content')
     .upsert(
@@ -103,13 +99,10 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
     { component: 'conclusion', image_url: form.conclusionImage }
   ];
   
-  // Process each section individually to avoid array type errors
   for (const section of sections) {
     const { component, image_url } = section;
     
-    // Check if an image URL exists before upserting
     if (image_url) {
-      // Fix: Use individual upsert per section rather than array
       const { error } = await supabase
         .from('case_study_sections')
         .upsert(
@@ -126,7 +119,6 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
         throw new Error(`Failed to save ${component} image`);
       }
     } else {
-      // If no image URL exists, delete the existing record
       const { error } = await supabase
         .from('case_study_sections')
         .delete()
@@ -146,17 +138,15 @@ const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) =
   // Add your logic here to handle custom sections
 };
 
-export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
+export const useFormSubmitHandling = (form: CaseStudyForm, navigate: ReturnType<typeof useNavigate>, slug?: string) => {
   const [saving, setSaving] = useState(false);
-  const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
     setSaving(true);
     
     try {
-      // Validate essential fields
       if (!form.title) {
         toast.error('Title is required');
         setSaving(false);
@@ -169,7 +159,6 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
         return { success: false };
       }
       
-      // Check for local auth only mode
       const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
       
       if (isLocalAuthOnly) {
@@ -178,28 +167,28 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
         return { success: true, slug: form.slug };
       }
       
-      // Process basic info (title, slug, summary, etc.)
       const { caseStudyId, isNew } = await processBasicInfo(form, slug);
       
       if (!caseStudyId) {
         throw new Error('Failed to process case study basic info');
       }
       
-      // Process content data (intro, challenge, approach, etc.)
       await processContentData(form, caseStudyId, isNew);
       
-      // Process section images
       await processSectionImages(form, caseStudyId);
       
-      // Process custom sections
       await processCustomSections(form, caseStudyId);
       
       toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
       
+      if (isNew) {
+        navigate(`/admin/case-studies/${form.slug}`);
+      }
+      
       return { success: true, slug: form.slug };
     } catch (error) {
       console.error('Error saving case study:', error);
-      toast.error('Failed to save case study');
+      toast.error(`Failed to ${isNew ? 'create' : 'update'} case study: ${(error as Error).message}`);
       return { success: false };
     } finally {
       setSaving(false);

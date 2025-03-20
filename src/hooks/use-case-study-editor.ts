@@ -20,7 +20,8 @@ export const useCaseStudyEditor = (slug?: string) => {
     
     // If submission was successful, refetch the case studies list
     if (result?.success) {
-      refetchCaseStudies();
+      // Immediately refetch the case studies to update the sidebar
+      await refetchCaseStudies();
       
       // Navigate to the newly created/updated case study
       if (!slug && result.slug) {
