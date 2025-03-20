@@ -12,7 +12,6 @@ interface CaseStudyEditorHeaderProps {
 
 const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
   headingText,
-  onCreateNew,
   onViewLive,
   onLogout,
   showViewLive
@@ -23,12 +22,6 @@ const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
         {headingText}
       </h1>
       <div className="flex gap-2">
-        <Button 
-          variant="outline" 
-          onClick={onCreateNew}
-        >
-          New Case Study
-        </Button>
         {showViewLive && (
           <Button
             variant="outline"
