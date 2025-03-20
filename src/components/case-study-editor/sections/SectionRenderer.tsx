@@ -70,9 +70,9 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
         <CarouselSection
           isOpen={isOpen}
           onToggle={onToggle}
-          title={form.carouselTitle || ''}
+          carouselTitle={form.carouselTitle || ''}
           onChange={handleContentChange}
-          onImageUploaded={handleImageUploaded}
+          onImageUpload={handleImageUploaded}
           items={carouselItems}
           onReorderItems={handleReorderCarouselItems}
         />
@@ -82,12 +82,12 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
         <FourParagraphsSection
           isOpen={isOpen}
           onToggle={onToggle}
-          title={form.fourParaTitle || ''}
-          subtitle={form.fourParaSubtitle || ''}
+          sectionTitle={form.fourParaTitle || ''}
+          sectionSubtitle={form.fourParaSubtitle || ''}
           paragraphs={paragraphItems}
-          image={form.fourParaImage || ''}
+          sectionImage={form.fourParaImage || ''}
           onChange={handleContentChange}
-          onImageUploaded={(url) => handleImageUploaded('fourParaImage', url)}
+          onImageUpload={(url) => handleImageUploaded('fourParaImage', url)}
         />
       );
     default:
