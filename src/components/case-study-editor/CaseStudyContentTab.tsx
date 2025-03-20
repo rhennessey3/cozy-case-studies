@@ -3,7 +3,7 @@ import React from 'react';
 import SectionManager from '@/components/case-study-editor/sections/SectionManager';
 import SectionList from '@/components/case-study-editor/sections/SectionList';
 import { useSectionState } from './sections/useSectionState';
-import { useCarouselItems } from './sections/useCarouselItems';
+import { useCarouselItems } from '@/hooks/case-study-editor/sections/useCarouselItems';
 import { useParagraphItems } from './sections/useParagraphItems';
 
 interface CaseStudyContentTabProps {

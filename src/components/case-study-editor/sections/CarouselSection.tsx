@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,7 +24,7 @@ interface CarouselSectionProps {
   items: CarouselItem[];
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   onImageUpload: (field: string, url: string) => void;
-  onReorderItems?: (newItems: CarouselItem[]) => void;
+  onReorderItems: (fromIndex: number, toIndex: number) => void;
 }
 
 const CarouselSection: React.FC<CarouselSectionProps> = ({
@@ -40,16 +39,12 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
   const moveItem = (index: number, direction: 'up' | 'down') => {
     if (!onReorderItems) return;
     
-    const newItems = [...items];
-    
     if (direction === 'up' && index > 0) {
-      // Swap with the item above
-      [newItems[index], newItems[index - 1]] = [newItems[index - 1], newItems[index]];
-      onReorderItems(newItems);
+      // Move item up by swapping with the item above
+      onReorderItems(index, index - 1);
     } else if (direction === 'down' && index < items.length - 1) {
-      // Swap with the item below
-      [newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]];
-      onReorderItems(newItems);
+      // Move item down by swapping with the item below
+      onReorderItems(index, index + 1);
     }
   };
   
