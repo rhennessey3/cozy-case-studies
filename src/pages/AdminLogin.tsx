@@ -10,8 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, Info } from "lucide-react";
 
 const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -21,6 +21,7 @@ const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
+  const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
 
   useEffect(() => {
     // Reset login state and error when component loads
@@ -33,8 +34,9 @@ const AdminLogin: React.FC = () => {
     // Only show hint in development mode
     if (import.meta.env.DEV) {
       console.log(`Hint: The admin password is "${ADMIN_PASSWORD}"`);
+      console.log(`Authentication mode: ${isLocalAuthOnly ? 'Local Auth Only' : 'Supabase Auth'}`);
     }
-  }, []);
+  }, [isLocalAuthOnly]);
 
   // If already authenticated, redirect to admin page
   if (isAuthenticated) {
@@ -95,6 +97,16 @@ const AdminLogin: React.FC = () => {
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
+              {isLocalAuthOnly && (
+                <Alert variant="info" className="bg-blue-50 border-blue-200">
+                  <Info className="h-4 w-4 text-blue-600" />
+                  <AlertTitle className="text-blue-700">Development Mode</AlertTitle>
+                  <AlertDescription className="text-blue-600">
+                    Using local authentication only. Supabase authentication is bypassed.
+                  </AlertDescription>
+                </Alert>
+              )}
+              
               {loginError && (
                 <Alert variant="destructive">
                   <AlertDescription>{loginError}</AlertDescription>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,9 +10,18 @@ export const useSupabaseAuth = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  
+  // Check if we're using local auth only mode
+  const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
 
   // Function to verify if we can authenticate with Supabase
   const verifySupabaseAuthentication = async (): Promise<boolean> => {
+    // If we're in local auth only mode, don't try to verify with Supabase
+    if (isLocalAuthOnly) {
+      console.log('Local auth only mode is enabled. Skipping Supabase authentication verification.');
+      return true;
+    }
+    
     try {
       // Clear any existing session first
       await supabase.auth.signOut();
@@ -68,13 +78,19 @@ export const useSupabaseAuth = () => {
     const initAuth = async () => {
       try {
         console.log('Initializing auth state...');
+        console.log('Local auth only mode:', isLocalAuthOnly ? 'enabled' : 'disabled');
         
-        // Set up auth state change listener
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-          console.log('Auth state changed:', event, newSession ? 'User is signed in' : 'No user');
-          setSession(newSession);
-          setUser(newSession?.user ?? null);
-        });
+        // Set up auth state change listener (only if not in local auth only mode)
+        let subscription: { unsubscribe: () => void } = { unsubscribe: () => {} };
+        
+        if (!isLocalAuthOnly) {
+          const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
+            console.log('Auth state changed:', event, newSession ? 'User is signed in' : 'No user');
+            setSession(newSession);
+            setUser(newSession?.user ?? null);
+          });
+          subscription = data.subscription;
+        }
 
         // Check local authentication status
         const authStatus = localStorage.getItem(AUTH_STORAGE_KEY);
@@ -83,27 +99,32 @@ export const useSupabaseAuth = () => {
           // First set authenticated to true based on local storage
           setIsAuthenticated(true);
           
-          // Get current Supabase session
-          const { data } = await supabase.auth.getSession();
-          
-          // If no active Supabase session, attempt to sign in
-          if (!data.session) {
-            console.log('No active Supabase session found but local auth is true. Attempting to sign in...');
-            const canAuthenticate = await verifySupabaseAuthentication();
+          // If we're not in local auth only mode, attempt to verify with Supabase
+          if (!isLocalAuthOnly) {
+            // Get current Supabase session
+            const { data } = await supabase.auth.getSession();
             
-            if (!canAuthenticate) {
-              console.log('Failed to authenticate with Supabase despite local auth. Not resetting auth state to maintain local functionality.');
-              // We keep isAuthenticated as true to allow local functionality to work
-              // This is a development convenience
+            // If no active Supabase session, attempt to sign in
+            if (!data.session) {
+              console.log('No active Supabase session found but local auth is true. Attempting to sign in...');
+              const canAuthenticate = await verifySupabaseAuthentication();
+              
+              if (!canAuthenticate) {
+                console.log('Failed to authenticate with Supabase despite local auth. Keeping local auth functionality.');
+              } else {
+                console.log('Successfully authenticated with Supabase.');
+              }
             } else {
-              console.log('Successfully authenticated with Supabase.');
+              console.log('Active Supabase session found and local auth is true.');
             }
           } else {
-            console.log('Active Supabase session found and local auth is true.');
+            console.log('Using local authentication only. Skipping Supabase session check.');
           }
         } else {
-          // No local authentication, ensure we're signed out from Supabase too
-          await supabase.auth.signOut();
+          // No local authentication, ensure we're signed out from Supabase too (if not in local auth only mode)
+          if (!isLocalAuthOnly) {
+            await supabase.auth.signOut();
+          }
           setIsAuthenticated(false);
         }
 
@@ -118,11 +139,19 @@ export const useSupabaseAuth = () => {
     };
     
     initAuth();
-  }, []);
+  }, [isLocalAuthOnly]);
 
   const login = async (password: string): Promise<boolean> => {
     if (password === ADMIN_PASSWORD) {
       try {
+        // In local auth only mode, skip Supabase authentication
+        if (isLocalAuthOnly) {
+          console.log('Local auth only mode enabled. Skipping Supabase authentication.');
+          setIsAuthenticated(true);
+          localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+          return true;
+        }
+        
         // First, ensure we're signed out
         await supabase.auth.signOut();
         
@@ -208,13 +237,15 @@ export const useSupabaseAuth = () => {
 
   const logout = async () => {
     try {
-      // Sign out from Supabase
-      await supabase.auth.signOut();
+      // Sign out from Supabase (if not in local auth only mode)
+      if (!isLocalAuthOnly) {
+        await supabase.auth.signOut();
+      }
       
       // Update local authentication state
       setIsAuthenticated(false);
       localStorage.removeItem(AUTH_STORAGE_KEY);
-      console.log('Logout successful - both local and Supabase sessions cleared');
+      console.log('Logout successful');
     } catch (error) {
       console.error('Error during logout:', error);
     }

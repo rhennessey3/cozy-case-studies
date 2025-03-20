@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { processAlignmentSection } from './sectionTypes/alignmentProcessor';
@@ -6,9 +7,13 @@ import { processFourParagraphsSection } from './sectionTypes/fourParagraphsProce
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/constants/authConstants';
 
 export const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
-  // In development mode, skip actual processing
-  if (import.meta.env.DEV) {
-    console.log('DEV MODE: Skipping custom sections processing');
+  // Check if we're using local auth only mode
+  const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
+  
+  // In development mode or local auth only mode, skip actual processing
+  if (import.meta.env.DEV || isLocalAuthOnly) {
+    console.log('DEV MODE or LOCAL AUTH ONLY: Skipping custom sections processing with Supabase');
+    console.log('Would have processed these custom sections:', form.customSections);
     return;
   }
   
