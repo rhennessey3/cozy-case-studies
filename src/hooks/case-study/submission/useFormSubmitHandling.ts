@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
@@ -138,7 +138,7 @@ const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) =
   // Add your logic here to handle custom sections
 };
 
-export const useFormSubmitHandling = (form: CaseStudyForm, navigate: ReturnType<typeof useNavigate>, slug?: string) => {
+export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFunction, slug?: string) => {
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -188,7 +188,7 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: ReturnType<
       return { success: true, slug: form.slug };
     } catch (error) {
       console.error('Error saving case study:', error);
-      toast.error(`Failed to ${isNew ? 'create' : 'update'} case study: ${(error as Error).message}`);
+      toast.error(`Failed to ${slug ? 'update' : 'create'} case study: ${(error as Error).message}`);
       return { success: false };
     } finally {
       setSaving(false);
