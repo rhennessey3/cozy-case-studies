@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudy } from '@/data/caseStudies';
 
@@ -236,4 +235,9 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
     console.error('Error fetching case study by slug:', error);
     throw new Error(`Case study with slug "${slug}" not found`);
   }
+};
+
+// Add or update the fetchCaseStudyBySlug function
+export const fetchCaseStudyBySlug = async (slug: string) => {
+  return getCaseStudyBySlug(slug);
 };

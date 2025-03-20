@@ -1,10 +1,2 @@
-
-// Export all services
-import { getCaseStudies, getCaseStudyBySlug } from './caseStudiesService';
-import { testDatabaseConnection } from './databaseService';
-
-export {
-  getCaseStudies,
-  getCaseStudyBySlug,
-  testDatabaseConnection
-};
+export { getCaseStudies, getCaseStudyBySlug } from './caseStudiesService';
+export { fetchCaseStudyBySlug } from './caseStudiesService';
