@@ -35,6 +35,7 @@ export const getLocalCaseStudies = (): CaseStudy[] => {
         results: '',
         conclusion: ''
       },
+      customSections: cs.customSections || '[]', // Ensure customSections is available
       created_at: cs.created_at || new Date().toISOString()
     }));
   } catch (error) {
@@ -62,6 +63,7 @@ export const saveLocalCaseStudy = (form: CaseStudyForm, isNew: boolean, slug?: s
     : `local-${slug}`;
   
   console.log(`Local auth mode: ${isNew ? 'Creating' : 'Updating'} case study with slug "${form.slug}"`);
+  console.log("Custom sections to save:", form.customSections);
   
   const existingData = getLocalCaseStudies();
   const existingIndex = existingData.findIndex((cs) => cs.slug === form.slug);
@@ -93,7 +95,7 @@ export const saveLocalCaseStudy = (form: CaseStudyForm, isNew: boolean, slug?: s
     solutionImage: form.solutionImage,
     resultsImage: form.resultsImage,
     conclusionImage: form.conclusionImage,
-    customSections: form.customSections,
+    customSections: form.customSections, // Make sure to save the custom sections
     carouselTitle: form.carouselTitle,
     carouselItem1Title: form.carouselItem1Title,
     carouselItem1Content: form.carouselItem1Content,

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { SectionWithOrder } from './types';
 import { SectionFormState, initializeDefaultSections, getInitialOpenSectionsState } from './utils/defaultSections';
@@ -57,14 +58,17 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   
   // Update form whenever sections change
   useEffect(() => {
+    console.log("Sections updated, saving to form:", sections);
+    
     const event = {
       target: {
         name: 'customSections',
         value: JSON.stringify(sections)
       }
     } as React.ChangeEvent<HTMLInputElement>;
+    
     handleContentChange(event);
-  }, [sections]);
+  }, [sections, handleContentChange]);
 
   return {
     sections,

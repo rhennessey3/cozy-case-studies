@@ -26,7 +26,11 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
     const localCaseStudy = getLocalCaseStudyBySlug(slug);
     
     if (localCaseStudy) {
-      console.log(`[getCaseStudyBySlug] Found case study in local storage: "${localCaseStudy.title}"`);
+      console.log(`[getCaseStudyBySlug] Found case study in local storage:`, localCaseStudy);
+      // Make sure customSections property is available for consumption by the frontend
+      if (localCaseStudy.customSections) {
+        console.log(`[getCaseStudyBySlug] Custom sections found in local storage:`, localCaseStudy.customSections);
+      }
       return localCaseStudy;
     } else if (isAdminRoute()) {
       // In admin mode with local auth, create a new case study if it doesn't exist
@@ -164,7 +168,8 @@ const createNewCaseStudy = (slug: string): CaseStudy => {
       solution: "",
       results: "",
       conclusion: ""
-    }
+    },
+    customSections: "[]" // Initialize with empty array
   };
 };
 

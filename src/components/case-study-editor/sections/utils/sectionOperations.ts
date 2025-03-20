@@ -30,19 +30,29 @@ export const removeSection = (
   setSections: React.Dispatch<React.SetStateAction<SectionWithOrder[]>>,
   setOpenSections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 ) => {
+  console.log(`Removing section with ID: ${id}`);
+  
   setSections(prev => {
     const sectionToRemove = prev.find(section => section.id === id);
-    if (!sectionToRemove) return prev;
+    if (!sectionToRemove) {
+      console.warn(`Section with ID ${id} not found for removal`);
+      return prev;
+    }
     
+    console.log(`Found section to remove:`, sectionToRemove);
     const removedOrder = sectionToRemove.order;
     
-    return prev
-      .filter(section => section.id !== id)
-      .map(section => ({
-        ...section,
-        // Adjust order for sections after the removed one
-        order: section.order > removedOrder ? section.order - 1 : section.order
-      }));
+    const filteredSections = prev.filter(section => section.id !== id);
+    
+    // Adjust order for sections after the removed one
+    const adjustedSections = filteredSections.map(section => ({
+      ...section,
+      // Adjust order for sections after the removed one
+      order: section.order > removedOrder ? section.order - 1 : section.order
+    }));
+    
+    console.log(`Updated sections after removal:`, adjustedSections);
+    return adjustedSections;
   });
   
   // Remove from open sections

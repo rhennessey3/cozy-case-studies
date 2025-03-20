@@ -29,12 +29,28 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: false };
       }
       
+      // Log the form data to debug custom sections
+      console.log("Submitting form with custom sections:", form.customSections);
+      
       const isNew = !slug || slug === 'new' || slug === '';
       console.log('Mode determined:', isNew ? 'Creating new case study' : 'Editing existing case study', 'Slug:', slug);
       
       // Check if we're in local auth mode
       if (isLocalAuthMode()) {
         console.log('Processing in local auth mode with localStorage persistence');
+        
+        // Parse sections to ensure they're valid before saving
+        if (form.customSections) {
+          try {
+            const parsedSections = JSON.parse(form.customSections);
+            console.log("Saving custom sections:", parsedSections);
+          } catch (e) {
+            console.error("Error parsing custom sections before save:", e);
+            toast.error("Error with custom sections format");
+            setSaving(false);
+            return { success: false };
+          }
+        }
         
         const result = saveLocalCaseStudy(form, isNew, slug);
         
