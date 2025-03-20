@@ -1,94 +1,10 @@
-
 import { useState } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
-
-const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
-  const isNew = !slug;
-  let caseStudyId: string | undefined;
-  
-  if (isNew) {
-    const { data, error } = await supabase
-      .from('case_studies')
-      .insert({
-        title: form.title,
-        slug: form.slug,
-        summary: form.summary,
-        description: form.description,
-        cover_image: form.coverImage,
-        category: form.category,
-        height: form.height
-      })
-      .select('id')
-      .single();
-      
-    if (error) {
-      console.error('Error creating case study:', error);
-      throw new Error('Failed to create case study');
-    }
-    
-    caseStudyId = data.id;
-  } else {
-    const { error } = await supabase
-      .from('case_studies')
-      .update({
-        title: form.title,
-        slug: form.slug,
-        summary: form.summary,
-        description: form.description,
-        cover_image: form.coverImage,
-        category: form.category,
-        height: form.height
-      })
-      .eq('slug', slug);
-      
-    if (error) {
-      console.error('Error updating case study:', error);
-      throw new Error('Failed to update case study');
-    }
-    
-    const { data, error: fetchError } = await supabase
-      .from('case_studies')
-      .select('id')
-      .eq('slug', form.slug)
-      .single();
-      
-    if (fetchError) {
-      console.error('Error fetching case study ID:', fetchError);
-      throw new Error('Failed to fetch case study ID');
-    }
-    
-    caseStudyId = data.id;
-  }
-  
-  return { caseStudyId, isNew };
-};
-
-const processContentData = async (form: CaseStudyForm, caseStudyId: string, isNew: boolean) => {
-  const { data: contentData, error: contentError } = await supabase
-    .from('case_study_content')
-    .upsert(
-      {
-        case_study_id: caseStudyId,
-        intro: form.intro,
-        challenge: form.challenge,
-        approach: form.approach,
-        solution: form.solution,
-        results: form.results,
-        conclusion: form.conclusion
-      },
-      { onConflict: 'case_study_id' }
-    )
-    .select()
-    .single();
-    
-  if (contentError) {
-    console.error('Error saving content data:', contentError);
-    throw new Error('Failed to save content data');
-  }
-};
+import { processBasicInfo } from './processors/basicInfoProcessor';
+import { processContentData } from './processors/contentDataProcessor';
 
 const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) => {
   const sections = [
@@ -168,18 +84,23 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: true, slug: form.slug };
       }
       
-      const { caseStudyId, isNew } = await processBasicInfo(form, slug);
+      // Use the improved processors to handle database operations
+      console.log('Using slug to process:', slug);
+      const { caseStudyId } = await processBasicInfo(form, slug);
       
       if (!caseStudyId) {
         throw new Error('Failed to process case study basic info');
       }
       
-      await processContentData(form, caseStudyId, isNew);
+      console.log('Case study ID retrieved:', caseStudyId);
+      
+      await processContentData(form, caseStudyId, slug);
       
       await processSectionImages(form, caseStudyId);
       
       await processCustomSections(form, caseStudyId);
       
+      const isNew = !slug;
       toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
       
       if (isNew) {
