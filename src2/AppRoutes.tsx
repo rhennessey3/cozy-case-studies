@@ -7,8 +7,6 @@ import CaseStudiesLanding from './pages/CaseStudiesLanding';
 import CaseStudyDetail from './pages/CaseStudyDetail';
 import CaseStudyEditor from './pages/CaseStudyEditor';
 import NotFound from './pages/NotFound';
-import StrapiTestPage from './pages/StrapiTestPage';
-import StrapiConfigPage from './pages/StrapiConfigPage';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -19,8 +17,6 @@ const AppRoutes: React.FC = () => {
       <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
       <Route path="/admin/case-studies" element={<CaseStudyEditor />} />
       <Route path="/admin/case-studies/:slug" element={<CaseStudyEditor />} />
-      <Route path="/strapi-test" element={<StrapiTestPage />} />
-      <Route path="/strapi-config" element={<StrapiConfigPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
