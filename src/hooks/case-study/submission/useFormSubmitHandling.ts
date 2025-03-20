@@ -9,7 +9,7 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
   let caseStudyId: string | undefined;
   
   if (isNew) {
-    // Create a new case study
+    // Create a new case study - use the correct property names that match the database schema
     const { data, error } = await supabase
       .from('case_studies')
       .insert({
@@ -17,7 +17,7 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
         slug: form.slug,
         summary: form.summary,
         description: form.description,
-        coverImage: form.coverImage,
+        cover_image: form.coverImage, // Fixed: coverImage -> cover_image
         category: form.category,
         height: form.height
       })
@@ -31,7 +31,7 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
     
     caseStudyId = data.id;
   } else {
-    // Update existing case study
+    // Update existing case study with correct property names
     const { error } = await supabase
       .from('case_studies')
       .update({
@@ -39,7 +39,7 @@ const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
         slug: form.slug,
         summary: form.summary,
         description: form.description,
-        coverImage: form.coverImage,
+        cover_image: form.coverImage, // Fixed: coverImage -> cover_image
         category: form.category,
         height: form.height
       })
@@ -103,12 +103,14 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
     { component: 'conclusion', image_url: form.conclusionImage }
   ];
   
+  // Process each section individually to avoid array type errors
   for (const section of sections) {
     const { component, image_url } = section;
     
     // Check if an image URL exists before upserting
     if (image_url) {
-      const { data, error } = await supabase
+      // Fix: Use individual upsert per section rather than array
+      const { error } = await supabase
         .from('case_study_sections')
         .upsert(
           {
@@ -116,10 +118,8 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
             component: component,
             image_url: image_url
           },
-          { onConflict: ['case_study_id', 'component'], ignoreDuplicates: false }
-        )
-        .select()
-        .single();
+          { onConflict: 'case_study_id,component' }
+        );
         
       if (error) {
         console.error(`Error saving ${component} image:`, error);
@@ -195,10 +195,6 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
       await processCustomSections(form, caseStudyId);
       
       toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
-      
-      if (isNew) {
-        navigate(`/admin/case-studies/${form.slug}`);
-      }
       
       return { success: true, slug: form.slug };
     } catch (error) {

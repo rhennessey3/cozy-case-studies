@@ -8,13 +8,13 @@ export const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
   if (!form.slug.trim()) throw new Error('Slug is required');
   if (!form.coverImage) throw new Error('Cover image is required');
   
-  // Prepare case study data
+  // Prepare case study data with correct database column names
   const caseStudyData = {
     title: form.title.trim(),
     slug: form.slug.trim(),
     summary: form.summary.trim() || 'No summary provided',
     description: form.description?.trim() || null,
-    cover_image: form.coverImage,
+    cover_image: form.coverImage, // Fixed: coverImage -> cover_image
     category: form.category.trim() || 'Uncategorized',
     height: form.height?.trim() || null
   };

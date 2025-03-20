@@ -34,7 +34,7 @@ export const processSectionImages = async (form: CaseStudyForm, caseStudyId: str
       const { error: updateSectionError } = await supabase
         .from('case_study_sections')
         .update({
-          image_url: imageUrl || null
+          image_url: imageUrl || null  // Use image_url to match the database column name
         })
         .eq('id', existingSection.id);
         
@@ -42,13 +42,13 @@ export const processSectionImages = async (form: CaseStudyForm, caseStudyId: str
         console.error(`Error updating section ${field.component}:`, updateSectionError);
       }
     } else if (imageUrl) {
-      // Create new section
+      // Create new section - ensure we process one record at a time
       const { error: createSectionError } = await supabase
         .from('case_study_sections')
         .insert({
           case_study_id: caseStudyId,
           component: field.component,
-          image_url: imageUrl,
+          image_url: imageUrl,  // Use image_url to match the database column name
           content: form[field.component as keyof typeof form] as string,
           sort_order: sectionImageFields.indexOf(field) + 1
         });
