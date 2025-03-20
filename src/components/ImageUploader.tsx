@@ -3,14 +3,21 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface ImageUploaderProps {
   onImageUploaded: (imageUrl: string) => void;
   currentImageUrl?: string;
   label?: string;
+  className?: string;
 }
 
-const ImageUploader = ({ onImageUploaded, currentImageUrl, label = 'Image' }: ImageUploaderProps) => {
+const ImageUploader = ({ 
+  onImageUploaded, 
+  currentImageUrl, 
+  label = 'Image', 
+  className 
+}: ImageUploaderProps) => {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
 
@@ -57,7 +64,7 @@ const ImageUploader = ({ onImageUploaded, currentImageUrl, label = 'Image' }: Im
   };
 
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", className)}>
       <label className="font-medium">{label}</label>
       <div className="flex flex-col gap-2">
         {preview && (
