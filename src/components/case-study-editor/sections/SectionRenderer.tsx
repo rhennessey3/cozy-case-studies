@@ -56,14 +56,13 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
         <AlignmentSection
           isOpen={isOpen}
           onToggle={onToggle}
+          subhead={form.subhead || ''}
           alignment={form.alignment || 'left'}
-          subheadValue={form.subhead || ''}
-          paragraphValue={form.introductionParagraph || ''}
-          imageUrl={form.alignmentImage || ''}
-          onSubheadChange={handleContentChange}
-          onParagraphChange={handleContentChange}
+          introductionParagraph={form.introductionParagraph || ''}
+          alignmentImage={form.alignmentImage || ''}
+          onChange={handleContentChange}
           onAlignmentChange={onAlignmentChange}
-          onImageUploaded={(url) => handleImageUploaded('alignmentImage', url)}
+          onImageUpload={(url) => handleImageUploaded('alignmentImage', url)}
         />
       );
     case 'carousel':
@@ -71,7 +70,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
         <CarouselSection
           isOpen={isOpen}
           onToggle={onToggle}
-          titleValue={form.carouselTitle || ''}
+          title={form.carouselTitle || ''}
           onChange={handleContentChange}
           onImageUploaded={handleImageUploaded}
           items={carouselItems}
@@ -83,10 +82,10 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
         <FourParagraphsSection
           isOpen={isOpen}
           onToggle={onToggle}
-          titleValue={form.fourParaTitle || ''}
-          subtitleValue={form.fourParaSubtitle || ''}
+          title={form.fourParaTitle || ''}
+          subtitle={form.fourParaSubtitle || ''}
           paragraphs={paragraphItems}
-          imageUrl={form.fourParaImage || ''}
+          image={form.fourParaImage || ''}
           onChange={handleContentChange}
           onImageUploaded={(url) => handleImageUploaded('fourParaImage', url)}
         />
