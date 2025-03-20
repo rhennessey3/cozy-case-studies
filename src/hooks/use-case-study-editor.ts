@@ -16,10 +16,16 @@ export const useCaseStudyEditor = (slug?: string) => {
   const shouldFetchCaseStudy = slug && slug !== '' && slug !== 'new';
   const { caseStudy, loading: fetchLoading, form: fetchedForm } = useFetchCaseStudy(shouldFetchCaseStudy ? slug : undefined);
   
-  // Initialize with empty form if no slug or slug is "new"
+  // Initialize with empty form
   const [formInitialized, setFormInitialized] = useState(false);
+  
+  // Initialize the form state - this is where the error was happening
+  // We need to declare the initial form state first
+  const initialForm = shouldFetchCaseStudy && fetchedForm ? fetchedForm : initialFormState;
+  
+  // Now we can use useCaseStudyForm with the proper initial state
   const { form, handleChange, handleContentChange, handleImageUploaded, setForm } = useCaseStudyForm(
-    formInitialized ? form : shouldFetchCaseStudy ? fetchedForm : initialFormState
+    formInitialized ? form : initialForm
   );
   
   // Update form when fetchedForm changes
