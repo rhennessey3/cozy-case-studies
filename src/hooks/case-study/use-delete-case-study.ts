@@ -28,7 +28,7 @@ export const useDeleteCaseStudy = () => {
           .from('case_studies')
           .select('id')
           .eq('slug', slug)
-          .single();
+          .maybeSingle(); // Changed from .single() to .maybeSingle() to handle case when no rows are found
 
         if (fetchError) {
           throw new Error(`Failed to find case study: ${fetchError.message}`);
