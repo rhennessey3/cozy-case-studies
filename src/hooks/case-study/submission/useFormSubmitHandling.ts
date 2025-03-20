@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { processBasicInfo } from './processors/basicInfoProcessor';
 import { processContentData } from './processors/contentDataProcessor';
-import { processCustomSections } from './processors/customSectionsProcessor';
+import { processCustomSections as processCustomSectionsFromProcessor } from './processors/customSectionsProcessor';
 
 const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) => {
   const sections = [
@@ -50,11 +50,6 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
       }
     }
   }
-};
-
-const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
-  // Placeholder for processing custom sections
-  // Add your logic here to handle custom sections
 };
 
 export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFunction, slug?: string) => {
@@ -115,7 +110,7 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       
       await processSectionImages(form, caseStudyId);
       
-      await processCustomSections(form, caseStudyId);
+      await processCustomSectionsFromProcessor(form, caseStudyId);
       
       toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
       
