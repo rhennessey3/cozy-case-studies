@@ -64,12 +64,23 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       // Check if in local dev mode
       const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
       
-      // If not in local auth only mode, check authentication
+      // Get current authentication state from localStorage
+      const localAuthState = localStorage.getItem('admin_authenticated');
+      console.log('Local auth state:', localAuthState);
+      
+      // Check authentication status
       if (!isLocalAuthOnly) {
         const { data: sessionData } = await supabase.auth.getSession();
-        console.log('Session data:', sessionData);
+        console.log('Current session data:', sessionData);
         
-        if (!sessionData.session) {
+        if (!sessionData.session && localAuthState !== 'true') {
+          toast.error('You must be logged in to save a case study');
+          setSaving(false);
+          return { success: false };
+        }
+      } else {
+        console.log('Running in local auth only mode, checking local auth state');
+        if (localAuthState !== 'true') {
           toast.error('You must be logged in to save a case study');
           setSaving(false);
           return { success: false };

@@ -1,12 +1,15 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import CaseStudyBasicInfoTab from './CaseStudyBasicInfoTab';
 import CaseStudyContentTab from './CaseStudyContentTab';
 import { CaseStudyForm } from '@/types/caseStudy';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface CaseStudyEditorContentProps {
   loading: boolean;
@@ -30,6 +33,59 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   handleSubmit
 }) => {
   const navigate = useNavigate();
+  const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // First check local auth state
+        const localAuth = localStorage.getItem('admin_authenticated');
+        
+        // Then check Supabase session if not in local auth only mode
+        if (!isLocalAuthOnly) {
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error('Auth check error:', error);
+            setAuthError(`Authentication error: ${error.message}`);
+            setAuthStatus('unauthenticated');
+            return;
+          }
+          
+          if (data.session || localAuth === 'true') {
+            console.log('User is authenticated:', data.session ? 'Via Supabase' : 'Via local auth');
+            setAuthStatus('authenticated');
+          } else {
+            console.log('User is not authenticated');
+            setAuthError('You must be logged in to create or edit case studies');
+            setAuthStatus('unauthenticated');
+          }
+        } else if (localAuth === 'true') {
+          // In local auth only mode, we only check the local auth state
+          console.log('Local auth mode: User is authenticated via local auth');
+          setAuthStatus('authenticated');
+        } else {
+          console.log('Local auth mode: User is not authenticated');
+          setAuthError('You must be logged in to create or edit case studies');
+          setAuthStatus('unauthenticated');
+        }
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        setAuthError(`Failed to verify authentication: ${(error as Error).message}`);
+        setAuthStatus('unauthenticated');
+      }
+    };
+    
+    checkAuth();
+  }, [isLocalAuthOnly]);
+
+  const handleRedirectToLogin = () => {
+    navigate('/admin/login');
+    toast.info('Please log in to continue');
+  };
 
   if (loading) {
     return (
@@ -37,6 +93,31 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
         <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
         <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    );
+  }
+
+  if (authStatus === 'checking') {
+    return (
+      <div className="flex justify-center items-center space-y-4 py-8">
+        <Loader2 size={24} className="animate-spin text-primary" />
+        <p className="text-muted-foreground">Verifying authentication...</p>
+      </div>
+    );
+  }
+
+  if (authStatus === 'unauthenticated') {
+    return (
+      <div className="space-y-6 py-8">
+        <Alert variant="destructive" className="bg-red-50 border-red-200">
+          <AlertTriangle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-700">
+            {authError || 'You must be logged in to create or edit case studies'}
+          </AlertDescription>
+        </Alert>
+        <Button onClick={handleRedirectToLogin} className="mt-4">
+          Go to Login
+        </Button>
       </div>
     );
   }
