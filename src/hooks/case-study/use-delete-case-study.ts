@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -15,8 +14,9 @@ export const useDeleteCaseStudy = () => {
 
     try {
       setIsDeleting(true);
-      // Use a specific message to distinguish from section deletion
-      toast.loading('Deleting entire case study...');
+      // Use a specific message and ID to distinguish from section deletion
+      const toastId = `delete-case-study-${slug}`;
+      toast.loading('Deleting entire case study...', { id: toastId });
       
       // Check if we're in local auth mode or if the case study exists in local storage
       const isLocalAuthOnly = isLocalAuthMode();
@@ -31,7 +31,7 @@ export const useDeleteCaseStudy = () => {
         
         // If we're in local auth mode or we've successfully deleted a local case study, return success
         if (isLocalAuthOnly || (localCaseStudies.length !== updatedCaseStudies.length)) {
-          toast.dismiss();
+          toast.dismiss(toastId);
           toast.success('Case study deleted successfully');
           navigate('/admin/case-studies');
           return true;
@@ -54,7 +54,7 @@ export const useDeleteCaseStudy = () => {
         if (!caseStudyData?.id) {
           // If we've already handled local deletion successfully, we don't need to throw an error
           if (localCaseStudy) {
-            toast.dismiss();
+            toast.dismiss(toastId);
             toast.success('Case study deleted successfully');
             navigate('/admin/case-studies');
             return true;
@@ -95,7 +95,7 @@ export const useDeleteCaseStudy = () => {
         }
       }
 
-      toast.dismiss();
+      toast.dismiss(toastId);
       toast.success('Case study deleted successfully');
       navigate('/admin/case-studies');
       return true;

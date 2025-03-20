@@ -36,14 +36,14 @@ export const removeSection = (
   // Clear any existing toast notifications to prevent stuck "deleting" messages
   toast.dismiss();
   
-  // Show a temporary removing message
-  toast.loading("Removing section...");
+  // Show a temporary removing message with a unique message to distinguish from full case study deletion
+  toast.loading("Removing section...", { id: `remove-section-${id}` });
   
   setSections(prev => {
     const sectionToRemove = prev.find(section => section.id === id);
     if (!sectionToRemove) {
       console.warn(`Section with ID ${id} not found for removal`);
-      toast.dismiss();
+      toast.dismiss(`remove-section-${id}`);
       toast.error("Section not found");
       return prev;
     }
@@ -63,7 +63,7 @@ export const removeSection = (
     console.log(`Updated sections after removal:`, adjustedSections);
     
     // Clear the loading toast and show success message
-    toast.dismiss();
+    toast.dismiss(`remove-section-${id}`);
     toast.success("Section removed successfully");
     
     return adjustedSections;

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import TopNavbar from '@/components/TopNavbar';
@@ -23,6 +22,9 @@ const CaseStudyDetail: React.FC = () => {
   // Log when component renders and what slug we're looking for
   useEffect(() => {
     console.log(`CaseStudyDetail rendering with slug: ${slug}`);
+    
+    // Dismiss any persistent toasts when mounting the component
+    toast.dismiss();
   }, [slug]);
 
   const { data: caseStudy, isLoading, error, refetch } = useQuery({
