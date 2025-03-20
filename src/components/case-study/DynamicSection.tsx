@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { StrapiCaseStudySection } from '@/types/strapi';
 import { cn } from '@/lib/utils';
@@ -20,6 +19,18 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
   const type = __component.split('.')[1]; // Get component type after the dot
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   const isMobile = useMediaQuery('(max-width: 768px)');
+  
+  // Helper function to get image URL without Strapi reference
+  const getImageUrl = (imageData: any, fallbackUrl: string) => {
+    if (!imageData?.data) return fallbackUrl;
+    
+    // Get URL from the data structure
+    const url = imageData.data.attributes.url;
+    // If the URL is already absolute, use it directly
+    if (url.startsWith('http')) return url;
+    // Otherwise treat it as a relative path
+    return url;
+  };
   
   // Set background color based on component type or explicitly defined color
   const bgColorClass = section.backgroundColor !== 'custom' 
@@ -80,12 +91,10 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
               <div className="w-full md:w-1/2">
                 <div className="rounded-lg overflow-hidden shadow-lg">
                   <img 
-                    src={section.textleftalignedPhoto?.data 
-                      ? `${import.meta.env.VITE_STRAPI_API_URL}${section.textleftalignedPhoto.data.attributes.url}` 
-                      : section.image?.data 
-                        ? `${import.meta.env.VITE_STRAPI_API_URL}${section.image.data.attributes.url}`
-                        : "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=800"
-                    } 
+                    src={getImageUrl(
+                      section.textleftalignedPhoto || section.image,
+                      "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=800"
+                    )} 
                     alt={section.textleftalignedHeading || section.title || "Case study image"} 
                     className="w-full h-auto object-cover"
                   />
@@ -104,12 +113,10 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
               <div className="w-full md:w-1/2 order-2 md:order-1">
                 <div className="rounded-lg overflow-hidden shadow-lg">
                   <img 
-                    src={section.textleftalignedPhoto?.data 
-                      ? `${import.meta.env.VITE_STRAPI_API_URL}${section.textleftalignedPhoto.data.attributes.url}` 
-                      : section.image?.data 
-                        ? `${import.meta.env.VITE_STRAPI_API_URL}${section.image.data.attributes.url}`
-                        : "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800"
-                    } 
+                    src={getImageUrl(
+                      section.textleftalignedPhoto || section.image,
+                      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800"
+                    )} 
                     alt={section.textleftalignedHeading || section.title || "Case study image"} 
                     className="w-full h-auto object-cover"
                   />
@@ -150,10 +157,10 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
                       <div className="flex flex-col items-start h-full">
                         <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
                           <img 
-                            src={item.casestudysliderphoto?.data 
-                              ? `${import.meta.env.VITE_STRAPI_API_URL}${item.casestudysliderphoto.data.attributes.url}` 
-                              : "https://images.unsplash.com/photo-1642964057919-6c2ce94ffc13?auto=format&fit=crop&q=80&w=800"
-                            } 
+                            src={getImageUrl(
+                              item.casestudysliderphoto,
+                              "https://images.unsplash.com/photo-1642964057919-6c2ce94ffc13?auto=format&fit=crop&q=80&w=800"
+                            )} 
                             alt={item.caststudysliderheading || "Slider image"} 
                             className="w-full h-full object-cover"
                           />
@@ -247,10 +254,10 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
               <div className="w-full md:w-1/3 mt-3 md:mt-0">
                 <div className="overflow-hidden rounded-lg shadow-lg">
                   <img 
-                    src={section.fourheadingphoto?.data 
-                      ? `${import.meta.env.VITE_STRAPI_API_URL}${section.fourheadingphoto.data.attributes.url}` 
-                      : "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?auto=format&fit=crop&q=80&w=800"
-                    } 
+                    src={getImageUrl(
+                      section.fourheadingphoto,
+                      "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?auto=format&fit=crop&q=80&w=800"
+                    )} 
                     alt={section.primaryheadingfoursmallparagraphs || "Four paragraphs image"} 
                     className="w-full h-auto object-cover"
                   />
@@ -303,7 +310,7 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({ section }) => {
                   )}>
                     <div className="rounded-lg overflow-hidden shadow-lg">
                       <img 
-                        src={`${import.meta.env.VITE_STRAPI_API_URL}${section.image.data.attributes.url}`} 
+                        src={getImageUrl(section.image, "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800")} 
                         alt={section.title || "Section image"} 
                         className="w-full h-auto object-cover"
                       />
