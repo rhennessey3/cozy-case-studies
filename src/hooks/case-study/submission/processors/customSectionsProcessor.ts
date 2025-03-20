@@ -26,41 +26,41 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     throw new Error(`Session error: ${sessionError.message}`);
   }
   
+  // If no session, attempt authentication
   if (!sessionData.session) {
-    console.error('No valid session found for processing custom sections');
+    console.log('No valid session found for processing custom sections');
     
-    // Attempt emergency authentication
-    console.log('Attempting emergency authentication...');
     try {
       // Sign out first to ensure clean state
       await supabase.auth.signOut();
       
       // Try to authenticate
+      console.log('Attempting authentication for custom sections processor...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email: ADMIN_EMAIL,
         password: ADMIN_PASSWORD
       });
       
       if (error) {
-        console.error('Emergency authentication failed:', error);
+        console.error('Authentication failed:', error);
         throw new Error(`Authentication failed: ${error.message}`);
       }
       
       if (!data.session) {
-        throw new Error('No session created after emergency authentication');
+        throw new Error('No session created after authentication');
       }
       
-      console.log('Emergency authentication succeeded');
+      console.log('Authentication succeeded for custom sections processor');
     } catch (authError) {
-      console.error('Emergency authentication exception:', authError);
-      throw new Error('Authentication required to process sections');
+      console.error('Authentication exception:', authError);
+      throw new Error('Authentication required to process sections. Please try logging out and logging back in.');
     }
   }
   
   // Verify we now have a valid session
   const { data: verificationData } = await supabase.auth.getSession();
   if (!verificationData.session) {
-    throw new Error('Failed to establish a valid session after authentication attempts');
+    throw new Error('Failed to establish a valid session. Please try logging out and logging back in.');
   }
   
   console.log('Valid session confirmed, processing custom sections');

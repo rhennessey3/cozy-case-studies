@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Session, User } from '@supabase/supabase-js';
 
 // Use the same admin credentials consistently across the application
 // These must match the credentials in Supabase
@@ -26,38 +27,30 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [initializing, setInitializing] = useState<boolean>(true);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  // Create the admin user in Supabase if it doesn't exist
-  const createAdminUserIfNeeded = async () => {
+  // Function to verify if we can authenticate with Supabase
+  const verifySupabaseAuthentication = async (): Promise<boolean> => {
     try {
-      // First check if user exists by attempting to sign in
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      // Clear any existing session first
+      await supabase.auth.signOut();
+      
+      // Try to authenticate with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: ADMIN_EMAIL,
         password: ADMIN_PASSWORD
       });
-
-      // If sign in fails with invalid credentials, create the user
-      if (signInError && signInError.message.includes('Invalid login credentials')) {
-        console.log('Admin user does not exist. Creating admin user...');
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: ADMIN_EMAIL,
-          password: ADMIN_PASSWORD,
-        });
-
-        if (signUpError) {
-          console.error('Failed to create admin user:', signUpError);
-        } else {
-          console.log('Admin user created successfully');
-        }
-      } else if (signInError) {
-        console.error('Other sign in error:', signInError);
-      } else {
-        console.log('Admin user exists and credentials are valid');
-        // Sign out after verification since we don't want to be logged in yet
-        await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Supabase authentication verification failed:', error);
+        return false;
       }
+      
+      return !!data.session;
     } catch (error) {
-      console.error('Error checking/creating admin user:', error);
+      console.error('Exception during Supabase authentication verification:', error);
+      return false;
     }
   };
 
@@ -65,8 +58,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Check if admin user exists and create if needed
-        await createAdminUserIfNeeded();
+        // Set up auth state change listener
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+          console.log('Auth state changed:', event, newSession ? 'User is signed in' : 'No user');
+          setSession(newSession);
+          setUser(newSession?.user ?? null);
+        });
 
         // Check local authentication status
         const authStatus = localStorage.getItem(AUTH_STORAGE_KEY);
@@ -79,25 +76,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           // If no active Supabase session, attempt to sign in
           if (!data.session) {
-            console.log('No active Supabase session found. Signing in with admin credentials...');
-            const { error } = await supabase.auth.signInWithPassword({
-              email: ADMIN_EMAIL,
-              password: ADMIN_PASSWORD
-            });
+            console.log('No active Supabase session found but local auth is true. Attempting to sign in...');
+            const canAuthenticate = await verifySupabaseAuthentication();
             
-            if (error) {
-              console.error('Failed to sign in with admin credentials:', error);
-              // If we can't authenticate with Supabase, reset local auth state
+            if (!canAuthenticate) {
+              console.log('Failed to authenticate with Supabase despite local auth. Resetting auth state.');
               setIsAuthenticated(false);
               localStorage.removeItem(AUTH_STORAGE_KEY);
-              toast.error('Session expired. Please log in again.');
-            } else {
-              console.log('Successfully signed in with admin credentials');
             }
           } else {
-            console.log('Active Supabase session found');
+            console.log('Active Supabase session found and local auth is true.');
           }
+        } else {
+          // No local authentication, ensure we're signed out from Supabase too
+          await supabase.auth.signOut();
         }
+
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         console.error('Error during auth initialization:', error);
       } finally {
@@ -106,15 +103,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     
     initAuth();
-    
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session ? 'User is signed in' : 'No user');
-    });
-    
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   const login = async (password: string): Promise<boolean> => {
@@ -124,25 +112,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await supabase.auth.signOut();
         
         // Sign in with Supabase
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: ADMIN_EMAIL,
           password: ADMIN_PASSWORD
         });
         
         if (error) {
           console.error('Supabase login failed:', error);
-          toast.error(`Authentication error: ${error.message}`);
-          return false;
+          
+          // Check if this is a login issue with Supabase only
+          const supportsAutoLogin = await verifySupabaseAuthentication();
+          
+          if (!supportsAutoLogin) {
+            // Supabase login consistently fails - might need to set up the account
+            toast.error(`Supabase authentication failed. Please ensure the admin account is set up in Supabase.`);
+            return false;
+          }
         }
         
-        // Update local authentication state
+        // Update local authentication state regardless of Supabase result
+        // This allows local development to proceed even if Supabase auth has issues
         setIsAuthenticated(true);
         localStorage.setItem(AUTH_STORAGE_KEY, 'true');
-        console.log('Login successful - both local and Supabase authentication completed');
+        console.log('Login successful - local authentication completed');
+        
+        // If Supabase session is established, log it
+        if (data.session) {
+          console.log('Supabase authentication also successful');
+        }
+        
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Exception during login:', error);
-        toast.error('An error occurred during login');
+        toast.error('An error occurred during login: ' + (error.message || 'Unknown error'));
         return false;
       }
     }
@@ -164,8 +166,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   if (initializing) {
-    // You could return a loading spinner here if needed
-    return <div>Loading authentication...</div>;
+    // Simple loading indicator
+    return <div className="flex items-center justify-center min-h-screen">Loading authentication...</div>;
   }
 
   return (
