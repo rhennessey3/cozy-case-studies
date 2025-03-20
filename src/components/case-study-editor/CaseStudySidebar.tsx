@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
@@ -23,6 +23,16 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
   
   const isAdminHome = location.pathname === '/admin' || location.pathname === '/admin/';
   const isCaseStudiesLanding = location.pathname === '/admin/case-studies';
+  const isNewCaseStudy = location.pathname === '/admin/case-studies/new';
+
+  // Update isCreatingNew state based on URL changes
+  useEffect(() => {
+    if (isNewCaseStudy) {
+      setIsCreatingNew(true);
+    } else {
+      setIsCreatingNew(false);
+    }
+  }, [location.pathname, isNewCaseStudy]);
 
   const selectCaseStudy = (slug: string) => {
     // Only navigate if the current slug is different
@@ -34,8 +44,6 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
   const handleCreateNew = () => {
     setIsCreatingNew(true);
     onCreateNew();
-    // Reset the state after a delay to provide visual feedback
-    setTimeout(() => setIsCreatingNew(false), 300);
   };
 
   const goToAdminHome = () => {
@@ -87,13 +95,16 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
       
       {/* List of Case Studies - Third item */}
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
-        {isCreatingNew && (
-          <div className="p-2 rounded bg-gray-200 font-medium animate-pulse">
+        {(isCreatingNew || isNewCaseStudy) && (
+          <div className={cn(
+            "p-2 rounded font-medium",
+            isNewCaseStudy ? "bg-gray-200" : "bg-gray-200 animate-pulse"
+          )}>
             <div className="truncate">New Case Study</div>
           </div>
         )}
         
-        {caseStudies.length === 0 && !isCreatingNew ? (
+        {caseStudies.length === 0 && !isCreatingNew && !isNewCaseStudy ? (
           <div className="text-sm text-gray-500 italic p-2">
             No case studies found
           </div>
