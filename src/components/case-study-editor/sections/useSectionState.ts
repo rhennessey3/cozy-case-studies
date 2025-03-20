@@ -37,7 +37,33 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     }
   }, []);
 
+  // Utility function to clean up any orphaned openSection entries
+  // This ensures we don't have stale references to removed sections
+  useEffect(() => {
+    if (sections.length > 0) {
+      // Get all valid section IDs
+      const validSectionIds = new Set(sections.map(section => section.id));
+      
+      // Clean up the openSections state
+      setOpenSections(prev => {
+        const newOpenSections = { ...prev };
+        let hasChanges = false;
+        
+        // Remove entries for sections that no longer exist
+        Object.keys(newOpenSections).forEach(id => {
+          if (!validSectionIds.has(id)) {
+            delete newOpenSections[id];
+            hasChanges = true;
+          }
+        });
+        
+        return hasChanges ? newOpenSections : prev;
+      });
+    }
+  }, [sections]);
+
   const toggleSection = (id: string) => {
+    if (!id) return; // Skip empty id (used as a no-op in some cases)
     setOpenSections(prev => ({
       ...prev,
       [id]: !prev[id]

@@ -9,6 +9,7 @@ import IterationSection from './IterationSection';
 import PrototypingSection from './PrototypingSection';
 import ContactSection from '@/components/sections/ContactSection';
 import CaseStudyHero from './CaseStudyHero';
+import { toast } from 'sonner';
 
 interface CaseStudyContentProps {
   caseStudy: CaseStudy;
@@ -16,6 +17,12 @@ interface CaseStudyContentProps {
 
 const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
   const [orderedSections, setOrderedSections] = useState<React.ReactNode[]>([]);
+
+  // Dismiss any lingering toasts when viewing a case study
+  useEffect(() => {
+    // Dismiss any lingering toasts when the component mounts
+    toast.dismiss();
+  }, []);
 
   useEffect(() => {
     const sections: React.ReactNode[] = [];

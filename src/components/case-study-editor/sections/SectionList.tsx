@@ -40,6 +40,27 @@ const SectionList: React.FC<SectionListProps> = ({
   // Sort sections by order for display
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
 
+  // Add an effect to ensure openSections stays in sync with actual sections
+  // This ensures that removed sections don't persist in the openSections state
+  useEffect(() => {
+    const sectionIds = new Set(sections.map(section => section.id));
+    const currentOpenSections = { ...openSections };
+    let changed = false;
+    
+    // Remove any openSections entries that don't correspond to actual sections
+    Object.keys(currentOpenSections).forEach(id => {
+      if (!sectionIds.has(id)) {
+        delete currentOpenSections[id];
+        changed = true;
+      }
+    });
+    
+    // If we found invalid entries, update the state
+    if (changed) {
+      toggleSection(''); // Trigger an update by toggling a non-existent section (no-op)
+    }
+  }, [sections, openSections, toggleSection]);
+
   return (
     <div className="space-y-4">
       {sortedSections.map(section => {

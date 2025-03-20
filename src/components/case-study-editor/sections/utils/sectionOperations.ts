@@ -43,7 +43,7 @@ export const removeSection = (
   const toastId = `remove-section-${id}`;
   
   // Show a temporary removing message with a unique message to distinguish from full case study deletion
-  toast.loading("Removing section...", { id: toastId, duration: 5000 });
+  toast.loading("Removing section...", { id: toastId, duration: 2000 });
   
   setSections(prev => {
     const sectionToRemove = prev.find(section => section.id === id);
@@ -71,7 +71,7 @@ export const removeSection = (
     
     // Clear the loading toast and show success message
     toast.dismiss(toastId);
-    toast.success(`${sectionName} section removed`, { id: `success-remove-${id}`, duration: 3000 });
+    toast.success(`${sectionName} section removed`, { id: `success-remove-${id}`, duration: 2000 });
     
     return adjustedSections;
   });
