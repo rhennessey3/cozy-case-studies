@@ -15,7 +15,8 @@ export const useDeleteCaseStudy = () => {
 
     try {
       setIsDeleting(true);
-      toast.loading('Deleting case study...');
+      // Use a specific message to distinguish from section deletion
+      toast.loading('Deleting entire case study...');
       
       // Check if we're in local auth mode or if the case study exists in local storage
       const isLocalAuthOnly = isLocalAuthMode();

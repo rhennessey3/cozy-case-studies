@@ -1,6 +1,7 @@
 
 import { SectionWithOrder } from '../types';
 import { createSection } from './createSection';
+import { toast } from 'sonner';
 
 export const addSection = (
   sections: SectionWithOrder[],
@@ -32,10 +33,18 @@ export const removeSection = (
 ) => {
   console.log(`Removing section with ID: ${id}`);
   
+  // Clear any existing toast notifications to prevent stuck "deleting" messages
+  toast.dismiss();
+  
+  // Show a temporary removing message
+  toast.loading("Removing section...");
+  
   setSections(prev => {
     const sectionToRemove = prev.find(section => section.id === id);
     if (!sectionToRemove) {
       console.warn(`Section with ID ${id} not found for removal`);
+      toast.dismiss();
+      toast.error("Section not found");
       return prev;
     }
     
@@ -52,6 +61,11 @@ export const removeSection = (
     }));
     
     console.log(`Updated sections after removal:`, adjustedSections);
+    
+    // Clear the loading toast and show success message
+    toast.dismiss();
+    toast.success("Section removed successfully");
+    
     return adjustedSections;
   });
   
