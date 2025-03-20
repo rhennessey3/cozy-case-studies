@@ -6,18 +6,28 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import CaseStudiesGrid from '@/components/CaseStudiesGrid';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
-import { getCaseStudies } from '@/services'; // Changed from @/services/strapiService to @/services'
+import { getCaseStudies } from '@/services';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import Footer from '@/components/Footer';
+import { useQuery } from '@tanstack/react-query';
 
 const CaseStudiesLanding = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
-  const [loading, setLoading] = useState(true);
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   
+  // Use React Query for better caching and auto-refresh
+  const { data: caseStudies = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['caseStudies'],
+    queryFn: getCaseStudies,
+    staleTime: 1000 * 60, // Consider data stale after 1 minute
+    refetchOnWindowFocus: true, // Refresh when user returns to the tab
+  });
+  
   useEffect(() => {
+    // Force a refresh when the component mounts
+    refetch();
+    
     const handleBodyClassChange = () => {
       setIsDrawerOpen(document.body.classList.contains('drawer-open'));
     };
@@ -29,22 +39,7 @@ const CaseStudiesLanding = () => {
     return () => {
       observer.disconnect();
     };
-  }, []);
-
-  useEffect(() => {
-    const fetchCaseStudies = async () => {
-      try {
-        const data = await getCaseStudies();
-        setCaseStudies(data);
-      } catch (error) {
-        console.error('Failed to fetch case studies:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCaseStudies();
-  }, []);
+  }, [refetch]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,11 +63,21 @@ const CaseStudiesLanding = () => {
                 <h1 className="text-4xl md:text-5xl font-[900] mb-3 text-[#1b1b1b] pb-4 border-b border-[#EAEAEA] pl-4">CASE STUDIES.</h1>
               </div>
               
-              {loading ? (
+              {isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
                   {[1, 2, 3, 4, 5, 6].map((n) => (
                     <Skeleton key={n} className="w-full h-64" />
                   ))}
+                </div>
+              ) : error ? (
+                <div className="text-center py-8">
+                  <p className="text-red-500">Failed to load case studies</p>
+                  <button 
+                    onClick={() => refetch()}
+                    className="mt-4 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
+                  >
+                    Try Again
+                  </button>
                 </div>
               ) : (
                 <CaseStudiesGrid caseStudies={caseStudies} />

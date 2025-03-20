@@ -41,7 +41,17 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (Local Mode)`);
         
         if (isNew) {
+          // First navigate to the case study editor for the new case study
           navigate(`/admin/case-studies/${form.slug}`);
+          
+          // Then show a toast with the option to view the case study on the public site
+          toast('Case study published! View it on the site?', {
+            action: {
+              label: 'View',
+              onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
+            },
+            duration: 5000
+          });
         }
         
         setSaving(false);
@@ -66,7 +76,17 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
         
         if (isNew) {
+          // First navigate to the case study editor for the new case study
           navigate(`/admin/case-studies/${form.slug}`);
+          
+          // Then show a toast with the option to view the case study on the public site
+          toast('Case study published! View it on the site?', {
+            action: {
+              label: 'View',
+              onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
+            },
+            duration: 5000
+          });
         }
         
         return result;

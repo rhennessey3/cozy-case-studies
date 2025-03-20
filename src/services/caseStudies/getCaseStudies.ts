@@ -9,6 +9,8 @@ import { transformCaseStudyData } from './transformers';
  */
 export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   try {
+    console.log('Fetching case studies from Supabase...');
+    
     // Fetch case studies from Supabase database
     const { data, error } = await supabase
       .from('case_studies')
@@ -36,6 +38,8 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
       console.error('Error fetching case studies:', error);
       throw error;
     }
+    
+    console.log(`Successfully fetched ${data.length} case studies`);
     
     // Transform the data to match our CaseStudy type
     const caseStudies: CaseStudy[] = data.map(study => transformCaseStudyData(study));
