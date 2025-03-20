@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Home } from 'lucide-react';
 
 interface CaseStudySidebarProps {
   caseStudies: CaseStudy[];
@@ -18,7 +18,10 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
   onCreateNew
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  
+  const isAdminHome = location.pathname === '/admin' || location.pathname === '/admin/';
 
   const selectCaseStudy = (slug: string) => {
     // Only navigate if the current slug is different
@@ -34,6 +37,10 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
     setTimeout(() => setIsCreatingNew(false), 300);
   };
 
+  const goToAdminHome = () => {
+    navigate('/admin');
+  };
+
   return (
     <div className="bg-gray-50 p-4 rounded-lg">
       <div className="flex items-center justify-between mb-3">
@@ -47,6 +54,19 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
         >
           <Plus className="h-4 w-4" />
         </Button>
+      </div>
+      
+      <div className="mb-3">
+        <div 
+          className={cn(
+            "p-2 rounded cursor-pointer hover:bg-gray-200 transition-colors flex items-center gap-2",
+            isAdminHome && "bg-gray-200 font-medium"
+          )}
+          onClick={goToAdminHome}
+        >
+          <Home className="h-4 w-4" />
+          <div className="truncate">Admin Home</div>
+        </div>
       </div>
       
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
