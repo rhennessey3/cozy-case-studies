@@ -1,3 +1,4 @@
+
 import { StrapiCaseStudySection } from "@/types/strapi";
 
 export interface CaseStudy {
@@ -17,6 +18,14 @@ export interface CaseStudy {
     results: string;
     conclusion: string;
   };
+  sections?: {
+    id: string;
+    component: string;
+    content?: string;
+    image_url?: string;
+    metadata?: any;
+    sort_order: number;
+  }[];
 }
 
 export const caseStudies: CaseStudy[] = [
