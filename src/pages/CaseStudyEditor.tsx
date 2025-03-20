@@ -54,11 +54,7 @@ const CaseStudyEditor = () => {
       <CaseStudyEditorLayout>
         <CaseStudyEditorHeader 
           headingText={getHeadingText()}
-          onViewLive={handleViewLive}
           onLogout={handleLogout}
-          onDelete={() => setDeleteDialogOpen(true)}
-          showViewLive={!!slug && slug !== 'new'}
-          showDelete={!!slug && slug !== 'new'}
         />
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
@@ -86,6 +82,10 @@ const CaseStudyEditor = () => {
               handleContentChange={handleContentChange}
               handleImageUploaded={handleImageUploaded}
               handleSubmit={handleSubmit}
+              onViewLive={handleViewLive}
+              onDelete={() => setDeleteDialogOpen(true)}
+              showViewLive={!!slug && slug !== 'new'}
+              showDelete={!!slug && slug !== 'new'}
             />
           </div>
         </div>

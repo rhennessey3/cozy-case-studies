@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import CaseStudyBasicInfoTab from './CaseStudyBasicInfoTab';
 import CaseStudyContentTab from './CaseStudyContentTab';
 import { CaseStudyForm } from '@/types/caseStudy';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, Eye, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -20,6 +20,10 @@ interface CaseStudyEditorContentProps {
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded: (field: string, url: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<{ success: boolean, slug?: string } | undefined>;
+  onViewLive?: () => void;
+  onDelete?: () => void;
+  showViewLive?: boolean;
+  showDelete?: boolean;
 }
 
 const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
@@ -30,7 +34,11 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   handleChange,
   handleContentChange,
   handleImageUploaded,
-  handleSubmit
+  handleSubmit,
+  onViewLive,
+  onDelete,
+  showViewLive = false,
+  showDelete = false
 }) => {
   const navigate = useNavigate();
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
@@ -144,12 +152,40 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <Tabs defaultValue="basics">
-        <TabsList className="mb-4">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+        <TabsList className="mb-0">
           <TabsTrigger value="basics">Basic Info</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
         </TabsList>
         
+        <div className="flex gap-2 mt-4 md:mt-0">
+          {showViewLive && onViewLive && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onViewLive}
+              className="flex items-center gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              View Live
+            </Button>
+          )}
+          
+          {showDelete && onDelete && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onDelete}
+              className="flex items-center gap-2 text-red-500 hover:bg-red-50 hover:text-red-600 border-red-200"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
+          )}
+        </div>
+      </div>
+      
+      <Tabs defaultValue="basics">
         <TabsContent value="basics">
           <CaseStudyBasicInfoTab 
             form={form} 
