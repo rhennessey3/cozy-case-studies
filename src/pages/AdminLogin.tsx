@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,26 +22,21 @@ const AdminLogin: React.FC = () => {
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
   
-  // Check local authentication as a fallback
   const isLocallyAuthenticated = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
   const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated) || isLocallyAuthenticated;
 
   useEffect(() => {
-    // Reset login state and error when component loads
     setIsLoggingIn(false);
     setLoginError(null);
   }, []);
 
-  // Add a hint for development
   useEffect(() => {
-    // Only show hint in development mode
     if (import.meta.env.DEV) {
       console.log(`Hint: The admin password is "${ADMIN_PASSWORD}"`);
       console.log(`Authentication mode: ${isLocalAuthOnly ? 'Local Auth Only' : 'Supabase Auth'}`);
     }
   }, [isLocalAuthOnly]);
 
-  // If already authenticated, redirect to admin page
   if (effectivelyAuthenticated) {
     return <Navigate to="/admin/case-studies" />;
   }
@@ -53,18 +47,15 @@ const AdminLogin: React.FC = () => {
     setLoginError(null);
     
     try {
-      // For local auth, we can directly check the password
       if (isLocalAuthOnly || password === ADMIN_PASSWORD) {
         if (isLocalAuthOnly || password === ADMIN_PASSWORD) {
-          // Set local authentication flag
           localStorage.setItem(AUTH_STORAGE_KEY, 'true');
           
           toast({
             title: "Login Successful",
-            description: "Welcome to the admin panel",
+            description: "Welcome to the admin panel"
           });
           
-          // Try to use the Auth context login as well
           if (!isLocalAuthOnly) {
             try {
               await login(password);
@@ -73,28 +64,25 @@ const AdminLogin: React.FC = () => {
             }
           }
           
-          // Redirect to admin page
           navigate('/admin/case-studies');
           return;
         }
       }
       
-      // If not local auth or password incorrect, try regular login
       const success = await login(password);
       
       if (success) {
         toast({
           title: "Login Successful",
-          description: "Welcome to the admin panel",
+          description: "Welcome to the admin panel"
         });
-        // Redirect immediately on success
         navigate('/admin/case-studies');
       } else {
         setLoginError(`Login failed. Please check your password and try again.`);
         toast({
           title: "Login Failed",
           description: "Incorrect password",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     } catch (error: any) {
@@ -103,7 +91,7 @@ const AdminLogin: React.FC = () => {
       toast({
         title: "Login Error",
         description: error.message || "An unexpected error occurred",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsLoggingIn(false);

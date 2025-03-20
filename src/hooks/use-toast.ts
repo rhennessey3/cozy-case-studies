@@ -1,3 +1,4 @@
+
 // Re-export Sonner toast to maintain compatibility with both implementations
 import { toast as sonnerToast } from 'sonner';
 
@@ -7,10 +8,6 @@ import type {
   ToastProps,
 } from "@/components/ui/toast";
 
-// Create a wrapper for the toast function that matches the expected signature
-const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
-
 type ToasterToast = ToastProps & {
   id: string
   title?: React.ReactNode
@@ -18,10 +15,28 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
-// Re-export the shadcn toast interface, but use Sonner under the hood
-export function useToast() {
+// Interface for the shadcn toast format
+interface ShadcnToastProps {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  variant?: "default" | "destructive";
+}
+
+// Create a wrapper that transforms shadcn toast interface to Sonner format
+const createToastAdapter = () => {
   return {
-    toast: sonnerToast,
+    // This mimics the shadcn toast interface but uses Sonner under the hood
+    toast: (props: ShadcnToastProps) => {
+      if (props.variant === "destructive") {
+        return sonnerToast.error(props.title as string, {
+          description: props.description
+        });
+      } else {
+        return sonnerToast.success(props.title as string, {
+          description: props.description
+        });
+      }
+    },
     dismiss: (toastId?: string) => {
       if (toastId) {
         sonnerToast.dismiss(toastId);
@@ -31,7 +46,12 @@ export function useToast() {
     },
     toasts: [] // This is a placeholder to match the interface
   };
+};
+
+// Export the wrapped toast interface
+export function useToast() {
+  return createToastAdapter();
 }
 
-// Export the Sonner toast directly
+// Export the native Sonner toast for direct usage
 export const toast = sonnerToast;

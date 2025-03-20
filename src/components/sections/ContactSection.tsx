@@ -91,14 +91,14 @@ const ContactSection = () => {
       // Show success toast
       toast({
         title: "Message Sent Successfully",
-        description: "Thank you for your message. We'll get back to you soon!",
+        description: "Thank you for your message. We'll get back to you soon!"
       });
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
         title: "Error",
         description: "There was a problem sending your message. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
