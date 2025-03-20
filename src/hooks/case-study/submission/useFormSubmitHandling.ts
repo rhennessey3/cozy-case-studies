@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { processBasicInfo } from './processors/basicInfoProcessor';
 import { processContentData } from './processors/contentDataProcessor';
+import { processCustomSections } from './processors/customSectionsProcessor';
 
 const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) => {
   const sections = [
@@ -65,6 +66,15 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
     setSaving(true);
     
     try {
+      // Check authentication status first
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (!sessionData.session) {
+        toast.error('You must be logged in to save a case study');
+        setSaving(false);
+        return { success: false };
+      }
+      
       if (!form.title) {
         toast.error('Title is required');
         setSaving(false);
@@ -116,7 +126,14 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       return { success: true, slug: form.slug };
     } catch (error) {
       console.error('Error saving case study:', error);
-      toast.error(`Failed to ${slug ? 'update' : 'create'} case study: ${(error as Error).message}`);
+      
+      // Provide more specific error messages based on error types
+      if ((error as Error).message.includes('Row Level Security')) {
+        toast.error('Permission denied. Please make sure you are logged in with the correct account.');
+      } else {
+        toast.error(`Failed to ${slug ? 'update' : 'create'} case study: ${(error as Error).message}`);
+      }
+      
       return { success: false };
     } finally {
       setSaving(false);

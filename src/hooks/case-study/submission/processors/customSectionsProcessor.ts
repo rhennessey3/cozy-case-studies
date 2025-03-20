@@ -5,6 +5,7 @@ import { processAlignmentSection } from './sectionTypes/alignmentProcessor';
 import { processCarouselSection } from './sectionTypes/carouselProcessor';
 import { processFourParagraphsSection } from './sectionTypes/fourParagraphsProcessor';
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/constants/authConstants';
+import { toast } from 'sonner';
 
 export const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
   // Check if we're using local auth only mode
@@ -33,46 +34,15 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   
   if (sessionError) {
     console.error('Session error when processing custom sections:', sessionError);
+    toast.error(`Authentication error: ${sessionError.message}. Please log in again.`);
     throw new Error(`Session error: ${sessionError.message}`);
   }
   
-  // If no session, attempt authentication
+  // If no session, notify user they need to log in
   if (!sessionData.session) {
     console.log('No valid session found for processing custom sections');
-    
-    try {
-      // Sign out first to ensure clean state
-      await supabase.auth.signOut();
-      
-      // Try to authenticate
-      console.log('Attempting authentication for custom sections processor...');
-      
-      // Try login with password
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: ADMIN_EMAIL,
-        password: ADMIN_PASSWORD
-      });
-      
-      if (error) {
-        console.error('Authentication failed:', error);
-        throw new Error(`Authentication failed: ${error.message}`);
-      }
-      
-      if (!data?.session) {
-        throw new Error('No session created after authentication');
-      }
-      
-      console.log('Authentication succeeded for custom sections processor');
-    } catch (authError) {
-      console.error('Authentication exception:', authError);
-      throw new Error('Authentication required to process sections. Please try logging out and logging back in.');
-    }
-  }
-  
-  // Verify we now have a valid session
-  const { data: verificationData } = await supabase.auth.getSession();
-  if (!verificationData.session) {
-    throw new Error('Failed to establish a valid session. Please try logging out and logging back in.');
+    toast.error('You must be logged in to create or edit case studies');
+    throw new Error('Authentication required. Please log in to continue.');
   }
   
   console.log('Valid session confirmed, processing custom sections');
@@ -86,6 +56,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     
   if (sectionsQueryError) {
     console.error('Error fetching existing sections:', sectionsQueryError);
+    toast.error(`Database error: ${sectionsQueryError.message}`);
     throw new Error(`Failed to fetch existing sections: ${sectionsQueryError.message}`);
   }
   
@@ -115,6 +86,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
         }
       } catch (sectionError: any) {
         console.error(`Error processing ${section.type} section:`, sectionError);
+        toast.error(`Failed to process ${section.type} section`);
         throw new Error(`Failed to process ${section.type} section: ${sectionError.message}`);
       }
     }
@@ -134,6 +106,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
       
     if (deleteError) {
       console.error('Error deleting removed sections:', deleteError);
+      toast.error(`Failed to delete unnecessary sections`);
       throw new Error(`Failed to delete removed sections: ${deleteError.message}`);
     }
   }
