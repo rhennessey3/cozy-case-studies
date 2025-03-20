@@ -17,6 +17,14 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     return;
   }
   
+  // First, check if we have a valid session
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  
+  if (sessionError || !sessionData.session) {
+    console.error('No valid session found for processing custom sections:', sessionError || 'No session data');
+    throw new Error('Authentication required to process sections');
+  }
+  
   // First, get all existing custom sections
   const { data: existingSections, error: sectionsQueryError } = await supabase
     .from('case_study_sections')
@@ -36,17 +44,8 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     // Sort sections by order property
     customSections.sort((a: any, b: any) => a.order - b.order);
     
-    // Create a session for our transaction
-    const processSession = supabase.auth.getSession();
-    
-    // Check if we have a valid session
-    if (!processSession) {
-      console.error('No valid session found. User might not be authenticated.');
-      return;
-    }
-    
     // Log authentication state for debugging
-    console.log('Authentication state:', processSession ? 'Authenticated' : 'Not authenticated');
+    console.log('Authentication state:', sessionData.session ? 'Authenticated' : 'Not authenticated');
     
     for (const [index, section] of customSections.entries()) {
       // Use the section's order if available, otherwise use the index + base offset

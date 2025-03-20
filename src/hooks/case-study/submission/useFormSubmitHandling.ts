@@ -8,12 +8,7 @@ import { processContentData } from './processors/contentDataProcessor';
 import { processCustomSections } from './processors/customSectionsProcessor';
 import { processSectionImages } from './processors/sectionImagesProcessor';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-
-// These credentials should match what's set up in your Supabase auth system
-// Since we're using a demo approach with fixed credentials for simplicity
-const ADMIN_EMAIL = 'admin@example.com';
-const ADMIN_PASSWORD = 'admin123';
+import { useAuth, ADMIN_EMAIL, ADMIN_PASSWORD } from '@/contexts/AuthContext';
 
 export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
   const navigate = useNavigate();
@@ -31,14 +26,21 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
       // sign in with the admin credentials
       if (!data.session && isAuthenticated) {
         try {
+          console.log('Attempting to sign in with admin credentials:', ADMIN_EMAIL);
           // Sign in as the admin user (this is a workaround for the demo)
-          await supabase.auth.signInWithPassword({
+          const { error } = await supabase.auth.signInWithPassword({
             email: ADMIN_EMAIL,
             password: ADMIN_PASSWORD
           });
-          console.log('Signed in with admin credentials');
+          
+          if (error) {
+            console.error('Failed to sign in with admin credentials:', error);
+            toast.error(`Authentication error: ${error.message}`);
+          } else {
+            console.log('Signed in with admin credentials successfully');
+          }
         } catch (error) {
-          console.error('Failed to sign in with admin credentials:', error);
+          console.error('Exception during sign in with admin credentials:', error);
         }
       }
     };
@@ -58,14 +60,22 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
         // If not authenticated, try to sign in with admin credentials
         if (isAuthenticated) {
           try {
+            console.log('Attempting to authenticate before save operation');
             // Use signInWithPassword directly for the most reliable auth approach
             const { data, error } = await supabase.auth.signInWithPassword({
               email: ADMIN_EMAIL,
               password: ADMIN_PASSWORD
             });
             
-            if (error) throw error;
-            if (!data.session) throw new Error('Failed to authenticate with Supabase');
+            if (error) {
+              console.error('Authentication error:', error);
+              throw error;
+            }
+            
+            if (!data.session) {
+              console.error('No session created after authentication');
+              throw new Error('Failed to authenticate with Supabase');
+            }
             
             console.log('Successfully authenticated with Supabase');
           } catch (authError: any) {
@@ -79,6 +89,14 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
           setSaving(false);
           return;
         }
+      }
+      
+      // Double-check once more that we have a valid session
+      const { data: finalSessionCheck } = await supabase.auth.getSession();
+      if (!finalSessionCheck.session) {
+        toast.error('Failed to establish a valid authentication session');
+        setSaving(false);
+        return;
       }
       
       // Process the case study submission in steps
