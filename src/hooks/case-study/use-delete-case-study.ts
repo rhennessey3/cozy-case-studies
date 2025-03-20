@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { getLocalCaseStudyBySlug } from './utils/localStorageUtils';
+import { isLocalAuthMode } from './utils/authUtils';
 
 export const useDeleteCaseStudy = () => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -15,14 +17,28 @@ export const useDeleteCaseStudy = () => {
       setIsDeleting(true);
       toast.loading('Deleting case study...');
       
-      const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
+      // Check if we're in local auth mode or if the case study exists in local storage
+      const isLocalAuthOnly = isLocalAuthMode();
+      const localCaseStudy = getLocalCaseStudyBySlug(slug);
       
-      if (isLocalAuthOnly) {
-        // Handle local storage deletion
+      // Handle local storage deletion - do this for both local auth mode and when we find a local case study
+      if (isLocalAuthOnly || localCaseStudy) {
+        console.log(`Deleting case study from local storage: ${slug}`);
         const localCaseStudies = JSON.parse(localStorage.getItem('local_case_studies') || '[]');
         const updatedCaseStudies = localCaseStudies.filter((cs: any) => cs.slug !== slug);
         localStorage.setItem('local_case_studies', JSON.stringify(updatedCaseStudies));
-      } else {
+        
+        // If we're in local auth mode or we've successfully deleted a local case study, return success
+        if (isLocalAuthOnly || (localCaseStudies.length !== updatedCaseStudies.length)) {
+          toast.dismiss();
+          toast.success('Case study deleted successfully');
+          navigate('/admin/case-studies');
+          return true;
+        }
+      }
+      
+      // If not in local auth mode, try to delete from Supabase
+      if (!isLocalAuthOnly) {
         // Handle Supabase deletion
         const { data: caseStudyData, error: fetchError } = await supabase
           .from('case_studies')
@@ -35,6 +51,13 @@ export const useDeleteCaseStudy = () => {
         }
 
         if (!caseStudyData?.id) {
+          // If we've already handled local deletion successfully, we don't need to throw an error
+          if (localCaseStudy) {
+            toast.dismiss();
+            toast.success('Case study deleted successfully');
+            navigate('/admin/case-studies');
+            return true;
+          }
           throw new Error('Case study not found');
         }
 
