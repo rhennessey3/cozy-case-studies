@@ -1,6 +1,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+// Use the same admin credentials consistently across the application
+const ADMIN_PASSWORD = 'admin123';
+const AUTH_STORAGE_KEY = 'admin_authenticated';
+
 type AuthContextType = {
   isAuthenticated: boolean;
   login: (password: string) => boolean;
@@ -14,9 +18,6 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const useAuth = () => useContext(AuthContext);
-
-const ADMIN_PASSWORD = 'admin123'; // In a real app, this would be stored securely
-const AUTH_STORAGE_KEY = 'admin_authenticated';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);

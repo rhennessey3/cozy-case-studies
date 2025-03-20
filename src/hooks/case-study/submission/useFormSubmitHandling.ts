@@ -10,6 +10,11 @@ import { processSectionImages } from './processors/sectionImagesProcessor';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
+// These credentials should match what's set up in your Supabase auth system
+// Since we're using a demo approach with fixed credentials for simplicity
+const ADMIN_EMAIL = 'admin@example.com';
+const ADMIN_PASSWORD = 'admin123';
+
 export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
@@ -28,8 +33,8 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
         try {
           // Sign in as the admin user (this is a workaround for the demo)
           await supabase.auth.signInWithPassword({
-            email: 'admin@example.com',
-            password: 'admin123'
+            email: ADMIN_EMAIL,
+            password: ADMIN_PASSWORD
           });
           console.log('Signed in with admin credentials');
         } catch (error) {
@@ -53,9 +58,10 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
         // If not authenticated, try to sign in with admin credentials
         if (isAuthenticated) {
           try {
+            // Use signInWithPassword directly for the most reliable auth approach
             const { data, error } = await supabase.auth.signInWithPassword({
-              email: 'admin@example.com',
-              password: 'admin123'
+              email: ADMIN_EMAIL,
+              password: ADMIN_PASSWORD
             });
             
             if (error) throw error;
