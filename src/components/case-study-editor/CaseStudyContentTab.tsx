@@ -1,8 +1,9 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AlignmentSection from '@/components/case-study-editor/sections/AlignmentSection';
 import CarouselSection from '@/components/case-study-editor/sections/CarouselSection';
 import FourParagraphsSection from '@/components/case-study-editor/sections/FourParagraphsSection';
+import SectionManager, { SectionType } from '@/components/case-study-editor/sections/SectionManager';
+import { v4 as uuidv4 } from '@/lib/utils';
 
 interface CaseStudyContentTabProps {
   form: {
@@ -37,6 +38,7 @@ interface CaseStudyContentTabProps {
     fourPara4Title?: string;
     fourPara4Content?: string;
     fourParaImage?: string;
+    customSections?: string;
   };
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
@@ -47,17 +49,88 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
   handleContentChange,
   handleImageUploaded = () => {} 
 }) => {
-  const [openSections, setOpenSections] = useState({
-    alignment: true,
-    carousel: true,
-    paragraphs: true
+  // Parse custom sections from form if available
+  const [sections, setSections] = useState<SectionType[]>(() => {
+    try {
+      if (form.customSections) {
+        return JSON.parse(form.customSections);
+      }
+    } catch (e) {
+      console.error("Failed to parse custom sections", e);
+    }
+    return [];
   });
 
-  const toggleSection = (section: keyof typeof openSections) => {
+  // State to keep track of which sections are open
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+  // Initialize the default sections if none are saved
+  useEffect(() => {
+    if (sections.length === 0) {
+      // If there's subhead or introductionParagraph, add alignment section
+      if (form.subhead || form.introductionParagraph || form.alignmentImage) {
+        addSection('alignment');
+      }
+      
+      // If there's carousel content, add carousel section
+      if (form.carouselTitle || form.carouselItem1Title || form.carouselItem1Content) {
+        addSection('carousel');
+      }
+      
+      // If there's four paragraphs content, add that section
+      if (form.fourParaTitle || form.fourPara1Title || form.fourPara1Content) {
+        addSection('fourParagraphs');
+      }
+    }
+  }, []);
+  
+  // Update form whenever sections change
+  useEffect(() => {
+    const event = {
+      target: {
+        name: 'customSections',
+        value: JSON.stringify(sections)
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+    handleContentChange(event);
+  }, [sections]);
+
+  const toggleSection = (id: string) => {
     setOpenSections(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [id]: !prev[id]
     }));
+  };
+
+  const addSection = (type: SectionType['type']) => {
+    const newSection = {
+      id: uuidv4(),
+      type,
+      name: type === 'alignment' 
+        ? 'Left or Right Aligned Section' 
+        : type === 'carousel' 
+          ? '3 Column Slider' 
+          : 'Four Small Paragraphs'
+    };
+    
+    setSections(prev => [...prev, newSection]);
+    
+    // Auto open the new section
+    setOpenSections(prev => ({
+      ...prev,
+      [newSection.id]: true
+    }));
+  };
+
+  const removeSection = (id: string) => {
+    setSections(prev => prev.filter(section => section.id !== id));
+    
+    // Remove from open sections
+    setOpenSections(prev => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
   };
 
   const handleAlignmentChange = (value: string) => {
@@ -172,38 +245,65 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
 
   return (
     <div className="space-y-8">
-      <AlignmentSection
-        isOpen={openSections.alignment}
-        onToggle={() => toggleSection('alignment')}
-        subhead={form.subhead || ''}
-        alignment={form.alignment || 'left'}
-        introductionParagraph={form.introductionParagraph || ''}
-        alignmentImage={form.alignmentImage}
-        onChange={handleContentChange}
-        onAlignmentChange={handleAlignmentChange}
-        onImageUpload={(url) => handleImageUploaded('alignmentImage', url)}
+      <SectionManager 
+        sections={sections}
+        onAddSection={addSection}
+        onRemoveSection={removeSection}
       />
-
-      <CarouselSection
-        isOpen={openSections.carousel}
-        onToggle={() => toggleSection('carousel')}
-        carouselTitle={form.carouselTitle || '3 Column Slider'}
-        items={carouselItems}
-        onChange={handleContentChange}
-        onImageUpload={handleImageUploaded}
-        onReorderItems={handleReorderCarouselItems}
-      />
-
-      <FourParagraphsSection
-        isOpen={openSections.paragraphs}
-        onToggle={() => toggleSection('paragraphs')}
-        sectionTitle={form.fourParaTitle || '4 Small Paragraphs'}
-        sectionSubtitle={form.fourParaSubtitle || 'With Photo'}
-        paragraphs={paragraphItems}
-        sectionImage={form.fourParaImage}
-        onChange={handleContentChange}
-        onImageUpload={(url) => handleImageUploaded('fourParaImage', url)}
-      />
+      
+      {sections.map(section => {
+        const isOpen = openSections[section.id] || false;
+        
+        if (section.type === 'alignment') {
+          return (
+            <AlignmentSection
+              key={section.id}
+              isOpen={isOpen}
+              onToggle={() => toggleSection(section.id)}
+              subhead={form.subhead || ''}
+              alignment={form.alignment || 'left'}
+              introductionParagraph={form.introductionParagraph || ''}
+              alignmentImage={form.alignmentImage}
+              onChange={handleContentChange}
+              onAlignmentChange={handleAlignmentChange}
+              onImageUpload={(url) => handleImageUploaded('alignmentImage', url)}
+            />
+          );
+        }
+        
+        if (section.type === 'carousel') {
+          return (
+            <CarouselSection
+              key={section.id}
+              isOpen={isOpen}
+              onToggle={() => toggleSection(section.id)}
+              carouselTitle={form.carouselTitle || '3 Column Slider'}
+              items={carouselItems}
+              onChange={handleContentChange}
+              onImageUpload={handleImageUploaded}
+              onReorderItems={handleReorderCarouselItems}
+            />
+          );
+        }
+        
+        if (section.type === 'fourParagraphs') {
+          return (
+            <FourParagraphsSection
+              key={section.id}
+              isOpen={isOpen}
+              onToggle={() => toggleSection(section.id)}
+              sectionTitle={form.fourParaTitle || '4 Small Paragraphs'}
+              sectionSubtitle={form.fourParaSubtitle || 'With Photo'}
+              paragraphs={paragraphItems}
+              sectionImage={form.fourParaImage}
+              onChange={handleContentChange}
+              onImageUpload={(url) => handleImageUploaded('fourParaImage', url)}
+            />
+          );
+        }
+        
+        return null;
+      })}
     </div>
   );
 };

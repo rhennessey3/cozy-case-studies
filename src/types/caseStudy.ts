@@ -48,6 +48,8 @@ export interface CaseStudyForm {
   fourPara4Title?: string;
   fourPara4Content?: string;
   fourParaImage?: string;
+  // Custom sections
+  customSections?: string;
 }
 
 export const initialFormState: CaseStudyForm = {
@@ -96,5 +98,7 @@ export const initialFormState: CaseStudyForm = {
   fourPara3Content: '',
   fourPara4Title: 'Paragraph 4',
   fourPara4Content: '',
-  fourParaImage: ''
+  fourParaImage: '',
+  // Custom sections
+  customSections: ''
 };

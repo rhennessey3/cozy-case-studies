@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +14,16 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
     setSaving(true);
     
     try {
+      // Parse custom sections if available
+      let customSections = [];
+      try {
+        if (form.customSections) {
+          customSections = JSON.parse(form.customSections);
+        }
+      } catch (e) {
+        console.error("Failed to parse custom sections", e);
+      }
+      
       // Prepare case study data
       const caseStudyData = {
         title: form.title,
@@ -142,178 +153,203 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
         }
       }
       
-      // Handle alignment section if it exists
-      if (form.subhead || form.introductionParagraph || form.alignmentImage) {
-        // Check if alignment section exists
-        const { data: existingAlignmentSection, error: alignmentSectionQueryError } = await supabase
-          .from('case_study_sections')
-          .select('id')
-          .eq('case_study_id', caseStudyId)
-          .eq('component', 'alignment')
-          .single();
-          
-        const alignmentData = {
-          case_study_id: caseStudyId,
-          component: 'alignment',
-          content: form.introductionParagraph || '',
-          subhead: form.subhead || '',
-          alignment: form.alignment || 'left',
-          image_url: form.alignmentImage || null,
-          sort_order: 7 // After the 6 standard sections
-        };
+      // First, get all existing custom sections
+      const { data: existingSections, error: sectionsQueryError } = await supabase
+        .from('case_study_sections')
+        .select('id, component')
+        .eq('case_study_id', caseStudyId)
+        .in('component', ['alignment', 'carousel', 'fourParagraphs']);
         
-        if (alignmentSectionQueryError && !alignmentSectionQueryError.message.includes('No rows found')) {
-          console.error('Error checking for alignment section:', alignmentSectionQueryError);
-        } else if (existingAlignmentSection) {
-          // Update existing alignment section
-          const { error: updateAlignmentError } = await supabase
-            .from('case_study_sections')
-            .update(alignmentData)
-            .eq('id', existingAlignmentSection.id);
+      const existingSectionIds = new Set(existingSections?.map(s => s.id) || []);
+      
+      // Process custom sections from the form
+      if (customSections.length > 0) {
+        let sortOrder = sectionImageFields.length + 1;
+        
+        for (const section of customSections) {
+          if (section.type === 'alignment' && (form.subhead || form.introductionParagraph || form.alignmentImage)) {
+            // Handle alignment section
+            const alignmentData = {
+              case_study_id: caseStudyId,
+              component: 'alignment',
+              content: form.introductionParagraph || '',
+              subhead: form.subhead || '',
+              alignment: form.alignment || 'left',
+              image_url: form.alignmentImage || null,
+              sort_order: sortOrder++
+            };
             
-          if (updateAlignmentError) {
-            console.error('Error updating alignment section:', updateAlignmentError);
-          }
-        } else {
-          // Create new alignment section
-          const { error: createAlignmentError } = await supabase
-            .from('case_study_sections')
-            .insert(alignmentData);
+            // Check if alignment section exists
+            const { data: existingAlignmentSection, error: alignmentSectionQueryError } = await supabase
+              .from('case_study_sections')
+              .select('id')
+              .eq('case_study_id', caseStudyId)
+              .eq('component', 'alignment')
+              .single();
+              
+            if (alignmentSectionQueryError && !alignmentSectionQueryError.message.includes('No rows found')) {
+              console.error('Error checking for alignment section:', alignmentSectionQueryError);
+            } else if (existingAlignmentSection) {
+              // Update existing alignment section
+              existingSectionIds.delete(existingAlignmentSection.id);
+              
+              const { error: updateAlignmentError } = await supabase
+                .from('case_study_sections')
+                .update(alignmentData)
+                .eq('id', existingAlignmentSection.id);
+                
+              if (updateAlignmentError) {
+                console.error('Error updating alignment section:', updateAlignmentError);
+              }
+            } else {
+              // Create new alignment section
+              const { error: createAlignmentError } = await supabase
+                .from('case_study_sections')
+                .insert(alignmentData);
+                
+              if (createAlignmentError) {
+                console.error('Error creating alignment section:', createAlignmentError);
+              }
+            }
+          } else if (section.type === 'carousel') {
+            // Handle carousel section
+            const carouselData = {
+              case_study_id: caseStudyId,
+              component: 'carousel',
+              title: form.carouselTitle || '3 Column Slider',
+              content: '', // We'll store the carousel items in metadata
+              sort_order: sortOrder++,
+              metadata: {
+                items: [
+                  {
+                    title: form.carouselItem1Title || 'Planning',
+                    content: form.carouselItem1Content || '',
+                    image: form.carouselItem1Image || null
+                  },
+                  {
+                    title: form.carouselItem2Title || 'Development',
+                    content: form.carouselItem2Content || '',
+                    image: form.carouselItem2Image || null
+                  },
+                  {
+                    title: form.carouselItem3Title || 'Results',
+                    content: form.carouselItem3Content || '',
+                    image: form.carouselItem3Image || null
+                  }
+                ]
+              }
+            };
             
-          if (createAlignmentError) {
-            console.error('Error creating alignment section:', createAlignmentError);
+            // Check if carousel section exists
+            const { data: existingCarouselSection, error: carouselSectionQueryError } = await supabase
+              .from('case_study_sections')
+              .select('id')
+              .eq('case_study_id', caseStudyId)
+              .eq('component', 'carousel')
+              .single();
+              
+            if (carouselSectionQueryError && !carouselSectionQueryError.message.includes('No rows found')) {
+              console.error('Error checking for carousel section:', carouselSectionQueryError);
+            } else if (existingCarouselSection) {
+              // Update existing carousel section
+              existingSectionIds.delete(existingCarouselSection.id);
+              
+              const { error: updateCarouselError } = await supabase
+                .from('case_study_sections')
+                .update(carouselData)
+                .eq('id', existingCarouselSection.id);
+                
+              if (updateCarouselError) {
+                console.error('Error updating carousel section:', updateCarouselError);
+              }
+            } else {
+              // Create new carousel section
+              const { error: createCarouselError } = await supabase
+                .from('case_study_sections')
+                .insert(carouselData);
+                
+              if (createCarouselError) {
+                console.error('Error creating carousel section:', createCarouselError);
+              }
+            }
+          } else if (section.type === 'fourParagraphs') {
+            // Handle four paragraphs section
+            const fourParaData = {
+              case_study_id: caseStudyId,
+              component: 'fourParagraphs',
+              title: form.fourParaTitle || '4 Small Paragraphs',
+              content: '',
+              subhead: form.fourParaSubtitle || 'With Photo',
+              image_url: form.fourParaImage || null,
+              sort_order: sortOrder++,
+              metadata: {
+                paragraphs: [
+                  {
+                    title: form.fourPara1Title || 'Paragraph 1',
+                    content: form.fourPara1Content || ''
+                  },
+                  {
+                    title: form.fourPara2Title || 'Paragraph 2',
+                    content: form.fourPara2Content || ''
+                  },
+                  {
+                    title: form.fourPara3Title || 'Paragraph 3',
+                    content: form.fourPara3Content || ''
+                  },
+                  {
+                    title: form.fourPara4Title || 'Paragraph 4',
+                    content: form.fourPara4Content || ''
+                  }
+                ]
+              }
+            };
+            
+            // Check if four paragraphs section exists
+            const { data: existingFourParaSection, error: fourParaSectionQueryError } = await supabase
+              .from('case_study_sections')
+              .select('id')
+              .eq('case_study_id', caseStudyId)
+              .eq('component', 'fourParagraphs')
+              .single();
+              
+            if (fourParaSectionQueryError && !fourParaSectionQueryError.message.includes('No rows found')) {
+              console.error('Error checking for four paragraphs section:', fourParaSectionQueryError);
+            } else if (existingFourParaSection) {
+              // Update existing four paragraphs section
+              existingSectionIds.delete(existingFourParaSection.id);
+              
+              const { error: updateFourParaError } = await supabase
+                .from('case_study_sections')
+                .update(fourParaData)
+                .eq('id', existingFourParaSection.id);
+                
+              if (updateFourParaError) {
+                console.error('Error updating four paragraphs section:', updateFourParaError);
+              }
+            } else {
+              // Create new four paragraphs section
+              const { error: createFourParaError } = await supabase
+                .from('case_study_sections')
+                .insert(fourParaData);
+                
+              if (createFourParaError) {
+                console.error('Error creating four paragraphs section:', createFourParaError);
+              }
+            }
           }
         }
       }
       
-      // Handle carousel section if it exists
-      if (form.carouselTitle || form.carouselItem1Title || form.carouselItem2Title || form.carouselItem3Title) {
-        // Check if carousel section exists
-        const { data: existingCarouselSection, error: carouselSectionQueryError } = await supabase
+      // Delete any sections that were removed
+      if (existingSectionIds.size > 0) {
+        const sectionsToDelete = Array.from(existingSectionIds);
+        const { error: deleteError } = await supabase
           .from('case_study_sections')
-          .select('id')
-          .eq('case_study_id', caseStudyId)
-          .eq('component', 'carousel')
-          .single();
+          .delete()
+          .in('id', sectionsToDelete);
           
-        const carouselData = {
-          case_study_id: caseStudyId,
-          component: 'carousel',
-          title: form.carouselTitle || '3 Column Slider',
-          content: '', // We'll store the carousel items in metadata
-          sort_order: 8, // After alignment section
-          metadata: {
-            items: [
-              {
-                title: form.carouselItem1Title || 'Planning',
-                content: form.carouselItem1Content || '',
-                image: form.carouselItem1Image || null
-              },
-              {
-                title: form.carouselItem2Title || 'Development',
-                content: form.carouselItem2Content || '',
-                image: form.carouselItem2Image || null
-              },
-              {
-                title: form.carouselItem3Title || 'Results',
-                content: form.carouselItem3Content || '',
-                image: form.carouselItem3Image || null
-              }
-            ]
-          }
-        };
-        
-        if (carouselSectionQueryError && !carouselSectionQueryError.message.includes('No rows found')) {
-          console.error('Error checking for carousel section:', carouselSectionQueryError);
-        } else if (existingCarouselSection) {
-          // Update existing carousel section
-          const { error: updateCarouselError } = await supabase
-            .from('case_study_sections')
-            .update(carouselData)
-            .eq('id', existingCarouselSection.id);
-            
-          if (updateCarouselError) {
-            console.error('Error updating carousel section:', updateCarouselError);
-          }
-        } else {
-          // Create new carousel section
-          const { error: createCarouselError } = await supabase
-            .from('case_study_sections')
-            .insert(carouselData);
-            
-          if (createCarouselError) {
-            console.error('Error creating carousel section:', createCarouselError);
-          }
-        }
-      }
-      
-      // Handle four paragraphs section if it exists
-      if (form.fourParaTitle || form.fourParaSubtitle || 
-          form.fourPara1Title || form.fourPara1Content || 
-          form.fourPara2Title || form.fourPara2Content || 
-          form.fourPara3Title || form.fourPara3Content || 
-          form.fourPara4Title || form.fourPara4Content || 
-          form.fourParaImage) {
-        
-        // Check if four paragraphs section exists
-        const { data: existingFourParaSection, error: fourParaSectionQueryError } = await supabase
-          .from('case_study_sections')
-          .select('id')
-          .eq('case_study_id', caseStudyId)
-          .eq('component', 'fourParagraphs')
-          .single();
-          
-        const fourParaData = {
-          case_study_id: caseStudyId,
-          component: 'fourParagraphs',
-          title: form.fourParaTitle || '4 Small Paragraphs',
-          content: '',
-          subhead: form.fourParaSubtitle || 'With Photo',
-          image_url: form.fourParaImage || null,
-          sort_order: 9, // After carousel section
-          metadata: {
-            paragraphs: [
-              {
-                title: form.fourPara1Title || 'Paragraph 1',
-                content: form.fourPara1Content || ''
-              },
-              {
-                title: form.fourPara2Title || 'Paragraph 2',
-                content: form.fourPara2Content || ''
-              },
-              {
-                title: form.fourPara3Title || 'Paragraph 3',
-                content: form.fourPara3Content || ''
-              },
-              {
-                title: form.fourPara4Title || 'Paragraph 4',
-                content: form.fourPara4Content || ''
-              }
-            ]
-          }
-        };
-        
-        if (fourParaSectionQueryError && !fourParaSectionQueryError.message.includes('No rows found')) {
-          console.error('Error checking for four paragraphs section:', fourParaSectionQueryError);
-        } else if (existingFourParaSection) {
-          // Update existing four paragraphs section
-          const { error: updateFourParaError } = await supabase
-            .from('case_study_sections')
-            .update(fourParaData)
-            .eq('id', existingFourParaSection.id);
-            
-          if (updateFourParaError) {
-            console.error('Error updating four paragraphs section:', updateFourParaError);
-          }
-        } else {
-          // Create new four paragraphs section
-          const { error: createFourParaError } = await supabase
-            .from('case_study_sections')
-            .insert(fourParaData);
-            
-          if (createFourParaError) {
-            console.error('Error creating four paragraphs section:', createFourParaError);
-          }
+        if (deleteError) {
+          console.error('Error deleting removed sections:', deleteError);
         }
       }
       
@@ -332,4 +368,3 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
 
   return { saving, handleSubmit };
 };
-
