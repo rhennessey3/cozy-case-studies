@@ -5,6 +5,9 @@ import { CaseStudy } from '@/data/caseStudies';
 import { getCaseStudyBySlug } from '@/services';
 import { toast } from 'sonner';
 import { CaseStudyForm } from '@/types/caseStudy';
+import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
+
+const LOCAL_CASE_STUDIES_KEY = 'local_case_studies';
 
 export const useFetchCaseStudy = (slug?: string) => {
   const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null);
@@ -23,6 +26,130 @@ export const useFetchCaseStudy = (slug?: string) => {
       setForm(null);
       setLoading(true);
       
+      // Check if we're in local auth mode
+      const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
+      const localAuthState = localStorage.getItem(AUTH_STORAGE_KEY);
+      
+      // Try to get case study from local storage first if in local auth mode
+      if (isLocalAuthOnly || localAuthState === 'true') {
+        console.log('Checking local storage for case study with slug:', slug);
+        const localCaseStudiesString = localStorage.getItem(LOCAL_CASE_STUDIES_KEY);
+        
+        if (localCaseStudiesString) {
+          try {
+            const localCaseStudies = JSON.parse(localCaseStudiesString);
+            const localCaseStudy = localCaseStudies.find((cs: any) => cs.slug === slug);
+            
+            if (localCaseStudy) {
+              console.log('Found case study in local storage:', localCaseStudy);
+              
+              // Format the case study to match the expected CaseStudy type
+              const formattedCaseStudy: CaseStudy = {
+                id: localCaseStudy.id,
+                title: localCaseStudy.title,
+                slug: localCaseStudy.slug,
+                summary: localCaseStudy.summary,
+                description: localCaseStudy.description,
+                coverImage: localCaseStudy.coverImage,
+                category: localCaseStudy.category,
+                height: localCaseStudy.height,
+                content: localCaseStudy.content
+              };
+              
+              setCaseStudy(formattedCaseStudy);
+              
+              // Set the form with all the case study data
+              setForm({
+                title: localCaseStudy.title,
+                slug: localCaseStudy.slug,
+                summary: localCaseStudy.summary,
+                description: localCaseStudy.description || '',
+                coverImage: localCaseStudy.coverImage,
+                category: localCaseStudy.category,
+                height: localCaseStudy.height || '',
+                intro: localCaseStudy.content.intro,
+                challenge: localCaseStudy.content.challenge,
+                approach: localCaseStudy.content.approach,
+                solution: localCaseStudy.content.solution,
+                results: localCaseStudy.content.results,
+                conclusion: localCaseStudy.content.conclusion,
+                alignment: localCaseStudy.alignment || 'left',
+                subhead: localCaseStudy.subhead || '',
+                introductionParagraph: localCaseStudy.introductionParagraph || '',
+                alignmentImage: localCaseStudy.alignmentImage || '',
+                introImage: localCaseStudy.introImage || '',
+                challengeImage: localCaseStudy.challengeImage || '',
+                approachImage: localCaseStudy.approachImage || '',
+                solutionImage: localCaseStudy.solutionImage || '',
+                resultsImage: localCaseStudy.resultsImage || '',
+                conclusionImage: localCaseStudy.conclusionImage || '',
+                customSections: localCaseStudy.customSections || '',
+                carouselTitle: localCaseStudy.carouselTitle || '',
+                carouselItem1Title: localCaseStudy.carouselItem1Title || '',
+                carouselItem1Content: localCaseStudy.carouselItem1Content || '',
+                carouselItem1Image: localCaseStudy.carouselItem1Image || '',
+                carouselItem2Title: localCaseStudy.carouselItem2Title || '',
+                carouselItem2Content: localCaseStudy.carouselItem2Content || '',
+                carouselItem2Image: localCaseStudy.carouselItem2Image || '',
+                carouselItem3Title: localCaseStudy.carouselItem3Title || '',
+                carouselItem3Content: localCaseStudy.carouselItem3Content || '',
+                carouselItem3Image: localCaseStudy.carouselItem3Image || '',
+                fourParaTitle: localCaseStudy.fourParaTitle || '',
+                fourParaSubtitle: localCaseStudy.fourParaSubtitle || '',
+                fourPara1Title: localCaseStudy.fourPara1Title || '',
+                fourPara1Content: localCaseStudy.fourPara1Content || '',
+                fourPara2Title: localCaseStudy.fourPara2Title || '',
+                fourPara2Content: localCaseStudy.fourPara2Content || '',
+                fourPara3Title: localCaseStudy.fourPara3Title || '',
+                fourPara3Content: localCaseStudy.fourPara3Content || '',
+                fourPara4Title: localCaseStudy.fourPara4Title || '',
+                fourPara4Content: localCaseStudy.fourPara4Content || '',
+                fourParaImage: localCaseStudy.fourParaImage || ''
+              });
+              
+              setLoading(false);
+              return;
+            }
+          } catch (error) {
+            console.error('Error parsing local case studies:', error);
+          }
+        }
+        
+        // If we're creating a new case study or the requested slug wasn't found
+        if (slug === 'new') {
+          // For new case studies, return empty form
+          setForm({
+            title: '',
+            slug: '',
+            summary: '',
+            description: '',
+            coverImage: '',
+            category: '',
+            height: '',
+            intro: '',
+            challenge: '',
+            approach: '',
+            solution: '',
+            results: '',
+            conclusion: '',
+            alignment: 'left',
+            subhead: '',
+            introductionParagraph: '',
+            alignmentImage: '',
+            introImage: '',
+            challengeImage: '',
+            approachImage: '',
+            solutionImage: '',
+            resultsImage: '',
+            conclusionImage: '',
+            customSections: ''
+          });
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // If not found in local storage or not in local auth mode, proceed with normal fetching
       try {
         const data = await getCaseStudyBySlug(slug);
         if (data) {
@@ -157,7 +284,7 @@ export const useFetchCaseStudy = (slug?: string) => {
     };
 
     fetchCaseStudy();
-  }, [slug]); // This ensures the effect runs when the slug changes
+  }, [slug]);
 
   return { caseStudy, loading, form };
 };

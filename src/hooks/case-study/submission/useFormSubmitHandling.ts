@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -6,8 +5,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { processBasicInfo } from './processors/basicInfoProcessor';
 import { processContentData } from './processors/contentDataProcessor';
-import { processCustomSections as processCustomSectionsFromProcessor } from './processors/customSectionsProcessor';
+import { processCustomSectionsFromProcessor } from './processors/customSectionsProcessor';
 import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
+
+const LOCAL_CASE_STUDIES_KEY = 'local_case_studies';
 
 const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) => {
   const sections = [
@@ -55,12 +56,78 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
 
 // Special function to handle database operations in local auth mode
 const processLocalDatabase = async (form: CaseStudyForm, isNew: boolean, slug?: string) => {
-  // In local auth mode, we'll mock a successful operation
-  // We'll just return a fixed ID for the case study
-  const caseStudyId = "local-mode-case-study-id-" + Date.now();
+  const caseStudyId = isNew 
+    ? "local-" + Date.now() 
+    : `local-${slug}`;
   
-  console.log(`Local auth mode: Simulating ${isNew ? 'creation' : 'update'} of case study with slug "${form.slug}"`);
-  console.log('Form data:', form);
+  console.log(`Local auth mode: ${isNew ? 'Creating' : 'Updating'} case study with slug "${form.slug}"`);
+  
+  const existingDataString = localStorage.getItem(LOCAL_CASE_STUDIES_KEY);
+  const existingData = existingDataString ? JSON.parse(existingDataString) : [];
+  
+  const existingIndex = existingData.findIndex((cs: any) => cs.slug === form.slug);
+  
+  const caseStudyData = {
+    id: caseStudyId,
+    title: form.title,
+    slug: form.slug,
+    summary: form.summary,
+    description: form.description,
+    coverImage: form.coverImage,
+    category: form.category,
+    height: form.height,
+    content: {
+      intro: form.intro,
+      challenge: form.challenge,
+      approach: form.approach,
+      solution: form.solution,
+      results: form.results,
+      conclusion: form.conclusion
+    },
+    alignment: form.alignment,
+    subhead: form.subhead,
+    introductionParagraph: form.introductionParagraph,
+    alignmentImage: form.alignmentImage,
+    introImage: form.introImage,
+    challengeImage: form.challengeImage,
+    approachImage: form.approachImage,
+    solutionImage: form.solutionImage,
+    resultsImage: form.resultsImage,
+    conclusionImage: form.conclusionImage,
+    customSections: form.customSections,
+    carouselTitle: form.carouselTitle,
+    carouselItem1Title: form.carouselItem1Title,
+    carouselItem1Content: form.carouselItem1Content,
+    carouselItem1Image: form.carouselItem1Image,
+    carouselItem2Title: form.carouselItem2Title,
+    carouselItem2Content: form.carouselItem2Content,
+    carouselItem2Image: form.carouselItem2Image,
+    carouselItem3Title: form.carouselItem3Title,
+    carouselItem3Content: form.carouselItem3Content,
+    carouselItem3Image: form.carouselItem3Image,
+    fourParaTitle: form.fourParaTitle,
+    fourParaSubtitle: form.fourParaSubtitle,
+    fourPara1Title: form.fourPara1Title,
+    fourPara1Content: form.fourPara1Content,
+    fourPara2Title: form.fourPara2Title,
+    fourPara2Content: form.fourPara2Content,
+    fourPara3Title: form.fourPara3Title,
+    fourPara3Content: form.fourPara3Content,
+    fourPara4Title: form.fourPara4Title,
+    fourPara4Content: form.fourPara4Content,
+    fourParaImage: form.fourParaImage,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+  
+  if (existingIndex >= 0) {
+    existingData[existingIndex] = caseStudyData;
+  } else {
+    existingData.push(caseStudyData);
+  }
+  
+  localStorage.setItem(LOCAL_CASE_STUDIES_KEY, JSON.stringify(existingData));
+  console.log('Case study saved to local storage:', caseStudyData);
   
   return {
     success: true,
@@ -78,14 +145,11 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
     setSaving(true);
     
     try {
-      // Check if in local auth mode
       const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
       
-      // Get current authentication state from localStorage
       const localAuthState = localStorage.getItem(AUTH_STORAGE_KEY);
       console.log('Local auth state:', localAuthState);
       
-      // Validate required fields
       if (!form.title) {
         toast.error('Title is required');
         setSaving(false);
@@ -98,15 +162,12 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: false };
       }
       
-      // Determine if we're creating or editing
       const isNew = !slug || slug === 'new' || slug === '';
       console.log('Mode determined:', isNew ? 'Creating new case study' : 'Editing existing case study', 'Slug:', slug);
       
-      // Handle local auth mode
       if ((isLocalAuthOnly || localAuthState === 'true')) {
-        console.log('Processing in local auth mode');
+        console.log('Processing in local auth mode with localStorage persistence');
         
-        // Use simulated database operations for local auth mode
         const result = await processLocalDatabase(form, isNew, slug);
         
         toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (Local Mode)`);
@@ -119,7 +180,6 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: true, slug: form.slug };
       }
       
-      // For non-local auth mode, check authentication with Supabase
       const { data: sessionData } = await supabase.auth.getSession();
       console.log('Current session data:', sessionData);
       
@@ -131,7 +191,6 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: false };
       }
       
-      // Process the database operations
       try {
         const editSlug = isNew ? null : slug;
         console.log('Using slug to process:', editSlug);
@@ -165,7 +224,6 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         } else if (dbError.message.includes('permission denied') || dbError.message.includes('row-level security')) {
           toast.error('Permission denied by database security. Please try logging out and back in.');
           
-          // Force a logout and redirect to login page to refresh authentication
           localStorage.removeItem(AUTH_STORAGE_KEY);
           navigate('/admin/login');
         } else {
@@ -177,11 +235,9 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
     } catch (error) {
       console.error('Error saving case study:', error);
       
-      // Provide more specific error messages based on error types
       if ((error as Error).message.includes('Row Level Security')) {
         toast.error('Permission denied by database security policies. Please try logging out and back in.');
         
-        // Force a logout and redirect to login page
         localStorage.removeItem(AUTH_STORAGE_KEY);
         navigate('/admin/login');
       } else {
