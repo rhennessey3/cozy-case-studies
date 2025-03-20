@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext } from 'react';
 import { AuthContextType } from '@/types/auth';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
 
 // Re-export constants for backward compatibility
 export { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/constants/authConstants';
