@@ -2,31 +2,28 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, MoveUp, MoveDown } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-
-export interface SectionType {
-  id: string;
-  type: 'alignment' | 'carousel' | 'fourParagraphs';
-  name: string;
-}
+import { SectionWithOrder } from './types';
 
 interface SectionManagerProps {
-  sections: SectionType[];
-  onAddSection: (type: SectionType['type']) => void;
+  sections: SectionWithOrder[];
+  onAddSection: (type: SectionWithOrder['type']) => void;
   onRemoveSection: (id: string) => void;
+  onMoveSection: (id: string, direction: 'up' | 'down') => void;
 }
 
 const SectionManager: React.FC<SectionManagerProps> = ({
   sections,
   onAddSection,
-  onRemoveSection
+  onRemoveSection,
+  onMoveSection
 }) => {
-  const [selectedType, setSelectedType] = React.useState<SectionType['type']>('alignment');
+  const [selectedType, setSelectedType] = React.useState<SectionWithOrder['type']>('alignment');
 
   const handleTypeChange = (value: string) => {
-    setSelectedType(value as SectionType['type']);
+    setSelectedType(value as SectionWithOrder['type']);
   };
 
   return (
@@ -40,20 +37,41 @@ const SectionManager: React.FC<SectionManagerProps> = ({
             <p className="text-gray-500 italic">No custom sections added yet</p>
           ) : (
             <ul className="space-y-2">
-              {sections.map((section) => (
+              {sections.map((section, index) => (
                 <li key={section.id} className="flex items-center justify-between p-3 border rounded-md">
-                  <div>
+                  <div className="flex items-center">
+                    <span className="font-medium mr-2">{section.order}.</span>
                     <span className="font-medium">{section.name}</span>
                     <span className="ml-2 text-xs text-gray-500">({section.type})</span>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => onRemoveSection(section.id)}
-                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => onMoveSection(section.id, 'up')}
+                      disabled={index === 0}
+                      className="h-8 w-8 text-gray-500 hover:text-gray-600 hover:bg-gray-50"
+                    >
+                      <MoveUp className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => onMoveSection(section.id, 'down')}
+                      disabled={index === sections.length - 1}
+                      className="h-8 w-8 text-gray-500 hover:text-gray-600 hover:bg-gray-50"
+                    >
+                      <MoveDown className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => onRemoveSection(section.id)}
+                      className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>

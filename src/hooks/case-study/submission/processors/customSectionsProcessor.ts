@@ -33,15 +33,21 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   
   // Process custom sections from the form
   if (customSections.length > 0) {
-    let sortOrder = 7; // Start after the 6 standard sections
+    // Sort sections by order property
+    customSections.sort((a: any, b: any) => a.order - b.order);
     
-    for (const section of customSections) {
+    for (const [index, section] of customSections.entries()) {
+      // Use the section's order if available, otherwise use the index + base offset
+      const sortOrder = section.order !== undefined 
+        ? section.order 
+        : index + 7; // Start after the 6 standard sections
+      
       if (section.type === 'alignment') {
-        await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder++);
+        await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder);
       } else if (section.type === 'carousel') {
-        await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder++);
+        await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder);
       } else if (section.type === 'fourParagraphs') {
-        await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder++);
+        await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder);
       }
     }
   }

@@ -14,3 +14,10 @@ export interface ParagraphItem {
   titleField: string;
   contentField: string;
 }
+
+export interface SectionWithOrder {
+  id: string;
+  type: 'alignment' | 'carousel' | 'fourParagraphs';
+  name: string;
+  order: number;
+}

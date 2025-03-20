@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { SectionType } from './SectionManager';
+import { SectionWithOrder } from './types';
 import { v4 as uuidv4 } from '@/lib/utils';
 
 interface SectionFormState {
@@ -33,10 +34,15 @@ interface SectionFormState {
 
 export const useSectionState = (form: SectionFormState, handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void) => {
   // Parse custom sections from form if available
-  const [sections, setSections] = useState<SectionType[]>(() => {
+  const [sections, setSections] = useState<SectionWithOrder[]>(() => {
     try {
       if (form.customSections) {
-        return JSON.parse(form.customSections);
+        const parsedSections = JSON.parse(form.customSections);
+        // Ensure all sections have order property
+        return parsedSections.map((section: any, index: number) => ({
+          ...section,
+          order: section.order !== undefined ? section.order : index + 1
+        }));
       }
     } catch (e) {
       console.error("Failed to parse custom sections", e);
@@ -85,7 +91,11 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     }));
   };
 
-  const addSection = (type: SectionType['type']) => {
+  const addSection = (type: SectionWithOrder['type']) => {
+    const newOrder = sections.length > 0 
+      ? Math.max(...sections.map(s => s.order)) + 1 
+      : 1;
+      
     const newSection = {
       id: uuidv4(),
       type,
@@ -93,7 +103,8 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
         ? 'Left or Right Aligned Section' 
         : type === 'carousel' 
           ? '3 Column Slider' 
-          : 'Four Small Paragraphs'
+          : 'Four Small Paragraphs',
+      order: newOrder
     };
     
     setSections(prev => [...prev, newSection]);
@@ -106,7 +117,20 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   };
 
   const removeSection = (id: string) => {
-    setSections(prev => prev.filter(section => section.id !== id));
+    setSections(prev => {
+      const sectionToRemove = prev.find(section => section.id === id);
+      if (!sectionToRemove) return prev;
+      
+      const removedOrder = sectionToRemove.order;
+      
+      return prev
+        .filter(section => section.id !== id)
+        .map(section => ({
+          ...section,
+          // Adjust order for sections after the removed one
+          order: section.order > removedOrder ? section.order - 1 : section.order
+        }));
+    });
     
     // Remove from open sections
     setOpenSections(prev => {
@@ -116,11 +140,38 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     });
   };
 
+  const moveSection = (id: string, direction: 'up' | 'down') => {
+    setSections(prev => {
+      const sectionIndex = prev.findIndex(section => section.id === id);
+      if (sectionIndex === -1) return prev;
+      
+      // Cannot move up if already at the top
+      if (direction === 'up' && sectionIndex === 0) return prev;
+      
+      // Cannot move down if already at the bottom
+      if (direction === 'down' && sectionIndex === prev.length - 1) return prev;
+      
+      const newSections = [...prev];
+      const section = newSections[sectionIndex];
+      const targetIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1;
+      const targetSection = newSections[targetIndex];
+      
+      // Swap orders
+      const tempOrder = section.order;
+      section.order = targetSection.order;
+      targetSection.order = tempOrder;
+      
+      // Sort by order
+      return newSections.sort((a, b) => a.order - b.order);
+    });
+  };
+
   return {
     sections,
     openSections,
     toggleSection,
     addSection,
-    removeSection
+    removeSection,
+    moveSection
   };
 };

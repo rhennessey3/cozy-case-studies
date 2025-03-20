@@ -57,7 +57,8 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
     openSections, 
     toggleSection, 
     addSection, 
-    removeSection 
+    removeSection,
+    moveSection
   } = useSectionState(form, handleContentChange);
   
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(
@@ -78,15 +79,19 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
     handleContentChange(event);
   };
 
+  // Sort sections by order for display
+  const sortedSections = [...sections].sort((a, b) => a.order - b.order);
+
   return (
     <div className="space-y-8">
       <SectionManager 
-        sections={sections}
+        sections={sortedSections}
         onAddSection={addSection}
         onRemoveSection={removeSection}
+        onMoveSection={moveSection}
       />
       
-      {sections.map(section => {
+      {sortedSections.map(section => {
         const isOpen = openSections[section.id] || false;
         
         if (section.type === 'alignment') {
