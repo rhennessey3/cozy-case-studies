@@ -49,6 +49,7 @@ const AdminCaseStudies = () => {
         onViewLive={handleViewLive}
         onLogout={handleLogout}
         showViewLive={true}
+        showDelete={false}
       />
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
