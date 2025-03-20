@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -53,7 +52,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
   handleImageUploaded = () => {} 
 }) => {
   const [openSections, setOpenSections] = useState({
-    header: true,
     introduction: true,
     alignment: true,
     carousel: true,
@@ -88,101 +86,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
 
   return (
     <div className="space-y-8">
-      <Collapsible 
-        open={openSections.header}
-        onOpenChange={() => toggleSection('header')}
-        className="w-full"
-      >
-        <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
-          <CollapsibleTrigger className="w-full text-left focus:outline-none">
-            <SectionHeader title="Case Study Header" section="header" />
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="space-y-2">
-                <Label htmlFor="subhead-one" className="text-gray-500">Subhead One</Label>
-                <Input 
-                  id="subhead-one" 
-                  name="challenge" 
-                  value={form.challenge} 
-                  onChange={handleContentChange} 
-                  placeholder="Challenge"
-                  className="bg-gray-50 border-gray-200"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="subhead-one-paragraph" className="text-gray-500">Subhead One Paragraph</Label>
-                <Textarea 
-                  id="subhead-one-paragraph" 
-                  name="intro" 
-                  value={form.intro} 
-                  onChange={handleContentChange} 
-                  placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-                  className="bg-gray-50 border-gray-200"
-                  rows={3}
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="space-y-2">
-                <Label htmlFor="subhead-two" className="text-gray-500">Subhead Two</Label>
-                <Input 
-                  id="subhead-two" 
-                  name="approach" 
-                  value={form.approach} 
-                  onChange={handleContentChange} 
-                  placeholder="Approach"
-                  className="bg-gray-50 border-gray-200"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="subhead-two-paragraph" className="text-gray-500">Subhead Two Paragraph</Label>
-                <Textarea 
-                  id="subhead-two-paragraph" 
-                  name="solution" 
-                  value={form.solution} 
-                  onChange={handleContentChange} 
-                  placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-                  className="bg-gray-50 border-gray-200"
-                  rows={3}
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="subhead-three" className="text-gray-500">Subhead Three</Label>
-                <Input 
-                  id="subhead-three" 
-                  name="results" 
-                  value={form.results} 
-                  onChange={handleContentChange} 
-                  placeholder="Results"
-                  className="bg-gray-50 border-gray-200"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="subhead-three-paragraph" className="text-gray-500">Subhead Three Paragraph</Label>
-                <Textarea 
-                  id="subhead-three-paragraph" 
-                  name="conclusion" 
-                  value={form.conclusion} 
-                  onChange={handleContentChange} 
-                  placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-                  className="bg-gray-50 border-gray-200"
-                  rows={3}
-                />
-              </div>
-            </div>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
-      
       <Collapsible
         open={openSections.introduction}
         onOpenChange={() => toggleSection('introduction')}
@@ -610,3 +513,4 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
 };
 
 export default CaseStudyContentTab;
+
