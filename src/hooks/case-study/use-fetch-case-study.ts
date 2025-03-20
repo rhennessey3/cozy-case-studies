@@ -18,6 +18,11 @@ export const useFetchCaseStudy = (slug?: string) => {
         return;
       }
       
+      // Reset state when slug changes to avoid showing previous data during loading
+      setCaseStudy(null);
+      setForm(null);
+      setLoading(true);
+      
       try {
         const data = await getCaseStudyBySlug(slug);
         if (data) {
@@ -111,7 +116,7 @@ export const useFetchCaseStudy = (slug?: string) => {
             ...sectionImages
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to fetch case study:', error);
         
         // Only show toast error if not in admin mode with a new case study
@@ -152,7 +157,7 @@ export const useFetchCaseStudy = (slug?: string) => {
     };
 
     fetchCaseStudy();
-  }, [slug]);
+  }, [slug]); // This ensures the effect runs when the slug changes
 
   return { caseStudy, loading, form };
 };

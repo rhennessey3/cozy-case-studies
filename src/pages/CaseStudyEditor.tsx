@@ -16,6 +16,7 @@ import CaseStudyContentTab from '@/components/case-study-editor/CaseStudyContent
 import { useCaseStudyEditor } from '@/hooks/use-case-study-editor';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 
 const CaseStudyEditor = () => {
   const { slug } = useParams();
@@ -28,6 +29,7 @@ const CaseStudyEditor = () => {
     loading,
     saving,
     caseStudies,
+    caseStudiesLoading,
     form,
     handleChange,
     handleContentChange,
@@ -61,6 +63,12 @@ const CaseStudyEditor = () => {
     toast('Logged out successfully');
   };
 
+  const handleViewLive = () => {
+    if (slug) {
+      window.open(`/case-studies/${slug}`, '_blank');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {isSmallScreen ? (
@@ -82,7 +90,7 @@ const CaseStudyEditor = () => {
               <div className="text-left max-w-screen-2xl mx-auto mb-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#EAEAEA]">
                   <h1 className="text-3xl md:text-4xl font-[900] text-[#1b1b1b]">
-                    {slug ? 'EDIT CASE STUDY' : 'CREATE CASE STUDY'}
+                    {slug === 'new' ? 'CREATE CASE STUDY' : 'EDIT CASE STUDY'}
                   </h1>
                   <div className="flex gap-2">
                     <Button 
@@ -91,10 +99,10 @@ const CaseStudyEditor = () => {
                     >
                       New Case Study
                     </Button>
-                    {slug && (
+                    {slug && slug !== 'new' && (
                       <Button
                         variant="outline"
-                        onClick={() => navigate(`/case-studies/${slug}`)}
+                        onClick={handleViewLive}
                       >
                         View Live
                       </Button>
@@ -109,22 +117,29 @@ const CaseStudyEditor = () => {
                 </div>
               </div>
               
-              {loading ? (
-                <div className="max-w-4xl mx-auto">
-                  <div className="h-8 bg-gray-200 rounded mb-4 animate-pulse"></div>
-                  <div className="h-32 bg-gray-200 rounded mb-4 animate-pulse"></div>
-                  <div className="h-8 bg-gray-200 rounded mb-4 animate-pulse"></div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
-                  <div className="md:col-span-1">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
+                <div className="md:col-span-1">
+                  {caseStudiesLoading ? (
+                    <div className="bg-gray-50 p-4 rounded-lg flex justify-center items-center h-40">
+                      <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+                    </div>
+                  ) : (
                     <CaseStudySidebar 
                       caseStudies={caseStudies} 
                       currentSlug={slug} 
+                      onCreateNew={createNewCaseStudy}
                     />
-                  </div>
-                  
-                  <div className="md:col-span-3">
+                  )}
+                </div>
+                
+                <div className="md:col-span-3">
+                  {loading ? (
+                    <div className="space-y-6">
+                      <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <Tabs defaultValue="basics">
                         <TabsList className="mb-4">
@@ -153,7 +168,7 @@ const CaseStudyEditor = () => {
                         <Button 
                           type="button" 
                           variant="outline" 
-                          onClick={() => navigate('/case-studies')}
+                          onClick={() => navigate('/admin/case-studies')}
                         >
                           Cancel
                         </Button>
@@ -161,13 +176,13 @@ const CaseStudyEditor = () => {
                           type="submit"
                           disabled={saving}
                         >
-                          {saving ? 'Saving...' : slug ? 'Update Case Study' : 'Create Case Study'}
+                          {saving ? 'Saving...' : slug === 'new' ? 'Create Case Study' : 'Update Case Study'}
                         </Button>
                       </div>
                     </form>
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </section>
           <Footer />
