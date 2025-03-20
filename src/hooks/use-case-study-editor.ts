@@ -10,9 +10,16 @@ import { initialFormState } from '@/types/caseStudy';
 export const useCaseStudyEditor = (slug?: string) => {
   const navigate = useNavigate();
   const { caseStudies, loading: caseStudiesLoading, refetchCaseStudies } = useFetchCaseStudies();
-  const { caseStudy, loading, form: fetchedForm } = useFetchCaseStudy(slug);
-  const { form, handleChange, handleContentChange, handleImageUploaded, setForm } = useCaseStudyForm(fetchedForm);
-  const { saving, handleSubmit: submitCaseStudy } = useCaseStudySubmit(form, slug);
+  
+  // Only fetch case study if we have a valid slug (not undefined, empty, or "new")
+  const shouldFetchCaseStudy = slug && slug !== '' && slug !== 'new';
+  const { caseStudy, loading, form: fetchedForm } = useFetchCaseStudy(shouldFetchCaseStudy ? slug : undefined);
+  
+  // Initialize with empty form if no slug or slug is "new"
+  const defaultForm = shouldFetchCaseStudy ? fetchedForm : initialFormState;
+  const { form, handleChange, handleContentChange, handleImageUploaded, setForm } = useCaseStudyForm(defaultForm);
+  
+  const { saving, handleSubmit: submitCaseStudy } = useCaseStudySubmit(form, shouldFetchCaseStudy ? slug : undefined);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +31,7 @@ export const useCaseStudyEditor = (slug?: string) => {
       await refetchCaseStudies();
       
       // Navigate to the newly created/updated case study
-      if (!slug && result.slug) {
+      if ((!slug || slug === 'new' || slug === '') && result.slug) {
         navigate(`/admin/case-studies/${result.slug}`);
       }
     }
@@ -34,11 +41,11 @@ export const useCaseStudyEditor = (slug?: string) => {
 
   const createNewCaseStudy = () => {
     setForm(initialFormState);
-    navigate('/admin/case-studies');
+    navigate('/admin/case-studies/new');
   };
 
   return {
-    loading,
+    loading: shouldFetchCaseStudy ? loading : false,
     saving,
     caseStudy,
     caseStudies,

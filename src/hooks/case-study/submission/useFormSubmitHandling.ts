@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -84,9 +85,15 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: true, slug: form.slug };
       }
       
+      // Determine if we're creating or editing based on whether the case study exists in the database
+      const isNew = !slug || slug === 'new' || slug === '';
+      console.log('Mode determined:', isNew ? 'Creating new case study' : 'Editing existing case study', 'Slug:', slug);
+      
       // Use the improved processors to handle database operations
-      console.log('Using slug to process:', slug);
-      const { caseStudyId } = await processBasicInfo(form, slug);
+      const editSlug = isNew ? null : slug;
+      console.log('Using slug to process:', editSlug);
+      
+      const { caseStudyId } = await processBasicInfo(form, editSlug);
       
       if (!caseStudyId) {
         throw new Error('Failed to process case study basic info');
@@ -94,13 +101,12 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       
       console.log('Case study ID retrieved:', caseStudyId);
       
-      await processContentData(form, caseStudyId, slug);
+      await processContentData(form, caseStudyId, editSlug);
       
       await processSectionImages(form, caseStudyId);
       
       await processCustomSections(form, caseStudyId);
       
-      const isNew = !slug;
       toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
       
       if (isNew) {
