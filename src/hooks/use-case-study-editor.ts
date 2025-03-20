@@ -23,10 +23,9 @@ export const useCaseStudyEditor = (slug?: string) => {
   // We need to declare the initial form state first
   const initialForm = shouldFetchCaseStudy && fetchedForm ? fetchedForm : initialFormState;
   
-  // Now we can use useCaseStudyForm with the proper initial state
-  const { form, handleChange, handleContentChange, handleImageUploaded, setForm } = useCaseStudyForm(
-    formInitialized ? form : initialForm
-  );
+  // Now we can use useCaseStudyForm with the proper initial state - but we need to avoid the circular reference
+  const formState = useCaseStudyForm(initialForm);
+  const { form, handleChange, handleContentChange, handleImageUploaded, setForm } = formState;
   
   // Update form when fetchedForm changes
   useEffect(() => {
