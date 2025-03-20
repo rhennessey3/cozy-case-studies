@@ -56,22 +56,54 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   // Initialize the default sections if none are saved
   useEffect(() => {
     if (sections.length === 0) {
+      const defaultSections = [];
+
       // If there's subhead or introductionParagraph, add alignment section
       if (form.subhead || form.introductionParagraph || form.alignmentImage) {
-        addSection('alignment');
+        defaultSections.push(createSection('alignment', 1));
       }
       
       // If there's carousel content, add carousel section
       if (form.carouselTitle || form.carouselItem1Title || form.carouselItem1Content) {
-        addSection('carousel');
+        defaultSections.push(createSection('carousel', defaultSections.length + 1));
       }
       
       // If there's four paragraphs content, add that section
       if (form.fourParaTitle || form.fourPara1Title || form.fourPara1Content) {
-        addSection('fourParagraphs');
+        defaultSections.push(createSection('fourParagraphs', defaultSections.length + 1));
       }
+
+      // If we have empty form and no existing sections, add one of each by default
+      if (defaultSections.length === 0) {
+        defaultSections.push(createSection('alignment', 1));
+        defaultSections.push(createSection('carousel', 2));
+        defaultSections.push(createSection('fourParagraphs', 3));
+      }
+
+      setSections(defaultSections);
+      
+      // Auto-open all sections by default for better UX
+      const newOpenSections: Record<string, boolean> = {};
+      defaultSections.forEach(section => {
+        newOpenSections[section.id] = true;
+      });
+      setOpenSections(newOpenSections);
     }
   }, []);
+
+  // Helper function to create a new section
+  const createSection = (type: SectionWithOrder['type'], order: number): SectionWithOrder => {
+    return {
+      id: uuidv4(),
+      type,
+      name: type === 'alignment' 
+        ? 'Left or Right Aligned Section' 
+        : type === 'carousel' 
+          ? '3 Column Slider' 
+          : 'Four Small Paragraphs',
+      order
+    };
+  };
   
   // Update form whenever sections change
   useEffect(() => {
@@ -96,16 +128,7 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
       ? Math.max(...sections.map(s => s.order)) + 1 
       : 1;
       
-    const newSection = {
-      id: uuidv4(),
-      type,
-      name: type === 'alignment' 
-        ? 'Left or Right Aligned Section' 
-        : type === 'carousel' 
-          ? '3 Column Slider' 
-          : 'Four Small Paragraphs',
-      order: newOrder
-    };
+    const newSection = createSection(type, newOrder);
     
     setSections(prev => [...prev, newSection]);
     

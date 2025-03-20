@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import AlignmentSection from '@/components/case-study-editor/sections/AlignmentSection';
 import CarouselSection from '@/components/case-study-editor/sections/CarouselSection';
 import FourParagraphsSection from '@/components/case-study-editor/sections/FourParagraphsSection';
@@ -78,6 +78,12 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
     } as React.ChangeEvent<HTMLInputElement>;
     handleContentChange(event);
   };
+
+  // Debug output to help troubleshoot missing sections
+  useEffect(() => {
+    console.log('Current sections:', sections);
+    console.log('Open sections:', openSections);
+  }, [sections, openSections]);
 
   // Sort sections by order for display
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
