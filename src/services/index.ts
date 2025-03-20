@@ -1,4 +1,3 @@
 
-export { getCaseStudies, getCaseStudyBySlug } from './caseStudiesService';
-export { fetchCaseStudyBySlug } from './caseStudiesService';
+export { getCaseStudies, getCaseStudyBySlug, fetchCaseStudyBySlug } from './caseStudies';
 export { testDatabaseConnection } from './databaseService';
