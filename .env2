@@ -1,6 +1,0 @@
-
-# Frontend URL (for CORS)
-VITE_FRONTEND_URL=https://cozy-case-studies.vercel.app
-
-# Debug mode
-VITE_DEBUG_MODE=true
