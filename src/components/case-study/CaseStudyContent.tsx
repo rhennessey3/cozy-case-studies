@@ -30,29 +30,39 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
     const sections: React.ReactNode[] = [];
     
     if (caseStudy.sections && Array.isArray(caseStudy.sections)) {
+      // Sort sections by sort_order
       const sortedSections = [...caseStudy.sections].sort((a, b) => a.sort_order - b.sort_order);
       
+      // Map each section to its corresponding component
       sortedSections.forEach(section => {
-        if (section.component === 'intro') {
-          sections.push(<CaseStudyIntro key={section.id} caseStudy={caseStudy} />);
-        } 
-        else if (section.component === 'research') {
-          sections.push(<UserResearchSection key={section.id} caseStudy={caseStudy} />);
-        }
-        else if (section.component === 'needs') {
-          sections.push(<UserNeedsSection key={section.id} caseStudy={caseStudy} />);
-        }
-        else if (section.component === 'flow') {
-          sections.push(<UserFlowSection key={section.id} caseStudy={caseStudy} />);
-        }
-        else if (section.component === 'iteration') {
-          sections.push(<IterationSection key={section.id} caseStudy={caseStudy} />);
-        }
-        else if (section.component === 'prototype') {
-          sections.push(<PrototypingSection key={section.id} caseStudy={caseStudy} />);
+        const componentType = section.component;
+        
+        switch (componentType) {
+          case 'intro':
+            sections.push(<CaseStudyIntro key={section.id} caseStudy={caseStudy} />);
+            break;
+          case 'research':
+            sections.push(<UserResearchSection key={section.id} caseStudy={caseStudy} />);
+            break;
+          case 'needs':
+            sections.push(<UserNeedsSection key={section.id} caseStudy={caseStudy} />);
+            break;
+          case 'flow':
+            sections.push(<UserFlowSection key={section.id} caseStudy={caseStudy} />);
+            break;
+          case 'iteration':
+            sections.push(<IterationSection key={section.id} caseStudy={caseStudy} />);
+            break;
+          case 'prototype':
+            sections.push(<PrototypingSection key={section.id} caseStudy={caseStudy} />);
+            break;
+          default:
+            // Handle custom section types here if needed
+            break;
         }
       });
     } else {
+      // Fallback to the default order if no sections are defined
       sections.push(
         <CaseStudyIntro key="intro" caseStudy={caseStudy} />,
         <UserResearchSection key="research" caseStudy={caseStudy} />,
