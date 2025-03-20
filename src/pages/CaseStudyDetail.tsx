@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import TopNavbar from '@/components/TopNavbar';
@@ -23,8 +24,14 @@ const CaseStudyDetail: React.FC = () => {
   useEffect(() => {
     console.log(`CaseStudyDetail rendering with slug: ${slug}`);
     
-    // Dismiss any persistent toasts when mounting the component
+    // Immediately dismiss any ongoing toast notifications
+    // This ensures we don't see deletion toasts from the editor when viewing the case study
     toast.dismiss();
+    
+    // Return cleanup function to dismiss toasts when component unmounts
+    return () => {
+      toast.dismiss();
+    };
   }, [slug]);
 
   const { data: caseStudy, isLoading, error, refetch } = useQuery({

@@ -22,6 +22,9 @@ export const addSection = (
     ...prev,
     [newSection.id]: true
   }));
+  
+  // Show success toast when section is added
+  toast.success(`${newSection.name} section added`);
 
   return newSection;
 };
@@ -36,20 +39,24 @@ export const removeSection = (
   // Clear any existing toast notifications to prevent stuck "deleting" messages
   toast.dismiss();
   
+  // Create a unique toast ID for this specific section removal
+  const toastId = `remove-section-${id}`;
+  
   // Show a temporary removing message with a unique message to distinguish from full case study deletion
-  toast.loading("Removing section...", { id: `remove-section-${id}` });
+  toast.loading("Removing section...", { id: toastId, duration: 5000 });
   
   setSections(prev => {
     const sectionToRemove = prev.find(section => section.id === id);
     if (!sectionToRemove) {
       console.warn(`Section with ID ${id} not found for removal`);
-      toast.dismiss(`remove-section-${id}`);
+      toast.dismiss(toastId);
       toast.error("Section not found");
       return prev;
     }
     
     console.log(`Found section to remove:`, sectionToRemove);
     const removedOrder = sectionToRemove.order;
+    const sectionName = sectionToRemove.name;
     
     const filteredSections = prev.filter(section => section.id !== id);
     
@@ -63,8 +70,8 @@ export const removeSection = (
     console.log(`Updated sections after removal:`, adjustedSections);
     
     // Clear the loading toast and show success message
-    toast.dismiss(`remove-section-${id}`);
-    toast.success("Section removed successfully");
+    toast.dismiss(toastId);
+    toast.success(`${sectionName} section removed`, { id: `success-remove-${id}`, duration: 3000 });
     
     return adjustedSections;
   });
@@ -101,6 +108,9 @@ export const moveSection = (
     const tempOrder = section.order;
     section.order = targetSection.order;
     targetSection.order = tempOrder;
+    
+    // Show success toast
+    toast.success(`Section moved ${direction}`, { id: `move-section-${id}`, duration: 2000 });
     
     // Sort by order
     return newSections.sort((a, b) => a.order - b.order);

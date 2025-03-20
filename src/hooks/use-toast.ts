@@ -20,6 +20,7 @@ interface ShadcnToastProps {
   title?: React.ReactNode;
   description?: React.ReactNode;
   variant?: "default" | "destructive";
+  duration?: number;
 }
 
 // Create a wrapper that transforms shadcn toast interface to Sonner format
@@ -27,13 +28,18 @@ const createToastAdapter = () => {
   return {
     // This mimics the shadcn toast interface but uses Sonner under the hood
     toast: (props: ShadcnToastProps) => {
+      // Set a reasonable default duration
+      const duration = props.duration || 5000;
+      
       if (props.variant === "destructive") {
         return sonnerToast.error(props.title as string, {
-          description: props.description
+          description: props.description,
+          duration
         });
       } else {
         return sonnerToast.success(props.title as string, {
-          description: props.description
+          description: props.description,
+          duration
         });
       }
     },

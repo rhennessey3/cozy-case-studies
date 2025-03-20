@@ -14,15 +14,6 @@ interface CaseStudyContentProps {
   caseStudy: CaseStudy;
 }
 
-const sectionComponents = {
-  intro: CaseStudyIntro,
-  research: UserResearchSection,
-  needs: UserNeedsSection,
-  flow: UserFlowSection,
-  iteration: IterationSection,
-  prototype: PrototypingSection
-};
-
 const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
   const [orderedSections, setOrderedSections] = useState<React.ReactNode[]>([]);
 
@@ -58,6 +49,7 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
         switch (componentType) {
           case 'intro':
           case 'introduction':
+            // Only render if we need the introduction section
             sections.push(<CaseStudyIntro key={section.id} caseStudy={caseStudy} />);
             break;
           case 'research':
@@ -81,49 +73,13 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
             break;
         }
       });
-    } else if (caseStudy.sections && Array.isArray(caseStudy.sections)) {
-      // Fall back to regular sections if present
-      // Sort sections by sort_order
-      const sortedSections = [...caseStudy.sections].sort((a, b) => a.sort_order - b.sort_order);
       
-      // Map each section to its corresponding component
-      sortedSections.forEach(section => {
-        const componentType = section.component;
-        
-        switch (componentType) {
-          case 'intro':
-            sections.push(<CaseStudyIntro key={section.id} caseStudy={caseStudy} />);
-            break;
-          case 'research':
-            sections.push(<UserResearchSection key={section.id} caseStudy={caseStudy} />);
-            break;
-          case 'needs':
-            sections.push(<UserNeedsSection key={section.id} caseStudy={caseStudy} />);
-            break;
-          case 'flow':
-            sections.push(<UserFlowSection key={section.id} caseStudy={caseStudy} />);
-            break;
-          case 'iteration':
-            sections.push(<IterationSection key={section.id} caseStudy={caseStudy} />);
-            break;
-          case 'prototype':
-            sections.push(<PrototypingSection key={section.id} caseStudy={caseStudy} />);
-            break;
-          default:
-            // Handle custom section types here if needed
-            break;
-        }
-      });
+      // Log the sections we've prepared for rendering
+      console.log(`Prepared ${sections.length} sections for rendering from custom sections`);
     } else {
-      // Fallback to the default order if no sections are defined
-      sections.push(
-        <CaseStudyIntro key="intro" caseStudy={caseStudy} />,
-        <UserResearchSection key="research" caseStudy={caseStudy} />,
-        <UserNeedsSection key="needs" caseStudy={caseStudy} />,
-        <UserFlowSection key="flow" caseStudy={caseStudy} />,
-        <IterationSection key="iteration" caseStudy={caseStudy} />,
-        <PrototypingSection key="prototype" caseStudy={caseStudy} />
-      );
+      // Important change: Don't automatically add all sections as fallback
+      // This was causing deleted sections to still appear
+      console.log("No custom sections found, NOT using fallback sections");
     }
     
     console.log("Final sections to render:", sections.length);
