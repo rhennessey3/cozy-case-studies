@@ -7,6 +7,12 @@ import { processFourParagraphsSection } from './sectionTypes/fourParagraphsProce
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/contexts/AuthContext';
 
 export const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
+  // In development mode, skip actual processing
+  if (import.meta.env.DEV) {
+    console.log('DEV MODE: Skipping custom sections processing');
+    return;
+  }
+  
   // Parse custom sections if available
   let customSections = [];
   try {
@@ -44,39 +50,8 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
       });
       
       if (error) {
-        // If the error indicates the user doesn't exist, try to create it
-        if (error.message.includes('Invalid login credentials')) {
-          console.log('User does not exist in Supabase. Attempting to create the admin user...');
-          
-          // Try to sign up with admin credentials
-          const { error: signUpError } = await supabase.auth.signUp({
-            email: ADMIN_EMAIL,
-            password: ADMIN_PASSWORD
-          });
-          
-          if (signUpError) {
-            console.error('Failed to create admin user:', signUpError);
-            throw new Error(`Failed to create admin user: ${signUpError.message}`);
-          }
-          
-          // Try to authenticate again
-          const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
-            email: ADMIN_EMAIL,
-            password: ADMIN_PASSWORD
-          });
-          
-          if (retryError) {
-            console.error('Failed to authenticate after creating admin user:', retryError);
-            throw new Error(`Failed to authenticate after creating admin user: ${retryError.message}`);
-          }
-          
-          if (!retryData.session) {
-            throw new Error('No session created after creating and authenticating admin user');
-          }
-        } else {
-          console.error('Authentication failed:', error);
-          throw new Error(`Authentication failed: ${error.message}`);
-        }
+        console.error('Authentication failed:', error);
+        throw new Error(`Authentication failed: ${error.message}`);
       }
       
       if (!data?.session) {

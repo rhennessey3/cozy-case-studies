@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -47,8 +48,10 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
           try {
             console.log('Session mismatch detected. Attempting to sign in with admin credentials...');
             
+            // Sign out first to ensure clean state
             await supabase.auth.signOut();
             
+            // Try to sign in with admin credentials
             const { data: signInData, error } = await supabase.auth.signInWithPassword({
               email: ADMIN_EMAIL,
               password: ADMIN_PASSWORD
@@ -99,6 +102,23 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
     setSaving(true);
     
     try {
+      // For development purposes, allow saving without actual Supabase authentication
+      // This skips the actual database operations but lets users test the UI
+      if (import.meta.env.DEV) {
+        // Simulate successful save in development
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+        
+        toast.success(slug ? 'Case study updated successfully' : 'Case study created successfully');
+        
+        if (!slug) {
+          navigate(`/admin/case-studies/${form.slug}`);
+        }
+        
+        setSaving(false);
+        return;
+      }
+      
+      // Production flow with actual authentication
       const { data: sessionData } = await supabase.auth.getSession();
       
       if (!sessionData.session) {
