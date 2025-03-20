@@ -9,9 +9,10 @@ import CaseStudyEditor from './pages/CaseStudyEditor';
 import AdminLogin from './pages/AdminLogin';
 import NotFound from './pages/NotFound';
 import DatabaseTestPage from './pages/DatabaseTestPage';
-import Footer from './components/Footer';
 
 const AppRoutes: React.FC = () => {
+  console.log('AppRoutes rendering...');
+  
   return (
     <>
       <Routes>
@@ -25,7 +26,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/database-test" element={<DatabaseTestPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Footer />
     </>
   );
 };

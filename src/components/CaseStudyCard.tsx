@@ -11,6 +11,12 @@ interface CaseStudyCardProps {
 const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
   const { title, coverImage, slug, height } = caseStudy;
   
+  // Make sure we have a valid slug (defensive coding)
+  const safeSlug = slug || '';
+  
+  // Add console log to debug the link path
+  console.log(`Creating case study link to: /case-studies/${safeSlug}`);
+  
   return (
     <div 
       className={cn(
@@ -18,7 +24,7 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ caseStudy }) => {
         height === "tall" ? "masonry-item-tall" : ""
       )}
     >
-      <Link to={`/case-studies/${slug}`} className="block relative h-full">
+      <Link to={`/case-studies/${safeSlug}`} className="block relative h-full">
         <div className="relative aspect-video overflow-hidden h-full">
           <img 
             src={coverImage} 

@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import TopNavbar from '@/components/TopNavbar';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -12,17 +12,35 @@ import { AlertTriangle, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const CaseStudyDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isAdminRoute = window.location.pathname.includes('/admin/');
+  const navigate = useNavigate();
   
+  // Log when component renders and what slug we're looking for
+  useEffect(() => {
+    console.log(`CaseStudyDetail rendering with slug: ${slug}`);
+  }, [slug]);
+
   const { data: caseStudy, isLoading, error, refetch } = useQuery({
     queryKey: ['caseStudy', slug],
-    queryFn: () => getCaseStudyBySlug(slug || ''),
+    queryFn: () => {
+      console.log(`Fetching case study with slug: ${slug}`);
+      if (!slug) {
+        toast.error('No case study slug provided');
+        return Promise.reject(new Error('No case study slug provided'));
+      }
+      return getCaseStudyBySlug(slug);
+    },
     enabled: !!slug,
-    retry: isAdminRoute ? 0 : 1 // Don't retry in admin mode
+    retry: isAdminRoute ? 0 : 1, // Don't retry in admin mode
+    onError: (err) => {
+      console.error('Error loading case study:', err);
+      toast.error(`Failed to load case study: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
   });
 
   if (isLoading) {
@@ -71,8 +89,8 @@ const CaseStudyDetail: React.FC = () => {
               <Button onClick={() => refetch()} variant="outline">
                 Try Again
               </Button>
-              <Button asChild>
-                <Link to="/case-studies">View All Case Studies</Link>
+              <Button onClick={() => navigate('/case-studies')}>
+                View All Case Studies
               </Button>
             </div>
           )}
@@ -98,6 +116,7 @@ const CaseStudyDetail: React.FC = () => {
       {isSmallScreen ? <TopNavbar /> : <Navbar />}
       <div className={cn(!isSmallScreen && "ml-[4.5rem]")}>
         <CaseStudyContent caseStudy={caseStudy} />
+        <Footer />
       </div>
     </div>
   );
