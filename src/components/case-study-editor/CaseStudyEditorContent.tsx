@@ -1,14 +1,15 @@
+
 import React, { useEffect, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Loader2 } from 'lucide-react';
+import { CaseStudyForm } from '@/types/caseStudy';
+import { supabase } from '@/integrations/supabase/client';
 import CaseStudyBasicInfoTab from './CaseStudyBasicInfoTab';
 import CaseStudyContentTab from './CaseStudyContentTab';
-import { CaseStudyForm } from '@/types/caseStudy';
-import { Loader2, AlertTriangle, Eye, Trash2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import EditorTabsNav from './components/EditorTabsNav';
+import FormActions from './components/FormActions';
+import EditorLoading from './components/EditorLoading';
+import AuthErrorState from './components/AuthErrorState';
 
 interface CaseStudyEditorContentProps {
   loading: boolean;
@@ -39,7 +40,6 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   showViewLive = false,
   showDelete = false
 }) => {
-  const navigate = useNavigate();
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
   const [authError, setAuthError] = useState<string | null>(null);
   const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
@@ -96,23 +96,8 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
     checkAuth();
   }, [isLocalAuthOnly]);
 
-  const handleRedirectToLogin = () => {
-    if (!isLocalAuthOnly) {
-      localStorage.removeItem('admin_authenticated');
-    }
-    
-    navigate('/admin/login');
-    toast.info('Please log in to continue');
-  };
-
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-      </div>
-    );
+    return <EditorLoading />;
   }
 
   if (authStatus === 'checking') {
@@ -125,56 +110,18 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   }
 
   if (authStatus === 'unauthenticated') {
-    return (
-      <div className="space-y-6 py-8">
-        <Alert variant="destructive" className="bg-red-50 border-red-200">
-          <AlertTriangle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700">
-            {authError || 'You must be logged in to create or edit case studies'}
-          </AlertDescription>
-        </Alert>
-        <Button onClick={handleRedirectToLogin} className="mt-4">
-          Go to Login
-        </Button>
-      </div>
-    );
+    return <AuthErrorState errorMessage={authError} />;
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <Tabs defaultValue="basics">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-          <TabsList className="mb-0">
-            <TabsTrigger value="basics">Basic Info</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
-          </TabsList>
-          
-          <div className="flex gap-2 mt-4 md:mt-0">
-            {showViewLive && onViewLive && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onViewLive}
-                className="flex items-center gap-2"
-              >
-                <Eye className="h-4 w-4" />
-                View Live
-              </Button>
-            )}
-            
-            {showDelete && onDelete && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onDelete}
-                className="flex items-center gap-2 text-red-500 hover:bg-red-50 hover:text-red-600 border-red-200"
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </Button>
-            )}
-          </div>
-        </div>
+        <EditorTabsNav
+          showViewLive={showViewLive}
+          showDelete={showDelete}
+          onViewLive={onViewLive}
+          onDelete={onDelete}
+        />
         
         <TabsContent value="basics">
           <CaseStudyBasicInfoTab 
@@ -193,23 +140,7 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         </TabsContent>
       </Tabs>
       
-      <div className="flex justify-end gap-2">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => navigate('/admin/case-studies')}
-        >
-          Cancel
-        </Button>
-        <Button 
-          type="submit"
-          disabled={saving}
-          className="flex items-center gap-2"
-        >
-          {saving && <Loader2 size={16} className="animate-spin" />}
-          {saving ? 'Saving...' : slug === 'new' ? 'Create Case Study' : 'Update Case Study'}
-        </Button>
-      </div>
+      <FormActions saving={saving} slug={slug} />
     </form>
   );
 };
