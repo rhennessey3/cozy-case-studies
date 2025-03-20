@@ -69,6 +69,13 @@ const CaseStudyEditor = () => {
     }
   };
 
+  // Create the dynamic heading text based on the current case study or "new" state
+  const getHeadingText = () => {
+    if (loading) return 'LOADING...';
+    if (slug === 'new') return 'CREATE CASE STUDY';
+    return form?.title ? `EDIT: ${form.title.toUpperCase()}` : 'EDIT CASE STUDY';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {isSmallScreen ? (
@@ -90,7 +97,7 @@ const CaseStudyEditor = () => {
               <div className="text-left max-w-screen-2xl mx-auto mb-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#EAEAEA]">
                   <h1 className="text-3xl md:text-4xl font-[900] text-[#1b1b1b]">
-                    {slug === 'new' ? 'CREATE CASE STUDY' : 'EDIT CASE STUDY'}
+                    {getHeadingText()}
                   </h1>
                   <div className="flex gap-2">
                     <Button 
