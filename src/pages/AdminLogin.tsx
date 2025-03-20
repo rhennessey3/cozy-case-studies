@@ -25,7 +25,7 @@ const AdminLogin: React.FC = () => {
   
   // Check local authentication as a fallback
   const isLocallyAuthenticated = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
-  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated);
+  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated) || isLocallyAuthenticated;
 
   useEffect(() => {
     // Reset login state and error when component loads
@@ -53,6 +53,33 @@ const AdminLogin: React.FC = () => {
     setLoginError(null);
     
     try {
+      // For local auth, we can directly check the password
+      if (isLocalAuthOnly || password === ADMIN_PASSWORD) {
+        if (isLocalAuthOnly || password === ADMIN_PASSWORD) {
+          // Set local authentication flag
+          localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+          
+          toast({
+            title: "Login Successful",
+            description: "Welcome to the admin panel",
+          });
+          
+          // Try to use the Auth context login as well
+          if (!isLocalAuthOnly) {
+            try {
+              await login(password);
+            } catch (error) {
+              console.warn("Supabase login failed, but proceeding with local auth:", error);
+            }
+          }
+          
+          // Redirect to admin page
+          navigate('/admin/case-studies');
+          return;
+        }
+      }
+      
+      // If not local auth or password incorrect, try regular login
       const success = await login(password);
       
       if (success) {

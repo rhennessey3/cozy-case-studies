@@ -9,6 +9,7 @@ import CaseStudySidebar from '@/components/case-study-editor/CaseStudySidebar';
 import CaseStudyEditorHeader from '@/components/case-study-editor/CaseStudyEditorHeader';
 import CaseStudyEditorContent from '@/components/case-study-editor/CaseStudyEditorContent';
 import CaseStudyEditorLayout from '@/components/case-study-editor/CaseStudyEditorLayout';
+import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
 
 const CaseStudyEditor = () => {
   const { slug } = useParams();
@@ -16,11 +17,11 @@ const CaseStudyEditor = () => {
   const { isAuthenticated, logout } = useAuth();
   
   // Check local authentication as a fallback
-  const isLocallyAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
+  const isLocallyAuthenticated = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
   const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
   
   // User is authenticated if they're authenticated via context OR locally authenticated in local auth mode
-  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated);
+  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated) || isLocallyAuthenticated;
   
   useEffect(() => {
     // If not authenticated at all, redirect to login

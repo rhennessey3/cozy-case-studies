@@ -44,6 +44,22 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         // First check local auth state
         const localAuth = localStorage.getItem('admin_authenticated');
         
+        // If we're in local auth only mode and have local auth, we're good to go
+        if (isLocalAuthOnly && localAuth === 'true') {
+          console.log('User is authenticated via local auth in local-only mode');
+          setAuthStatus('authenticated');
+          return;
+        }
+        
+        // If no local auth but we're in local auth only mode, user is not authenticated
+        if (isLocalAuthOnly && localAuth !== 'true') {
+          console.log('User is not authenticated via local auth in local-only mode');
+          setAuthError('You must be logged in to create or edit case studies');
+          setAuthStatus('unauthenticated');
+          return;
+        }
+        
+        // If we're not in local auth only mode, check local auth first as a fallback
         if (localAuth === 'true') {
           console.log('User is authenticated via local auth');
           setAuthStatus('authenticated');
@@ -51,21 +67,19 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         }
         
         // If no local auth, try Supabase
-        if (!isLocalAuthOnly) {
-          const { data, error } = await supabase.auth.getSession();
-          
-          if (error) {
-            console.error('Auth check error:', error);
-            setAuthError(`Authentication error: ${error.message}`);
-            setAuthStatus('unauthenticated');
-            return;
-          }
-          
-          if (data.session) {
-            console.log('User is authenticated via Supabase');
-            setAuthStatus('authenticated');
-            return;
-          }
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Auth check error:', error);
+          setAuthError(`Authentication error: ${error.message}`);
+          setAuthStatus('unauthenticated');
+          return;
+        }
+        
+        if (data.session) {
+          console.log('User is authenticated via Supabase');
+          setAuthStatus('authenticated');
+          return;
         }
         
         // If we got here, user is not authenticated
@@ -83,8 +97,10 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   }, [isLocalAuthOnly]);
 
   const handleRedirectToLogin = () => {
-    // Clear any existing authentication state
-    localStorage.removeItem('admin_authenticated');
+    // Don't clear authentication state if using local auth
+    if (!isLocalAuthOnly) {
+      localStorage.removeItem('admin_authenticated');
+    }
     
     // Redirect to login
     navigate('/admin/login');

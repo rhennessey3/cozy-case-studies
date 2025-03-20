@@ -7,6 +7,7 @@ import { CaseStudyForm } from '@/types/caseStudy';
 import { processBasicInfo } from './processors/basicInfoProcessor';
 import { processContentData } from './processors/contentDataProcessor';
 import { processCustomSections as processCustomSectionsFromProcessor } from './processors/customSectionsProcessor';
+import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
 
 const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) => {
   const sections = [
@@ -56,7 +57,7 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
 const processLocalDatabase = async (form: CaseStudyForm, isNew: boolean, slug?: string) => {
   // In local auth mode, we'll mock a successful operation
   // We'll just return a fixed ID for the case study
-  const caseStudyId = "local-mode-case-study-id";
+  const caseStudyId = "local-mode-case-study-id-" + Date.now();
   
   console.log(`Local auth mode: Simulating ${isNew ? 'creation' : 'update'} of case study with slug "${form.slug}"`);
   console.log('Form data:', form);
@@ -77,11 +78,11 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
     setSaving(true);
     
     try {
-      // Check if in local dev mode
+      // Check if in local auth mode
       const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
       
       // Get current authentication state from localStorage
-      const localAuthState = localStorage.getItem('admin_authenticated');
+      const localAuthState = localStorage.getItem(AUTH_STORAGE_KEY);
       console.log('Local auth state:', localAuthState);
       
       // Validate required fields
@@ -101,8 +102,8 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       const isNew = !slug || slug === 'new' || slug === '';
       console.log('Mode determined:', isNew ? 'Creating new case study' : 'Editing existing case study', 'Slug:', slug);
       
-      // Handle local auth mode differently
-      if (isLocalAuthOnly && localAuthState === 'true') {
+      // Handle local auth mode
+      if ((isLocalAuthOnly || localAuthState === 'true')) {
         console.log('Processing in local auth mode');
         
         // Use simulated database operations for local auth mode
@@ -124,7 +125,7 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       
       if (!sessionData.session && localAuthState !== 'true') {
         toast.error('You must be logged in to save a case study');
-        localStorage.removeItem('admin_authenticated');
+        localStorage.removeItem(AUTH_STORAGE_KEY);
         navigate('/admin/login');
         setSaving(false);
         return { success: false };
@@ -165,7 +166,7 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
           toast.error('Permission denied by database security. Please try logging out and back in.');
           
           // Force a logout and redirect to login page to refresh authentication
-          localStorage.removeItem('admin_authenticated');
+          localStorage.removeItem(AUTH_STORAGE_KEY);
           navigate('/admin/login');
         } else {
           toast.error(`Database error: ${dbError.message}`);
@@ -181,7 +182,7 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         toast.error('Permission denied by database security policies. Please try logging out and back in.');
         
         // Force a logout and redirect to login page
-        localStorage.removeItem('admin_authenticated');
+        localStorage.removeItem(AUTH_STORAGE_KEY);
         navigate('/admin/login');
       } else {
         toast.error(`Failed to ${slug ? 'update' : 'create'} case study: ${(error as Error).message}`);
