@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import IntroductionSection from '@/components/case-study-editor/sections/IntroductionSection';
 import AlignmentSection from '@/components/case-study-editor/sections/AlignmentSection';
 import CarouselSection from '@/components/case-study-editor/sections/CarouselSection';
 import FourParagraphsSection from '@/components/case-study-editor/sections/FourParagraphsSection';
@@ -49,7 +48,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
   handleImageUploaded = () => {} 
 }) => {
   const [openSections, setOpenSections] = useState({
-    introduction: true,
     alignment: true,
     carousel: true,
     paragraphs: true
@@ -100,6 +98,50 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
     }
   ];
 
+  // Handler for reordering carousel items
+  const handleReorderCarouselItems = (newItems: any[]) => {
+    // Update each field based on the new order
+    const fieldUpdates = newItems.map((item, index) => {
+      const oldIndex = carouselItems.findIndex(oldItem => 
+        oldItem.titleField === item.titleField &&
+        oldItem.contentField === item.contentField &&
+        oldItem.imageField === item.imageField
+      );
+      
+      // Create synthetic events for each field that needs to be updated
+      const updates = [] as React.ChangeEvent<HTMLInputElement>[];
+      
+      // Only create updates if the item has moved
+      if (oldIndex !== index) {
+        const positionNumber = index + 1;
+        
+        updates.push({
+          target: {
+            name: `carouselItem${positionNumber}Title`,
+            value: item.title || ''
+          }
+        } as React.ChangeEvent<HTMLInputElement>);
+        
+        updates.push({
+          target: {
+            name: `carouselItem${positionNumber}Content`,
+            value: item.content || ''
+          }
+        } as React.ChangeEvent<HTMLInputElement>);
+        
+        if (item.image) {
+          // For images, we need to call handleImageUploaded
+          handleImageUploaded(`carouselItem${positionNumber}Image`, item.image);
+        }
+      }
+      
+      return updates;
+    }).flat();
+    
+    // Apply all the updates
+    fieldUpdates.forEach(event => handleContentChange(event));
+  };
+
   // Prepare paragraph items
   const paragraphItems = [
     {
@@ -130,15 +172,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
 
   return (
     <div className="space-y-8">
-      <IntroductionSection
-        isOpen={openSections.introduction}
-        onToggle={() => toggleSection('introduction')}
-        introValue={form.intro}
-        challengeValue={form.challenge}
-        approachValue={form.approach}
-        onChange={handleContentChange}
-      />
-
       <AlignmentSection
         isOpen={openSections.alignment}
         onToggle={() => toggleSection('alignment')}
@@ -158,6 +191,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
         items={carouselItems}
         onChange={handleContentChange}
         onImageUpload={handleImageUploaded}
+        onReorderItems={handleReorderCarouselItems}
       />
 
       <FourParagraphsSection

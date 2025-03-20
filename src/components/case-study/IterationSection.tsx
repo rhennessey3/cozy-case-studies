@@ -18,10 +18,38 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
 
+  // Check if we have carousel items in the metadata
+  const carouselTitle = caseStudy.sections?.find(s => s.component === 'carousel')?.title || '3 Column Slider';
+  const carouselItems = caseStudy.sections?.find(s => s.component === 'carousel')?.metadata?.items || [];
+  
+  // Fallback items if no custom carousel items exist
+  const fallbackItems = [
+    {
+      title: "Planning",
+      content: caseStudy.content.approach.split('.')[0],
+      image: "https://images.unsplash.com/photo-1642964057919-6c2ce94ffc13?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      title: "Development",
+      content: caseStudy.content.solution.split('.')[0],
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      title: "Results",
+      content: caseStudy.content.results,
+      image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&q=80&w=800"
+    }
+  ];
+  
+  // Use custom items if available, otherwise use fallback
+  const displayItems = carouselItems.length > 0 ? carouselItems : fallbackItems;
+
   return (
     <section className={`${isExtraSmallScreen ? 'py-6' : 'py-12'} bg-[#221F26]`}>
       <div className="container mx-auto px-4">
-        <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-white mb-3 md:mb-8 text-left`}>3 Column Slider</h2>
+        <h2 className={`${isExtraSmallScreen ? 'text-2xl' : 'text-3xl'} font-bold text-white mb-3 md:mb-8 text-left`}>
+          {carouselTitle}
+        </h2>
         
         <div className="relative px-4 md:px-12">
           <Carousel
@@ -31,53 +59,23 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
             }}
           >
             <CarouselContent>
-              <CarouselItem className="basis-full md:basis-1/3">
-                <div className="flex flex-col items-start h-full">
-                  <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1642964057919-6c2ce94ffc13?auto=format&fit=crop&q=80&w=800" 
-                      alt="Initial wireframes" 
-                      className="w-full h-full object-cover"
-                    />
+              {displayItems.map((item, index) => (
+                <CarouselItem key={index} className="basis-full md:basis-1/3">
+                  <div className="flex flex-col items-start h-full">
+                    <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
+                      <img 
+                        src={item.image || `https://images.unsplash.com/photo-${1642964057919 + index}-6c2ce94ffc13?auto=format&fit=crop&q=80&w=800`} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 text-left">{item.title}</h3>
+                    <p className="text-gray-300 text-left">
+                      {item.content}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 text-left">Planning</h3>
-                  <p className="text-gray-300 text-left">
-                    {caseStudy.content.approach.split('.')[0]}. 
-                  </p>
-                </div>
-              </CarouselItem>
-              
-              <CarouselItem className="basis-full md:basis-1/3">
-                <div className="flex flex-col items-start h-full">
-                  <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800" 
-                      alt="Development process" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 text-left">Development</h3>
-                  <p className="text-gray-300 text-left">
-                    {caseStudy.content.solution.split('.')[0]}.
-                  </p>
-                </div>
-              </CarouselItem>
-              
-              <CarouselItem className="basis-full md:basis-1/3">
-                <div className="flex flex-col items-start h-full">
-                  <div className="w-full aspect-square mb-3 md:mb-4 overflow-hidden rounded-lg shadow-lg relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&q=80&w=800" 
-                      alt="Final implementation" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="text-xl font-semibold text-[#89c5cc] mb-2 text-left">Results</h3>
-                  <p className="text-gray-300 text-left">
-                    {caseStudy.content.results}
-                  </p>
-                </div>
-              </CarouselItem>
+                </CarouselItem>
+              ))}
             </CarouselContent>
             
             {isMobile && (

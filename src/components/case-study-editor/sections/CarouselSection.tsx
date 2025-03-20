@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import ImageUploader from '@/components/ImageUploader';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface CarouselItem {
   title: string;
@@ -24,6 +25,7 @@ interface CarouselSectionProps {
   items: CarouselItem[];
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   onImageUpload: (field: string, url: string) => void;
+  onReorderItems?: (newItems: CarouselItem[]) => void;
 }
 
 const CarouselSection: React.FC<CarouselSectionProps> = ({
@@ -32,8 +34,25 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
   carouselTitle,
   items,
   onChange,
-  onImageUpload
+  onImageUpload,
+  onReorderItems
 }) => {
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    if (!onReorderItems) return;
+    
+    const newItems = [...items];
+    
+    if (direction === 'up' && index > 0) {
+      // Swap with the item above
+      [newItems[index], newItems[index - 1]] = [newItems[index - 1], newItems[index]];
+      onReorderItems(newItems);
+    } else if (direction === 'down' && index < items.length - 1) {
+      // Swap with the item below
+      [newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]];
+      onReorderItems(newItems);
+    }
+  };
+  
   return (
     <Collapsible 
       open={isOpen}
@@ -65,7 +84,34 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
           
           {items.map((item, index) => (
             <div key={index} className="border border-gray-200 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold mb-4">Carousel Item {index + 1}</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <GripVertical className="h-5 w-5 text-gray-400" />
+                  <h3 className="font-semibold">Carousel Item {index + 1}</h3>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    disabled={index === 0}
+                    onClick={() => moveItem(index, 'up')}
+                    className="h-8 w-8 rounded-full"
+                  >
+                    <ArrowUp className="h-4 w-4" />
+                    <span className="sr-only">Move up</span>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    disabled={index === items.length - 1}
+                    onClick={() => moveItem(index, 'down')}
+                    className="h-8 w-8 rounded-full"
+                  >
+                    <ArrowDown className="h-4 w-4" />
+                    <span className="sr-only">Move down</span>
+                  </Button>
+                </div>
+              </div>
               
               <div className="space-y-2 mb-4">
                 <Label htmlFor={`${item.titleField}`} className="text-gray-500">Item Title</Label>
