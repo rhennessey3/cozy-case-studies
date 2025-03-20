@@ -26,6 +26,7 @@ export interface CaseStudy {
     metadata?: any;
     sort_order: number;
   }[];
+  customSections?: string; // Added the missing property
 }
 
 export const caseStudies: CaseStudy[] = [

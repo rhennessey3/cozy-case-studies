@@ -28,6 +28,7 @@ export const transformCaseStudyData = (data: any): CaseStudy => {
       solution: '',
       results: '',
       conclusion: ''
-    }
+    },
+    customSections: data.customSections || "[]" // Adding customSections property
   };
 };
