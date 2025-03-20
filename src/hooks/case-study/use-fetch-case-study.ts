@@ -23,7 +23,41 @@ export const useFetchCaseStudy = (slug?: string) => {
         if (data) {
           setCaseStudy(data);
           
-          // Get section images if they exist
+          // Check if we're in admin mode
+          const isAdminMode = window.location.pathname.includes('/admin/');
+          
+          // Skip fetching section images for new case studies in admin mode
+          if (data.id === "new" && isAdminMode) {
+            setForm({
+              title: data.title,
+              slug: data.slug,
+              summary: data.summary,
+              description: data.description || '',
+              coverImage: data.coverImage,
+              category: data.category,
+              height: data.height || '',
+              intro: data.content.intro,
+              challenge: data.content.challenge,
+              approach: data.content.approach,
+              solution: data.content.solution,
+              results: data.content.results,
+              conclusion: data.content.conclusion,
+              alignment: 'left',
+              subhead: '',
+              introductionParagraph: '',
+              alignmentImage: '',
+              introImage: '',
+              challengeImage: '',
+              approachImage: '',
+              solutionImage: '',
+              resultsImage: '',
+              conclusionImage: ''
+            });
+            setLoading(false);
+            return;
+          }
+          
+          // For existing case studies, get section images if they exist
           const { data: sectionsData, error: sectionsError } = await supabase
             .from('case_study_sections')
             .select('*')
@@ -79,7 +113,39 @@ export const useFetchCaseStudy = (slug?: string) => {
         }
       } catch (error) {
         console.error('Failed to fetch case study:', error);
-        toast.error('Failed to fetch case study');
+        
+        // Only show toast error if not in admin mode with a new case study
+        if (!window.location.pathname.includes('/admin/case-studies/')) {
+          toast.error('Failed to fetch case study');
+        } else {
+          // For admin mode with a new case study that doesn't exist yet
+          // Return empty form to start with
+          setForm({
+            title: '',
+            slug: slug,
+            summary: '',
+            description: '',
+            coverImage: '',
+            category: '',
+            height: '',
+            intro: '',
+            challenge: '',
+            approach: '',
+            solution: '',
+            results: '',
+            conclusion: '',
+            alignment: 'left',
+            subhead: '',
+            introductionParagraph: '',
+            alignmentImage: '',
+            introImage: '',
+            challengeImage: '',
+            approachImage: '',
+            solutionImage: '',
+            resultsImage: '',
+            conclusionImage: ''
+          });
+        }
       } finally {
         setLoading(false);
       }

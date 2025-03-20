@@ -19,6 +19,28 @@ export const getCaseStudyBySlug = async (slug: string): Promise<CaseStudy | unde
   // Find the case study in local data
   const caseStudy = localCaseStudies.find(study => study.slug === slug);
   
+  // When in admin mode and creating a new case study, we don't want to throw an error
+  if (!caseStudy && window.location.pathname.includes('/admin/case-studies/')) {
+    // Return a blank/default case study with the requested slug
+    return Promise.resolve({
+      id: "new",
+      title: "",
+      slug: slug,
+      summary: "",
+      description: "",
+      coverImage: "",
+      category: "",
+      content: {
+        intro: "",
+        challenge: "",
+        approach: "",
+        solution: "",
+        results: "",
+        conclusion: ""
+      }
+    });
+  }
+  
   if (!caseStudy) {
     throw new Error(`Case study with slug "${slug}" not found`);
   }
