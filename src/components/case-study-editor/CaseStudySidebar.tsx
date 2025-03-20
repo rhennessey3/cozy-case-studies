@@ -43,6 +43,21 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg">
+      {/* Admin Home Link - First item */}
+      <div className="mb-4">
+        <div 
+          className={cn(
+            "p-2 rounded cursor-pointer hover:bg-gray-200 transition-colors flex items-center gap-2",
+            isAdminHome && "bg-gray-200 font-medium"
+          )}
+          onClick={goToAdminHome}
+        >
+          <Home className="h-4 w-4" />
+          <div className="truncate">Admin Home</div>
+        </div>
+      </div>
+      
+      {/* Case Studies Heading with Plus Button - Second item */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-bold">Case Studies</h3>
         <Button 
@@ -56,19 +71,7 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
         </Button>
       </div>
       
-      <div className="mb-3">
-        <div 
-          className={cn(
-            "p-2 rounded cursor-pointer hover:bg-gray-200 transition-colors flex items-center gap-2",
-            isAdminHome && "bg-gray-200 font-medium"
-          )}
-          onClick={goToAdminHome}
-        >
-          <Home className="h-4 w-4" />
-          <div className="truncate">Admin Home</div>
-        </div>
-      </div>
-      
+      {/* List of Case Studies - Third item */}
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
         {isCreatingNew && (
           <div className="p-2 rounded bg-gray-200 font-medium animate-pulse">
