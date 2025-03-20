@@ -18,12 +18,14 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
 
-  // Check if we have carousel items in the metadata
-  const carouselTitle = caseStudy.sections?.find(s => s.component === 'carousel')?.title || '3 Column Slider';
-  const carouselItems = caseStudy.sections?.find(s => s.component === 'carousel')?.metadata?.items || [];
+  // Since 'sections' property doesn't exist on CaseStudy type,
+  // we'll simply use default values
+
+  // Default carousel title
+  const carouselTitle = '3 Column Slider';
   
-  // Fallback items if no custom carousel items exist
-  const fallbackItems = [
+  // Fallback items using content from the case study
+  const displayItems = [
     {
       title: "Planning",
       content: caseStudy.content.approach.split('.')[0],
@@ -40,9 +42,6 @@ const IterationSection: React.FC<IterationSectionProps> = ({ caseStudy }) => {
       image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&q=80&w=800"
     }
   ];
-  
-  // Use custom items if available, otherwise use fallback
-  const displayItems = carouselItems.length > 0 ? carouselItems : fallbackItems;
 
   return (
     <section className={`${isExtraSmallScreen ? 'py-6' : 'py-12'} bg-[#221F26]`}>
