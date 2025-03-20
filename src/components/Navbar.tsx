@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import AnimatedMenuIcon from './AnimatedMenuIcon';
 import gsap from 'gsap';
+import { ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
   className?: string;
@@ -112,6 +113,10 @@ const Navbar = ({
             </button>
             <button type="button" onClick={() => handleNavigation('/case-studies')} className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[67px]">
               Case Studies
+            </button>
+            <button type="button" onClick={() => handleNavigation('/admin/login')} className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[67px] flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4" />
+              Admin
             </button>
           </nav>
         </div>
