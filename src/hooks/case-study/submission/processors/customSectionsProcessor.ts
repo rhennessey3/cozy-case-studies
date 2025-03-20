@@ -36,6 +36,18 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     // Sort sections by order property
     customSections.sort((a: any, b: any) => a.order - b.order);
     
+    // Create a session for our transaction
+    const processSession = supabase.auth.getSession();
+    
+    // Check if we have a valid session
+    if (!processSession) {
+      console.error('No valid session found. User might not be authenticated.');
+      return;
+    }
+    
+    // Log authentication state for debugging
+    console.log('Authentication state:', processSession ? 'Authenticated' : 'Not authenticated');
+    
     for (const [index, section] of customSections.entries()) {
       // Use the section's order if available, otherwise use the index + base offset
       const sortOrder = section.order !== undefined 
@@ -55,6 +67,10 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   // Delete any sections that were removed
   if (existingSectionIds.size > 0) {
     const sectionsToDelete = Array.from(existingSectionIds);
+    
+    // Log the deletion attempt for debugging
+    console.log('Attempting to delete sections:', sectionsToDelete);
+    
     const { error: deleteError } = await supabase
       .from('case_study_sections')
       .delete()

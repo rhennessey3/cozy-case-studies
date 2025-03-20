@@ -7,6 +7,7 @@ import { processBasicInfo } from './processors/basicInfoProcessor';
 import { processContentData } from './processors/contentDataProcessor';
 import { processCustomSections } from './processors/customSectionsProcessor';
 import { processSectionImages } from './processors/sectionImagesProcessor';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
   const navigate = useNavigate();
@@ -17,6 +18,15 @@ export const useFormSubmitHandling = (form: CaseStudyForm, slug?: string) => {
     setSaving(true);
     
     try {
+      // Check authentication status before proceeding
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (!sessionData.session) {
+        toast.error('You must be logged in to save case studies');
+        setSaving(false);
+        return;
+      }
+      
       // Process the case study submission in steps
       const { caseStudyId } = await processBasicInfo(form, slug);
       await processContentData(form, caseStudyId, slug);
