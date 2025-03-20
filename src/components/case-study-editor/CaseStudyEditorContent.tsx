@@ -77,7 +77,9 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         <Button 
           type="submit"
           disabled={saving}
+          className="flex items-center gap-2"
         >
+          {saving && <Loader2 size={16} className="animate-spin" />}
           {saving ? 'Saving...' : slug === 'new' ? 'Create Case Study' : 'Update Case Study'}
         </Button>
       </div>

@@ -35,7 +35,7 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
         
       if (error) {
         console.error(`Error saving ${component} image:`, error);
-        throw new Error(`Failed to save ${component} image`);
+        throw new Error(`Failed to save ${component} image: ${error.message}`);
       }
     } else {
       const { error } = await supabase
@@ -46,7 +46,7 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
         
       if (error) {
         console.error(`Error deleting ${component} image:`, error);
-        throw new Error(`Failed to delete ${component} image`);
+        throw new Error(`Failed to delete ${component} image: ${error.message}`);
       }
     }
   }
@@ -61,15 +61,22 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
     setSaving(true);
     
     try {
-      // Check authentication status first
-      const { data: sessionData } = await supabase.auth.getSession();
+      // Check if in local dev mode
+      const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
       
-      if (!sessionData.session) {
-        toast.error('You must be logged in to save a case study');
-        setSaving(false);
-        return { success: false };
+      // If not in local auth only mode, check authentication
+      if (!isLocalAuthOnly) {
+        const { data: sessionData } = await supabase.auth.getSession();
+        console.log('Session data:', sessionData);
+        
+        if (!sessionData.session) {
+          toast.error('You must be logged in to save a case study');
+          setSaving(false);
+          return { success: false };
+        }
       }
       
+      // Validate required fields
       if (!form.title) {
         toast.error('Title is required');
         setSaving(false);
@@ -82,9 +89,9 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: false };
       }
       
-      const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
-      
+      // Handle local auth only mode
       if (isLocalAuthOnly) {
+        console.log('Running in local auth only mode, bypassing Supabase operations');
         toast.success('Case study saved successfully in local mode');
         setSaving(false);
         return { success: true, slug: form.slug };
@@ -98,33 +105,47 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       const editSlug = isNew ? null : slug;
       console.log('Using slug to process:', editSlug);
       
-      const { caseStudyId } = await processBasicInfo(form, editSlug);
-      
-      if (!caseStudyId) {
-        throw new Error('Failed to process case study basic info');
+      try {
+        const { caseStudyId } = await processBasicInfo(form, editSlug);
+        
+        if (!caseStudyId) {
+          throw new Error('Failed to process case study basic info');
+        }
+        
+        console.log('Case study ID retrieved:', caseStudyId);
+        
+        await processContentData(form, caseStudyId, editSlug);
+        
+        await processSectionImages(form, caseStudyId);
+        
+        await processCustomSectionsFromProcessor(form, caseStudyId);
+        
+        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
+        
+        if (isNew) {
+          navigate(`/admin/case-studies/${form.slug}`);
+        }
+        
+        return { success: true, slug: form.slug };
+      } catch (dbError: any) {
+        console.error('Database operation error:', dbError);
+        
+        if (dbError.message.includes('duplicate key')) {
+          toast.error(`A case study with slug "${form.slug}" already exists. Please choose a different slug.`);
+        } else if (dbError.message.includes('permission denied')) {
+          toast.error('Permission denied. Make sure you are logged in with the correct account.');
+        } else {
+          toast.error(`Database error: ${dbError.message}`);
+        }
+        
+        return { success: false };
       }
-      
-      console.log('Case study ID retrieved:', caseStudyId);
-      
-      await processContentData(form, caseStudyId, editSlug);
-      
-      await processSectionImages(form, caseStudyId);
-      
-      await processCustomSectionsFromProcessor(form, caseStudyId);
-      
-      toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
-      
-      if (isNew) {
-        navigate(`/admin/case-studies/${form.slug}`);
-      }
-      
-      return { success: true, slug: form.slug };
     } catch (error) {
       console.error('Error saving case study:', error);
       
       // Provide more specific error messages based on error types
       if ((error as Error).message.includes('Row Level Security')) {
-        toast.error('Permission denied. Please make sure you are logged in with the correct account.');
+        toast.error('Permission denied by database security policies. Please make sure you are logged in with the correct account.');
       } else {
         toast.error(`Failed to ${slug ? 'update' : 'create'} case study: ${(error as Error).message}`);
       }
