@@ -44,37 +44,34 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         // First check local auth state
         const localAuth = localStorage.getItem('admin_authenticated');
         
-        // In local auth only mode, we only check the local auth state
-        if (isLocalAuthOnly) {
-          if (localAuth === 'true') {
-            console.log('Local auth mode: User is authenticated via local auth');
-            setAuthStatus('authenticated');
-          } else {
-            console.log('Local auth mode: User is not authenticated');
-            setAuthError('You must be logged in to create or edit case studies');
-            setAuthStatus('unauthenticated');
-          }
-          return;
-        }
-        
-        // In normal mode, try both Supabase and local auth
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Auth check error:', error);
-          setAuthError(`Authentication error: ${error.message}`);
-          setAuthStatus('unauthenticated');
-          return;
-        }
-        
-        if (data.session || localAuth === 'true') {
-          console.log('User is authenticated:', data.session ? 'Via Supabase' : 'Via local auth');
+        if (localAuth === 'true') {
+          console.log('User is authenticated via local auth');
           setAuthStatus('authenticated');
-        } else {
-          console.log('User is not authenticated');
-          setAuthError('You must be logged in to create or edit case studies');
-          setAuthStatus('unauthenticated');
+          return;
         }
+        
+        // If no local auth, try Supabase
+        if (!isLocalAuthOnly) {
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error('Auth check error:', error);
+            setAuthError(`Authentication error: ${error.message}`);
+            setAuthStatus('unauthenticated');
+            return;
+          }
+          
+          if (data.session) {
+            console.log('User is authenticated via Supabase');
+            setAuthStatus('authenticated');
+            return;
+          }
+        }
+        
+        // If we got here, user is not authenticated
+        console.log('User is not authenticated');
+        setAuthError('You must be logged in to create or edit case studies');
+        setAuthStatus('unauthenticated');
       } catch (error) {
         console.error('Authentication check failed:', error);
         setAuthError(`Failed to verify authentication: ${(error as Error).message}`);

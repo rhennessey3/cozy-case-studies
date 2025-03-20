@@ -1,10 +1,9 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
 import { useCaseStudyEditor } from '@/hooks/use-case-study-editor';
 import CaseStudySidebar from '@/components/case-study-editor/CaseStudySidebar';
 import CaseStudyEditorHeader from '@/components/case-study-editor/CaseStudyEditorHeader';
@@ -15,6 +14,21 @@ const CaseStudyEditor = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+  
+  // Check local authentication as a fallback
+  const isLocallyAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
+  const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
+  
+  // User is authenticated if they're authenticated via context OR locally authenticated in local auth mode
+  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated);
+  
+  useEffect(() => {
+    // If not authenticated at all, redirect to login
+    if (!effectivelyAuthenticated) {
+      navigate('/admin/login');
+      toast.error('You must be logged in to access this page');
+    }
+  }, [effectivelyAuthenticated, navigate]);
   
   const {
     loading,
@@ -29,11 +43,6 @@ const CaseStudyEditor = () => {
     createNewCaseStudy
   } = useCaseStudyEditor(slug);
   
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" />;
-  }
-
   const handleLogout = async () => {
     await logout();
     navigate('/admin/login');
@@ -52,6 +61,17 @@ const CaseStudyEditor = () => {
     if (slug === 'new') return 'CREATE CASE STUDY';
     return form?.title ? `EDIT: ${form.title.toUpperCase()}` : 'EDIT CASE STUDY';
   };
+
+  // If not authenticated, content will handle redirection
+  if (!effectivelyAuthenticated) {
+    return (
+      <CaseStudyEditorLayout>
+        <div className="py-8 flex justify-center items-center">
+          <Loader2 size={24} className="animate-spin text-primary" />
+        </div>
+      </CaseStudyEditorLayout>
+    );
+  }
 
   return (
     <CaseStudyEditorLayout>

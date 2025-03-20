@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { ADMIN_PASSWORD } from '@/constants/authConstants';
+import { ADMIN_PASSWORD, AUTH_STORAGE_KEY } from '@/constants/authConstants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +22,10 @@ const AdminLogin: React.FC = () => {
   const { toast } = useToast();
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
+  
+  // Check local authentication as a fallback
+  const isLocallyAuthenticated = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated);
 
   useEffect(() => {
     // Reset login state and error when component loads
@@ -39,7 +43,7 @@ const AdminLogin: React.FC = () => {
   }, [isLocalAuthOnly]);
 
   // If already authenticated, redirect to admin page
-  if (isAuthenticated) {
+  if (effectivelyAuthenticated) {
     return <Navigate to="/admin/case-studies" />;
   }
 

@@ -52,6 +52,22 @@ const processSectionImages = async (form: CaseStudyForm, caseStudyId: string) =>
   }
 };
 
+// Special function to handle database operations in local auth mode
+const processLocalDatabase = async (form: CaseStudyForm, isNew: boolean, slug?: string) => {
+  // In local auth mode, we'll mock a successful operation
+  // We'll just return a fixed ID for the case study
+  const caseStudyId = "local-mode-case-study-id";
+  
+  console.log(`Local auth mode: Simulating ${isNew ? 'creation' : 'update'} of case study with slug "${form.slug}"`);
+  console.log('Form data:', form);
+  
+  return {
+    success: true,
+    slug: form.slug,
+    caseStudyId
+  };
+};
+
 export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFunction, slug?: string) => {
   const [saving, setSaving] = useState(false);
 
@@ -68,45 +84,6 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       const localAuthState = localStorage.getItem('admin_authenticated');
       console.log('Local auth state:', localAuthState);
       
-      // If we're using local auth and the user is authenticated locally
-      if (isLocalAuthOnly && localAuthState === 'true') {
-        // Special handling for local auth mode when creating a case study
-        if (!slug || slug === 'new') {
-          try {
-            // Set up service role access for local auth mode
-            const { data, error } = await supabase.auth.signInWithPassword({
-              email: 'localauth@example.com',
-              password: 'localauth123',
-            });
-            
-            if (error) {
-              console.error('Local auth mode: Failed to get session for database operations', error);
-            } else {
-              console.log('Local auth mode: Temporary session created for database operations');
-            }
-          } catch (error) {
-            console.error('Local auth mode: Error with temp authentication', error);
-          }
-        }
-      } else if (!isLocalAuthOnly) {
-        // Check authentication status with Supabase in normal mode
-        const { data: sessionData } = await supabase.auth.getSession();
-        console.log('Current session data:', sessionData);
-        
-        if (!sessionData.session && localAuthState !== 'true') {
-          toast.error('You must be logged in to save a case study');
-          setSaving(false);
-          return { success: false };
-        }
-      } else {
-        console.log('Running in local auth only mode, checking local auth state');
-        if (localAuthState !== 'true') {
-          toast.error('You must be logged in to save a case study');
-          setSaving(false);
-          return { success: false };
-        }
-      }
-      
       // Validate required fields
       if (!form.title) {
         toast.error('Title is required');
@@ -120,29 +97,43 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
         return { success: false };
       }
       
-      // Determine if we're creating or editing based on whether the case study exists in the database
+      // Determine if we're creating or editing
       const isNew = !slug || slug === 'new' || slug === '';
       console.log('Mode determined:', isNew ? 'Creating new case study' : 'Editing existing case study', 'Slug:', slug);
       
-      // Use the improved processors to handle database operations
-      const editSlug = isNew ? null : slug;
-      console.log('Using slug to process:', editSlug);
-      
-      try {
-        // Special case for local auth mode to prevent RLS errors
-        if (isLocalAuthOnly && localAuthState === 'true') {
-          console.log('Processing in local auth mode with bypassed RLS');
-          
-          // Mock a successful case study creation in local mode
-          toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully in local mode`);
-          
-          if (isNew) {
-            navigate(`/admin/case-studies/${form.slug}`);
-          }
-          
-          setSaving(false);
-          return { success: true, slug: form.slug };
+      // Handle local auth mode differently
+      if (isLocalAuthOnly && localAuthState === 'true') {
+        console.log('Processing in local auth mode');
+        
+        // Use simulated database operations for local auth mode
+        const result = await processLocalDatabase(form, isNew, slug);
+        
+        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (Local Mode)`);
+        
+        if (isNew) {
+          navigate(`/admin/case-studies/${form.slug}`);
         }
+        
+        setSaving(false);
+        return { success: true, slug: form.slug };
+      }
+      
+      // For non-local auth mode, check authentication with Supabase
+      const { data: sessionData } = await supabase.auth.getSession();
+      console.log('Current session data:', sessionData);
+      
+      if (!sessionData.session && localAuthState !== 'true') {
+        toast.error('You must be logged in to save a case study');
+        localStorage.removeItem('admin_authenticated');
+        navigate('/admin/login');
+        setSaving(false);
+        return { success: false };
+      }
+      
+      // Process the database operations
+      try {
+        const editSlug = isNew ? null : slug;
+        console.log('Using slug to process:', editSlug);
         
         const { caseStudyId } = await processBasicInfo(form, editSlug);
         
