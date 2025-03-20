@@ -8,6 +8,7 @@ import CaseStudyDetail from './pages/CaseStudyDetail';
 import CaseStudyEditor from './pages/CaseStudyEditor';
 import AdminHome from './pages/AdminHome';
 import AdminLogin from './pages/AdminLogin';
+import AdminCaseStudies from './pages/AdminCaseStudies';
 import NotFound from './pages/NotFound';
 import DatabaseTestPage from './pages/DatabaseTestPage';
 
@@ -23,7 +24,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
         <Route path="/admin" element={<AdminHome />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/case-studies" element={<CaseStudyEditor />} />
+        <Route path="/admin/case-studies" element={<AdminCaseStudies />} />
         <Route path="/admin/case-studies/:slug" element={<CaseStudyEditor />} />
         <Route path="/database-test" element={<DatabaseTestPage />} />
         <Route path="*" element={<NotFound />} />

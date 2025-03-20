@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
 import { Button } from '@/components/ui/button';
-import { Plus, Home } from 'lucide-react';
+import { Plus, Home, FileText } from 'lucide-react';
 
 interface CaseStudySidebarProps {
   caseStudies: CaseStudy[];
@@ -22,6 +22,7 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   
   const isAdminHome = location.pathname === '/admin' || location.pathname === '/admin/';
+  const isCaseStudiesLanding = location.pathname === '/admin/case-studies';
 
   const selectCaseStudy = (slug: string) => {
     // Only navigate if the current slug is different
@@ -39,6 +40,10 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
 
   const goToAdminHome = () => {
     navigate('/admin');
+  };
+
+  const goToCaseStudies = () => {
+    navigate('/admin/case-studies');
   };
 
   return (
@@ -59,7 +64,16 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
       
       {/* Case Studies Heading with Plus Button - Second item */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-bold">Case Studies</h3>
+        <div 
+          className={cn(
+            "font-bold flex items-center gap-2 cursor-pointer hover:text-primary transition-colors",
+            isCaseStudiesLanding && "text-primary"
+          )}
+          onClick={goToCaseStudies}
+        >
+          <FileText className="h-4 w-4" />
+          <span>Case Studies</span>
+        </div>
         <Button 
           variant="ghost" 
           size="sm" 
