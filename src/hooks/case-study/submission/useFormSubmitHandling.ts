@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,7 +7,8 @@ import { processContentData } from './processors/contentDataProcessor';
 import { processCustomSections } from './processors/customSectionsProcessor';
 import { processSectionImages } from './processors/sectionImagesProcessor';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth, ADMIN_EMAIL, ADMIN_PASSWORD } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/constants/authConstants';
 
 const validateCaseStudyForm = (form: CaseStudyForm): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];

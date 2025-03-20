@@ -1,10 +1,9 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { processAlignmentSection } from './sectionTypes/alignmentProcessor';
 import { processCarouselSection } from './sectionTypes/carouselProcessor';
 import { processFourParagraphsSection } from './sectionTypes/fourParagraphsProcessor';
-import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/contexts/AuthContext';
+import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/constants/authConstants';
 
 export const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
   // In development mode, skip actual processing

@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { useAuth, ADMIN_PASSWORD } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { ADMIN_PASSWORD } from '@/constants/authConstants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
