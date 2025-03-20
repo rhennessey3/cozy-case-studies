@@ -36,17 +36,50 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
       
       // Try to authenticate
       console.log('Attempting authentication for custom sections processor...');
+      
+      // Try login with password
       const { data, error } = await supabase.auth.signInWithPassword({
         email: ADMIN_EMAIL,
         password: ADMIN_PASSWORD
       });
       
       if (error) {
-        console.error('Authentication failed:', error);
-        throw new Error(`Authentication failed: ${error.message}`);
+        // If the error indicates the user doesn't exist, try to create it
+        if (error.message.includes('Invalid login credentials')) {
+          console.log('User does not exist in Supabase. Attempting to create the admin user...');
+          
+          // Try to sign up with admin credentials
+          const { error: signUpError } = await supabase.auth.signUp({
+            email: ADMIN_EMAIL,
+            password: ADMIN_PASSWORD
+          });
+          
+          if (signUpError) {
+            console.error('Failed to create admin user:', signUpError);
+            throw new Error(`Failed to create admin user: ${signUpError.message}`);
+          }
+          
+          // Try to authenticate again
+          const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
+            email: ADMIN_EMAIL,
+            password: ADMIN_PASSWORD
+          });
+          
+          if (retryError) {
+            console.error('Failed to authenticate after creating admin user:', retryError);
+            throw new Error(`Failed to authenticate after creating admin user: ${retryError.message}`);
+          }
+          
+          if (!retryData.session) {
+            throw new Error('No session created after creating and authenticating admin user');
+          }
+        } else {
+          console.error('Authentication failed:', error);
+          throw new Error(`Authentication failed: ${error.message}`);
+        }
       }
       
-      if (!data.session) {
+      if (!data?.session) {
         throw new Error('No session created after authentication');
       }
       

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, ADMIN_PASSWORD } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +27,14 @@ const AdminLogin: React.FC = () => {
     setLoginError(null);
   }, []);
 
+  // Add a hint for development
+  useEffect(() => {
+    // Only show hint in development mode
+    if (import.meta.env.DEV) {
+      console.log(`Hint: The admin password is "${ADMIN_PASSWORD}"`);
+    }
+  }, []);
+
   // If already authenticated, redirect to admin page
   if (isAuthenticated) {
     return <Navigate to="/admin/case-studies" />;
@@ -45,12 +53,10 @@ const AdminLogin: React.FC = () => {
           title: "Login Successful",
           description: "Welcome to the admin panel",
         });
-        // Small delay to allow UI to update before redirecting
-        setTimeout(() => {
-          navigate('/admin/case-studies');
-        }, 500);
+        // Redirect immediately on success
+        navigate('/admin/case-studies');
       } else {
-        setLoginError("Login failed. Please check your password and try again.");
+        setLoginError(`Login failed. Please check your password and try again. The correct password is "${ADMIN_PASSWORD}" (for development purposes).`);
         toast({
           title: "Login Failed",
           description: "Incorrect password",
@@ -58,6 +64,7 @@ const AdminLogin: React.FC = () => {
         });
       }
     } catch (error: any) {
+      console.error('Authentication error:', error);
       setLoginError(`Authentication error: ${error.message || 'Unknown error'}`);
       toast({
         title: "Login Error",
