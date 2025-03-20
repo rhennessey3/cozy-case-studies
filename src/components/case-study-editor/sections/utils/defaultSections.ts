@@ -29,14 +29,20 @@ export interface SectionFormState {
   fourPara4Content?: string;
   fourParaImage?: string;
   customSections?: string;
+  intro?: string;
+  challenge?: string;
+  approach?: string;
 }
 
 export const initializeDefaultSections = (form: SectionFormState): SectionWithOrder[] => {
   const defaultSections: SectionWithOrder[] = [];
 
+  // Always add the introduction section first
+  defaultSections.push(createSection('introduction', 1));
+  
   // If there's subhead or introductionParagraph, add alignment section
   if (form.subhead || form.introductionParagraph || form.alignmentImage) {
-    defaultSections.push(createSection('alignment', 1));
+    defaultSections.push(createSection('alignment', defaultSections.length + 1));
   }
   
   // If there's carousel content, add carousel section
@@ -49,11 +55,11 @@ export const initializeDefaultSections = (form: SectionFormState): SectionWithOr
     defaultSections.push(createSection('fourParagraphs', defaultSections.length + 1));
   }
 
-  // If we have empty form and no existing sections, add one of each by default
-  if (defaultSections.length === 0) {
-    defaultSections.push(createSection('alignment', 1));
-    defaultSections.push(createSection('carousel', 2));
-    defaultSections.push(createSection('fourParagraphs', 3));
+  // If we have no sections other than introduction, add default ones
+  if (defaultSections.length === 1) {
+    defaultSections.push(createSection('alignment', 2));
+    defaultSections.push(createSection('carousel', 3));
+    defaultSections.push(createSection('fourParagraphs', 4));
   }
 
   return defaultSections;

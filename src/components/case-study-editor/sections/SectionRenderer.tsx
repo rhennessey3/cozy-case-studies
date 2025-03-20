@@ -4,7 +4,7 @@ import { SectionWithOrder } from './types';
 import AlignmentSection from './AlignmentSection';
 import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
-import SectionContainer from './SectionContainer';
+import IntroductionSection from './IntroductionSection';
 
 interface SectionRendererProps {
   section: SectionWithOrder;
@@ -20,7 +20,7 @@ interface SectionRendererProps {
 }
 
 /**
- * Component that renders the appropriate section based on type
+ * Component that renders a specific section based on its type
  */
 const SectionRenderer: React.FC<SectionRendererProps> = ({
   section,
@@ -34,58 +34,66 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   carouselItems,
   paragraphItems
 }) => {
-  if (section.type === 'alignment') {
-    return (
-      <SectionContainer section={section} isOpen={isOpen} onToggle={onToggle}>
+  // Debug output to help troubleshoot sections
+  React.useEffect(() => {
+    console.log(`Rendering section ${section.id} of type ${section.type}`);
+  }, [section]);
+
+  switch (section.type) {
+    case 'introduction':
+      return (
+        <IntroductionSection
+          isOpen={isOpen}
+          onToggle={onToggle}
+          introValue={form.intro || ''}
+          challengeValue={form.challenge || ''}
+          approachValue={form.approach || ''}
+          onChange={handleContentChange}
+        />
+      );
+    case 'alignment':
+      return (
         <AlignmentSection
           isOpen={isOpen}
           onToggle={onToggle}
-          subhead={form.subhead || ''}
           alignment={form.alignment || 'left'}
-          introductionParagraph={form.introductionParagraph || ''}
-          alignmentImage={form.alignmentImage}
-          onChange={handleContentChange}
+          subheadValue={form.subhead || ''}
+          paragraphValue={form.introductionParagraph || ''}
+          imageUrl={form.alignmentImage || ''}
+          onSubheadChange={handleContentChange}
+          onParagraphChange={handleContentChange}
           onAlignmentChange={onAlignmentChange}
-          onImageUpload={(url) => handleImageUploaded('alignmentImage', url)}
+          onImageUploaded={(url) => handleImageUploaded('alignmentImage', url)}
         />
-      </SectionContainer>
-    );
-  }
-  
-  if (section.type === 'carousel') {
-    return (
-      <SectionContainer section={section} isOpen={isOpen} onToggle={onToggle}>
+      );
+    case 'carousel':
+      return (
         <CarouselSection
           isOpen={isOpen}
           onToggle={onToggle}
-          carouselTitle={form.carouselTitle || '3 Column Slider'}
-          items={carouselItems}
+          titleValue={form.carouselTitle || ''}
           onChange={handleContentChange}
-          onImageUpload={handleImageUploaded}
+          onImageUploaded={handleImageUploaded}
+          items={carouselItems}
           onReorderItems={handleReorderCarouselItems}
         />
-      </SectionContainer>
-    );
-  }
-  
-  if (section.type === 'fourParagraphs') {
-    return (
-      <SectionContainer section={section} isOpen={isOpen} onToggle={onToggle}>
+      );
+    case 'fourParagraphs':
+      return (
         <FourParagraphsSection
           isOpen={isOpen}
           onToggle={onToggle}
-          sectionTitle={form.fourParaTitle || '4 Small Paragraphs'}
-          sectionSubtitle={form.fourParaSubtitle || 'With Photo'}
+          titleValue={form.fourParaTitle || ''}
+          subtitleValue={form.fourParaSubtitle || ''}
           paragraphs={paragraphItems}
-          sectionImage={form.fourParaImage}
+          imageUrl={form.fourParaImage || ''}
           onChange={handleContentChange}
-          onImageUpload={(url) => handleImageUploaded('fourParaImage', url)}
+          onImageUploaded={(url) => handleImageUploaded('fourParaImage', url)}
         />
-      </SectionContainer>
-    );
+      );
+    default:
+      return <div>Unknown section type: {section.type}</div>;
   }
-  
-  return null;
 };
 
 export default SectionRenderer;

@@ -17,7 +17,7 @@ export interface ParagraphItem {
 
 export interface SectionWithOrder {
   id: string;
-  type: 'alignment' | 'carousel' | 'fourParagraphs';
+  type: 'alignment' | 'carousel' | 'fourParagraphs' | 'introduction';
   name: string;
   order: number;
 }

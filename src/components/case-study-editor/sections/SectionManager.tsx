@@ -87,6 +87,10 @@ const SectionManager: React.FC<SectionManagerProps> = ({
             className="flex flex-col space-y-2 mb-4"
           >
             <div className="flex items-center space-x-2">
+              <RadioGroupItem value="introduction" id="introduction" />
+              <Label htmlFor="introduction">Case Study Introduction</Label>
+            </div>
+            <div className="flex items-center space-x-2">
               <RadioGroupItem value="alignment" id="alignment" />
               <Label htmlFor="alignment">Left or Right Aligned Section</Label>
             </div>

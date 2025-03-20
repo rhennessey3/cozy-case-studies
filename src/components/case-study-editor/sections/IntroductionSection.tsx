@@ -61,20 +61,20 @@ const IntroductionSection: React.FC<IntroductionSectionProps> = ({
                 name="approach" 
                 value={approachValue} 
                 onChange={onChange} 
-                placeholder="It's a pretty awesome case study"
+                placeholder="This is the subhead to the introduction"
                 className="bg-gray-50 border-gray-200"
               />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="intro-content" className="text-gray-500">Case Study Introduction Paragraph</Label>
+            <Label htmlFor="intro" className="text-gray-500">Case Study Introduction Paragraph</Label>
             <Textarea 
-              id="intro-content" 
+              id="intro" 
               name="intro" 
               value={introValue} 
               onChange={onChange} 
-              placeholder="Enter your case study introduction paragraph here..."
+              placeholder="This is the dummy text for the introduction paragraph."
               className="bg-gray-50 border-gray-200 w-full"
               rows={6}
             />
