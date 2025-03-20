@@ -1,28 +1,19 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import Navbar from '@/components/Navbar';
-import TopNavbar from '@/components/TopNavbar';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import Footer from '@/components/Footer';
-import CaseStudySidebar from '@/components/case-study-editor/CaseStudySidebar';
-import CaseStudyBasicInfoTab from '@/components/case-study-editor/CaseStudyBasicInfoTab';
-import CaseStudyContentTab from '@/components/case-study-editor/CaseStudyContentTab';
-import { useCaseStudyEditor } from '@/hooks/use-case-study-editor';
+import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { useCaseStudyEditor } from '@/hooks/use-case-study-editor';
+import CaseStudySidebar from '@/components/case-study-editor/CaseStudySidebar';
+import CaseStudyEditorHeader from '@/components/case-study-editor/CaseStudyEditorHeader';
+import CaseStudyEditorContent from '@/components/case-study-editor/CaseStudyEditorContent';
+import CaseStudyEditorLayout from '@/components/case-study-editor/CaseStudyEditorLayout';
 
 const CaseStudyEditor = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const isSmallScreen = useMediaQuery('(max-width: 1000px)');
   const { isAuthenticated, logout } = useAuth();
   
   const {
@@ -42,20 +33,6 @@ const CaseStudyEditor = () => {
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" />;
   }
-  
-  useEffect(() => {
-    const handleBodyClassChange = () => {
-      setIsDrawerOpen(document.body.classList.contains('drawer-open'));
-    };
-    const observer = new MutationObserver(handleBodyClassChange);
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -77,125 +54,44 @@ const CaseStudyEditor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {isSmallScreen ? (
-        <TopNavbar className="fixed top-0 left-0 right-0 z-50" />
-      ) : (
-        <Navbar className="fixed top-0 left-0 right-0 z-50 bg-white" />
-      )}
+    <CaseStudyEditorLayout>
+      <CaseStudyEditorHeader 
+        headingText={getHeadingText()}
+        onCreateNew={createNewCaseStudy}
+        onViewLive={handleViewLive}
+        onLogout={handleLogout}
+        showViewLive={!!slug && slug !== 'new'}
+      />
       
-      <div 
-        className={cn(
-          "fixed inset-0 overflow-hidden transition-all duration-300 ease-in-out z-30",
-          !isSmallScreen && (isDrawerOpen ? "pl-[280px]" : "pl-[4.5rem]"),
-          isSmallScreen && "pt-16"
-        )}
-      >
-        <ScrollArea className="h-full">
-          <section className="min-h-screen bg-white py-20">
-            <div className="w-full px-4 md:px-6 lg:px-8">
-              <div className="text-left max-w-screen-2xl mx-auto mb-6">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#EAEAEA]">
-                  <h1 className="text-3xl md:text-4xl font-[900] text-[#1b1b1b]">
-                    {getHeadingText()}
-                  </h1>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      onClick={createNewCaseStudy}
-                    >
-                      New Case Study
-                    </Button>
-                    {slug && slug !== 'new' && (
-                      <Button
-                        variant="outline"
-                        onClick={handleViewLive}
-                      >
-                        View Live
-                      </Button>
-                    )}
-                    <Button
-                      variant="outline"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
-                <div className="md:col-span-1">
-                  {caseStudiesLoading ? (
-                    <div className="bg-gray-50 p-4 rounded-lg flex justify-center items-center h-40">
-                      <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
-                    </div>
-                  ) : (
-                    <CaseStudySidebar 
-                      caseStudies={caseStudies} 
-                      currentSlug={slug} 
-                      onCreateNew={createNewCaseStudy}
-                    />
-                  )}
-                </div>
-                
-                <div className="md:col-span-3">
-                  {loading ? (
-                    <div className="space-y-6">
-                      <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <Tabs defaultValue="basics">
-                        <TabsList className="mb-4">
-                          <TabsTrigger value="basics">Basic Info</TabsTrigger>
-                          <TabsTrigger value="content">Content</TabsTrigger>
-                        </TabsList>
-                        
-                        <TabsContent value="basics">
-                          <CaseStudyBasicInfoTab 
-                            form={form} 
-                            handleChange={handleChange} 
-                            handleImageUploaded={handleImageUploaded} 
-                          />
-                        </TabsContent>
-                        
-                        <TabsContent value="content">
-                          <CaseStudyContentTab 
-                            form={form} 
-                            handleContentChange={handleContentChange} 
-                            handleImageUploaded={handleImageUploaded}
-                          />
-                        </TabsContent>
-                      </Tabs>
-                      
-                      <div className="flex justify-end gap-2">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          onClick={() => navigate('/admin/case-studies')}
-                        >
-                          Cancel
-                        </Button>
-                        <Button 
-                          type="submit"
-                          disabled={saving}
-                        >
-                          {saving ? 'Saving...' : slug === 'new' ? 'Create Case Study' : 'Update Case Study'}
-                        </Button>
-                      </div>
-                    </form>
-                  )}
-                </div>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
+        <div className="md:col-span-1">
+          {caseStudiesLoading ? (
+            <div className="bg-gray-50 p-4 rounded-lg flex justify-center items-center h-40">
+              <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
             </div>
-          </section>
-          <Footer />
-        </ScrollArea>
+          ) : (
+            <CaseStudySidebar 
+              caseStudies={caseStudies} 
+              currentSlug={slug} 
+              onCreateNew={createNewCaseStudy}
+            />
+          )}
+        </div>
+        
+        <div className="md:col-span-3">
+          <CaseStudyEditorContent
+            loading={loading}
+            saving={saving}
+            form={form}
+            slug={slug}
+            handleChange={handleChange}
+            handleContentChange={handleContentChange}
+            handleImageUploaded={handleImageUploaded}
+            handleSubmit={handleSubmit}
+          />
+        </div>
       </div>
-    </div>
+    </CaseStudyEditorLayout>
   );
 };
 
