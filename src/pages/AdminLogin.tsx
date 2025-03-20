@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { ADMIN_PASSWORD } from '@/constants/authConstants';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Info } from "lucide-react";
+import { Loader2, Info, ArrowLeft } from "lucide-react";
 
 const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -59,7 +59,7 @@ const AdminLogin: React.FC = () => {
         // Redirect immediately on success
         navigate('/admin/case-studies');
       } else {
-        setLoginError(`Login failed. Please check your password and try again. The correct password is "${ADMIN_PASSWORD}" (for development purposes).`);
+        setLoginError(`Login failed. Please check your password and try again.`);
         toast({
           title: "Login Failed",
           description: "Incorrect password",
@@ -90,7 +90,19 @@ const AdminLogin: React.FC = () => {
       <div className="pt-20 px-4 flex items-center justify-center min-h-screen">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
+              <Button 
+                variant="ghost" 
+                asChild 
+                className="flex items-center gap-1 text-gray-600 hover:text-gray-900"
+              >
+                <Link to="/">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Website
+                </Link>
+              </Button>
+            </div>
             <CardDescription>
               Enter password to access the admin panel
             </CardDescription>

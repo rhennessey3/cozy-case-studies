@@ -246,6 +246,8 @@ export const useSupabaseAuth = () => {
       setIsAuthenticated(false);
       localStorage.removeItem(AUTH_STORAGE_KEY);
       console.log('Logout successful');
+      
+      // Redirect to the login page - we'll let the component handle this now
     } catch (error) {
       console.error('Error during logout:', error);
     }

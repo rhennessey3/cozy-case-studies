@@ -55,8 +55,8 @@ const CaseStudyEditor = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/admin/login');
     toast('Logged out successfully');
   };
