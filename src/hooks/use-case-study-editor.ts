@@ -71,8 +71,9 @@ export const useCaseStudyEditor = (slug?: string) => {
       // Immediately refetch the case studies to update the sidebar
       await refetchCaseStudies();
       
+      // Fix: Only access result.slug when it exists
       // Navigate to the newly created/updated case study
-      if ((!slug || slug === 'new' || slug === '') && result.slug) {
+      if ((!slug || slug === 'new' || slug === '') && result && 'slug' in result && result.slug) {
         navigate(`/admin/case-studies/${result.slug}`);
       } else {
         toast.success(slug === 'new' ? 'Case study created!' : 'Case study updated!');
