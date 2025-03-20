@@ -1,9 +1,11 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
-import { processBasicInfo } from '../processors/basicInfoProcessor';
-import { processContentData } from '../processors/contentDataProcessor';
-import { processCustomSections } from '../processors/customSectionsProcessor';
+import { 
+  processBasicInfo, 
+  processContentData, 
+  processCustomSections 
+} from '../processors';
 import { processSectionImages } from '../../services/supabaseService';
 
 /**

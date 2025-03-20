@@ -1,10 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useFetchCaseStudies } from './case-study/use-fetch-case-studies';
-import { useFetchCaseStudy } from './case-study/use-fetch-case-study';
-import { useCaseStudyForm } from './case-study/use-case-study-form';
-import { useCaseStudySubmit } from './case-study/use-case-study-submit';
+import { 
+  useFetchCaseStudies, 
+  useFetchCaseStudy, 
+  useCaseStudyForm,
+  useCaseStudySubmit
+} from './case-study';
 import { initialFormState } from '@/types/caseStudy';
 import { toast } from 'sonner';
 
