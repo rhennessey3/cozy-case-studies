@@ -1,36 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { SectionWithOrder } from './types';
-import { v4 as uuidv4 } from '@/lib/utils';
-
-interface SectionFormState {
-  subhead?: string;
-  introductionParagraph?: string;
-  alignmentImage?: string;
-  alignment?: string;
-  carouselTitle?: string;
-  carouselItem1Title?: string;
-  carouselItem1Content?: string;
-  carouselItem1Image?: string;
-  carouselItem2Title?: string;
-  carouselItem2Content?: string;
-  carouselItem2Image?: string;
-  carouselItem3Title?: string;
-  carouselItem3Content?: string;
-  carouselItem3Image?: string;
-  fourParaTitle?: string;
-  fourParaSubtitle?: string;
-  fourPara1Title?: string;
-  fourPara1Content?: string;
-  fourPara2Title?: string;
-  fourPara2Content?: string;
-  fourPara3Title?: string;
-  fourPara3Content?: string;
-  fourPara4Title?: string;
-  fourPara4Content?: string;
-  fourParaImage?: string;
-  customSections?: string;
-}
+import { SectionFormState, initializeDefaultSections, getInitialOpenSectionsState } from './utils/defaultSections';
+import { addSection, removeSection, moveSection } from './utils/sectionOperations';
 
 export const useSectionState = (form: SectionFormState, handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void) => {
   // Parse custom sections from form if available
@@ -56,53 +27,32 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   // Initialize the default sections if none are saved
   useEffect(() => {
     if (sections.length === 0) {
-      const defaultSections = [];
-
-      // If there's subhead or introductionParagraph, add alignment section
-      if (form.subhead || form.introductionParagraph || form.alignmentImage) {
-        defaultSections.push(createSection('alignment', 1));
-      }
-      
-      // If there's carousel content, add carousel section
-      if (form.carouselTitle || form.carouselItem1Title || form.carouselItem1Content) {
-        defaultSections.push(createSection('carousel', defaultSections.length + 1));
-      }
-      
-      // If there's four paragraphs content, add that section
-      if (form.fourParaTitle || form.fourPara1Title || form.fourPara1Content) {
-        defaultSections.push(createSection('fourParagraphs', defaultSections.length + 1));
-      }
-
-      // If we have empty form and no existing sections, add one of each by default
-      if (defaultSections.length === 0) {
-        defaultSections.push(createSection('alignment', 1));
-        defaultSections.push(createSection('carousel', 2));
-        defaultSections.push(createSection('fourParagraphs', 3));
-      }
-
+      const defaultSections = initializeDefaultSections(form);
       setSections(defaultSections);
       
       // Auto-open all sections by default for better UX
-      const newOpenSections: Record<string, boolean> = {};
-      defaultSections.forEach(section => {
-        newOpenSections[section.id] = true;
-      });
+      const newOpenSections = getInitialOpenSectionsState(defaultSections);
       setOpenSections(newOpenSections);
     }
   }, []);
 
-  // Helper function to create a new section
-  const createSection = (type: SectionWithOrder['type'], order: number): SectionWithOrder => {
-    return {
-      id: uuidv4(),
-      type,
-      name: type === 'alignment' 
-        ? 'Left or Right Aligned Section' 
-        : type === 'carousel' 
-          ? '3 Column Slider' 
-          : 'Four Small Paragraphs',
-      order
-    };
+  const toggleSection = (id: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const handleAddSection = (type: SectionWithOrder['type']) => {
+    addSection(sections, type, setSections, setOpenSections);
+  };
+
+  const handleRemoveSection = (id: string) => {
+    removeSection(id, setSections, setOpenSections);
+  };
+
+  const handleMoveSection = (id: string, direction: 'up' | 'down') => {
+    moveSection(id, direction, setSections);
   };
   
   // Update form whenever sections change
@@ -116,85 +66,12 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     handleContentChange(event);
   }, [sections]);
 
-  const toggleSection = (id: string) => {
-    setOpenSections(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
-
-  const addSection = (type: SectionWithOrder['type']) => {
-    const newOrder = sections.length > 0 
-      ? Math.max(...sections.map(s => s.order)) + 1 
-      : 1;
-      
-    const newSection = createSection(type, newOrder);
-    
-    setSections(prev => [...prev, newSection]);
-    
-    // Auto open the new section
-    setOpenSections(prev => ({
-      ...prev,
-      [newSection.id]: true
-    }));
-  };
-
-  const removeSection = (id: string) => {
-    setSections(prev => {
-      const sectionToRemove = prev.find(section => section.id === id);
-      if (!sectionToRemove) return prev;
-      
-      const removedOrder = sectionToRemove.order;
-      
-      return prev
-        .filter(section => section.id !== id)
-        .map(section => ({
-          ...section,
-          // Adjust order for sections after the removed one
-          order: section.order > removedOrder ? section.order - 1 : section.order
-        }));
-    });
-    
-    // Remove from open sections
-    setOpenSections(prev => {
-      const updated = { ...prev };
-      delete updated[id];
-      return updated;
-    });
-  };
-
-  const moveSection = (id: string, direction: 'up' | 'down') => {
-    setSections(prev => {
-      const sectionIndex = prev.findIndex(section => section.id === id);
-      if (sectionIndex === -1) return prev;
-      
-      // Cannot move up if already at the top
-      if (direction === 'up' && sectionIndex === 0) return prev;
-      
-      // Cannot move down if already at the bottom
-      if (direction === 'down' && sectionIndex === prev.length - 1) return prev;
-      
-      const newSections = [...prev];
-      const section = newSections[sectionIndex];
-      const targetIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1;
-      const targetSection = newSections[targetIndex];
-      
-      // Swap orders
-      const tempOrder = section.order;
-      section.order = targetSection.order;
-      targetSection.order = tempOrder;
-      
-      // Sort by order
-      return newSections.sort((a, b) => a.order - b.order);
-    });
-  };
-
   return {
     sections,
     openSections,
     toggleSection,
-    addSection,
-    removeSection,
-    moveSection
+    addSection: handleAddSection,
+    removeSection: handleRemoveSection,
+    moveSection: handleMoveSection
   };
 };
