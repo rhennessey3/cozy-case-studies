@@ -41,6 +41,13 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
     </div>
   );
 
+  // Helper component for required field labels
+  const RequiredLabel = ({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) => (
+    <Label htmlFor={htmlFor} className="flex items-center">
+      {children} <span className="text-red-500 ml-1">*</span>
+    </Label>
+  );
+
   return (
     <div className="space-y-6">
       <Collapsible 
@@ -55,33 +62,36 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
           <CollapsibleContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <RequiredLabel htmlFor="title">Title</RequiredLabel>
                 <Input
                   id="title"
                   name="title"
                   value={form.title}
                   onChange={handleChange}
                   placeholder="Enter case study title"
+                  className={!form.title.trim() ? "border-red-300" : ""}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="slug">Slug</Label>
+                <RequiredLabel htmlFor="slug">Slug</RequiredLabel>
                 <Input
                   id="slug"
                   name="slug"
                   value={form.slug}
                   onChange={handleChange}
                   placeholder="Enter URL slug (e.g., my-case-study)"
+                  className={!form.slug.trim() ? "border-red-300" : ""}
                 />
               </div>
             </div>
             
             <div className="space-y-2 mt-4">
-              <Label>Cover Image</Label>
+              <RequiredLabel htmlFor="coverImage">Cover Image</RequiredLabel>
               <ImageUploader
                 label="Upload Cover Image"
                 currentImageUrl={form.coverImage}
                 onImageUploaded={(url) => handleImageUploaded('coverImage', url)}
+                className={!form.coverImage ? "border-red-300 border rounded" : ""}
               />
             </div>
           </CollapsibleContent>
@@ -101,26 +111,26 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
           <CollapsibleContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-2">
-                <Label htmlFor="subhead-one" className="text-gray-500">Subhead One</Label>
+                <RequiredLabel htmlFor="subhead-one">Challenge</RequiredLabel>
                 <Input 
                   id="subhead-one" 
                   name="challenge" 
                   value={form.challenge} 
                   onChange={handleChange} 
                   placeholder="Challenge"
-                  className="bg-gray-50 border-gray-200"
+                  className={`bg-gray-50 border-gray-200 ${!form.challenge.trim() ? "border-red-300" : ""}`}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="subhead-one-paragraph" className="text-gray-500">Subhead One Paragraph</Label>
+                <RequiredLabel htmlFor="subhead-one-paragraph">Challenge Description</RequiredLabel>
                 <Textarea 
                   id="subhead-one-paragraph" 
                   name="intro" 
                   value={form.intro} 
                   onChange={handleChange} 
-                  placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-                  className="bg-gray-50 border-gray-200"
+                  placeholder="Describe the challenge..."
+                  className={`bg-gray-50 border-gray-200 ${!form.intro.trim() ? "border-red-300" : ""}`}
                   rows={3}
                 />
               </div>
@@ -128,26 +138,26 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-2">
-                <Label htmlFor="subhead-two" className="text-gray-500">Subhead Two</Label>
+                <RequiredLabel htmlFor="subhead-two">Approach</RequiredLabel>
                 <Input 
                   id="subhead-two" 
                   name="approach" 
                   value={form.approach} 
                   onChange={handleChange} 
                   placeholder="Approach"
-                  className="bg-gray-50 border-gray-200"
+                  className={`bg-gray-50 border-gray-200 ${!form.approach.trim() ? "border-red-300" : ""}`}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="subhead-two-paragraph" className="text-gray-500">Subhead Two Paragraph</Label>
+                <RequiredLabel htmlFor="subhead-two-paragraph">Approach Description</RequiredLabel>
                 <Textarea 
                   id="subhead-two-paragraph" 
                   name="solution" 
                   value={form.solution} 
                   onChange={handleChange} 
-                  placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-                  className="bg-gray-50 border-gray-200"
+                  placeholder="Describe the approach..."
+                  className={`bg-gray-50 border-gray-200 ${!form.solution.trim() ? "border-red-300" : ""}`}
                   rows={3}
                 />
               </div>
@@ -155,26 +165,26 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="subhead-three" className="text-gray-500">Subhead Three</Label>
+                <RequiredLabel htmlFor="subhead-three">Results</RequiredLabel>
                 <Input 
                   id="subhead-three" 
                   name="results" 
                   value={form.results} 
                   onChange={handleChange} 
                   placeholder="Results"
-                  className="bg-gray-50 border-gray-200"
+                  className={`bg-gray-50 border-gray-200 ${!form.results.trim() ? "border-red-300" : ""}`}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="subhead-three-paragraph" className="text-gray-500">Subhead Three Paragraph</Label>
+                <RequiredLabel htmlFor="subhead-three-paragraph">Results Description</RequiredLabel>
                 <Textarea 
                   id="subhead-three-paragraph" 
                   name="conclusion" 
                   value={form.conclusion} 
                   onChange={handleChange} 
-                  placeholder="Lorem Ipsum Lorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-                  className="bg-gray-50 border-gray-200"
+                  placeholder="Describe the results..."
+                  className={`bg-gray-50 border-gray-200 ${!form.conclusion.trim() ? "border-red-300" : ""}`}
                   rows={3}
                 />
               </div>

@@ -3,15 +3,20 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 
 export const processBasicInfo = async (form: CaseStudyForm, slug?: string) => {
+  // Ensure required fields are present
+  if (!form.title.trim()) throw new Error('Title is required');
+  if (!form.slug.trim()) throw new Error('Slug is required');
+  if (!form.coverImage) throw new Error('Cover image is required');
+  
   // Prepare case study data
   const caseStudyData = {
-    title: form.title,
-    slug: form.slug,
-    summary: form.summary,
-    description: form.description || null,
+    title: form.title.trim(),
+    slug: form.slug.trim(),
+    summary: form.summary.trim() || 'No summary provided',
+    description: form.description?.trim() || null,
     cover_image: form.coverImage,
-    category: form.category,
-    height: form.height || null
+    category: form.category.trim() || 'Uncategorized',
+    height: form.height?.trim() || null
   };
   
   let caseStudyId;
