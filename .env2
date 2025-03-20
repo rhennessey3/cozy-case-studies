@@ -1,7 +1,4 @@
 
-# Strapi API URL
-VITE_STRAPI_API_URL=https://prized-ball-ee89a13ade.strapiapp.com
-
 # Frontend URL (for CORS)
 VITE_FRONTEND_URL=https://cozy-case-studies.vercel.app
 
