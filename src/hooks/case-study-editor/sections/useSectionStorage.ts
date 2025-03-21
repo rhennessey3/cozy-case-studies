@@ -23,19 +23,21 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       setIsLoading(true);
       setError(null);
 
-      // Get the case study sections from the case_study_sections table
+      // Get the case study sections container from the database
+      // Using a specific component name to store the editor state
       const { data, error } = await supabase
         .from('case_study_sections')
-        .select('section_data')
+        .select('metadata, id')
         .eq('case_study_id', caseStudyId)
-        .single();
+        .eq('component', 'editor_state')
+        .maybeSingle();
 
       if (error) {
         throw new Error(`Failed to load sections: ${error.message}`);
       }
 
-      if (data && data.section_data) {
-        setSectionsState(data.section_data);
+      if (data && data.metadata) {
+        setSectionsState(data.metadata as SectionState);
       } else {
         setSectionsState({});
       }
@@ -62,6 +64,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         .from('case_study_sections')
         .select('id')
         .eq('case_study_id', caseStudyId)
+        .eq('component', 'editor_state')
         .maybeSingle();
 
       if (checkError) {
@@ -75,19 +78,22 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         result = await supabase
           .from('case_study_sections')
           .update({
-            section_data: sectionData,
+            metadata: sectionData,
+            content: 'Editor state storage',
             updated_at: new Date().toISOString()
           })
-          .eq('case_study_id', caseStudyId);
+          .eq('id', data.id);
       } else {
         // Insert new record
         result = await supabase
           .from('case_study_sections')
           .insert({
             case_study_id: caseStudyId,
-            section_data: sectionData,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            component: 'editor_state',
+            title: 'Editor State',
+            content: 'Editor state storage',
+            metadata: sectionData,
+            sort_order: 0
           });
       }
 
