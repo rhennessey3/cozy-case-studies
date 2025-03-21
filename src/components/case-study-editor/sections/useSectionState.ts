@@ -1,6 +1,7 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { SectionWithOrder } from './types';
+import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 import { SectionFormState } from './utils/defaultSections';
 import { useOpenSections } from './hooks/useOpenSections';
 import { useSectionInitialization } from './hooks/useSectionInitialization';
@@ -15,17 +16,13 @@ import {
 } from '@/hooks/case-study-editor/sections/utils/sectionResponseMapper';
 
 export const useSectionState = (
-  form: SectionFormState & { slug?: string }, 
-  handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void,
   caseStudyId: string | null = null
 ) => {
-  // Get case study slug to use for session storage key (UI state only)
-  const getSlugFromForm = (): string => {
-    return form.slug || 'new-case-study';
-  };
+  // Use a ref to prevent infinite loops
+  const isInitializingRef = useRef(true);
   
   // Session storage key for UI state only (open/closed sections)
-  const sessionStorageKey = `case-study-ui-state-${getSlugFromForm()}`;
+  const sessionStorageKey = `case-study-ui-state-${caseStudyId || 'new-case-study'}`;
   // Ref to prevent recalculation of the session storage key on every render
   const sessionStorageKeyRef = useRef(sessionStorageKey);
   
@@ -36,17 +33,26 @@ export const useSectionState = (
     isLoading: supabaseLoading
   } = useSectionStorage(caseStudyId);
   
-  // Use refs for handler functions to ensure they don't change between renders
-  const isUpdatingRef = useRef(false);
+  // Initialize with empty sections array
+  const [sections, setSections] = useState<SectionWithOrder[]>([]);
+  const [initialized, setInitialized] = useState(false);
+  const lastValidSectionsRef = useRef<SectionWithOrder[]>([]);
   
-  // Initialize sections state
-  const {
-    sections,
-    setSections,
-    initialized,
-    setInitialized,
-    lastValidSectionsRef
-  } = useSectionInitialization(form, sessionStorageKeyRef.current, supabaseSections, supabaseLoading);
+  // Load initial sections from Supabase
+  useEffect(() => {
+    if (supabaseSections && supabaseSections.length > 0 && !initialized && isInitializingRef.current) {
+      isInitializingRef.current = false;
+      
+      // Convert SectionResponse[] to SectionWithOrder[]
+      const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(supabaseSections);
+      setSections(sectionsWithOrder);
+      lastValidSectionsRef.current = sectionsWithOrder;
+      setInitialized(true);
+    } else if (!supabaseLoading && !initialized && isInitializingRef.current) {
+      isInitializingRef.current = false;
+      setInitialized(true);
+    }
+  }, [supabaseSections, supabaseLoading, initialized]);
   
   // Manage open/closed state for sections (UI state only)
   const {
@@ -67,37 +73,8 @@ export const useSectionState = (
     }
   }, [sections, cleanupOrphanedSections]);
   
-  // Sync sections with form.customSections
-  useSectionSync(
-    sections,
-    form,
-    (updatedSections) => {
-      // Ensure case_study_id is properly set when updating sections
-      if (Array.isArray(updatedSections)) {
-        const processedSections = updatedSections.map(section => {
-          if (caseStudyId && (!section.case_study_id || section.case_study_id === '')) {
-            return { ...section, case_study_id: caseStudyId };
-          }
-          return section;
-        });
-        setSections(processedSections);
-      } else {
-        // Handle the case where it might be a function
-        setSections(updatedSections);
-      }
-    },
-    lastValidSectionsRef,
-    sessionStorageKeyRef.current
-  );
-  
-  // Update form with sections changes
-  useFormUpdate(
-    sections,
-    initialized,
-    isUpdatingRef,
-    form,
-    handleContentChange
-  );
+  // Use refs for handler functions to ensure they don't change between renders
+  const isUpdatingRef = useRef(false);
   
   // Add debugging to track section changes
   useEffect(() => {
@@ -117,6 +94,7 @@ export const useSectionState = (
       console.log('Adding section of type:', type);
       const newSection = addSection(sections, type, setSections, setOpenSections);
       lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
+      return newSection;
     },
     
     removeSection: (id: string) => {
@@ -151,7 +129,7 @@ export const useSectionState = (
   });
 
   return {
-    sections,
+    sections: sections as SectionResponse[], // Cast to satisfy TypeScript
     openSections,
     toggleSection,
     addSection: handlersRef.current.addSection,

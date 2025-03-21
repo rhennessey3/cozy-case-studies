@@ -1,19 +1,12 @@
 
-import { useRef } from 'react';
-import { SectionResponse } from './types/sectionTypes';
-import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
+import { useRef, useCallback } from 'react';
+import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 import { useOpenSections } from './useOpenSections';
-import { useSectionStorage } from './useSectionStorage';
+import { useSectionInitHook } from './hooks/useSectionInitHook';
 import { useAddSectionHook } from './hooks/useAddSectionHook';
 import { useRemoveSectionHook } from './hooks/useRemoveSectionHook';
 import { useTogglePublishedHook } from './hooks/useTogglePublishedHook';
-import { useSectionInitHook } from './hooks/useSectionInitHook';
-import { 
-  mapSectionResponseToSectionWithOrder, 
-  mapSectionResponsesToSectionWithOrders,
-  mapSectionWithOrdersToSectionResponses,
-  mapSectionWithOrderToSectionResponse
-} from './utils/sectionResponseMapper';
+import { useSectionStorage } from './useSectionStorage';
 
 /**
  * Main hook for managing sections state
@@ -26,7 +19,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     isLoading: supabaseLoading
   } = useSectionStorage(caseStudyId);
   
-  // Initialize sections state
+  // Initialize sections state with sections from Supabase
   const {
     sections,
     setSections,
@@ -44,35 +37,17 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     cleanupOrphanedSections
   } = useOpenSections();
   
-  // Sync sections with open sections state
-  const validSectionIds = new Set(sections.map(section => section.id));
-  cleanupOrphanedSections(validSectionIds);
-  
-  // Use refs for handler functions to ensure they don't change between renders
+  // Use a ref to indicate if we're currently updating to prevent infinite loops
   const isUpdatingRef = useRef(false);
-  
-  // Save to Supabase when sections change
-  const handleSectionsChange = (updatedSections: SectionResponse[]) => {
-    if (caseStudyId && updatedSections.length > 0 && initialized && !isUpdatingRef.current) {
-      // Handle potential type conversion before saving
-      const sectionsToSave = updatedSections.map(section => {
-        // Ensure all required fields are present
-        return {
-          ...section,
-          case_study_id: section.case_study_id || caseStudyId
-        };
-      });
-      saveToSupabase(sectionsToSave);
-    }
-    
-    // Update the reference to last valid sections
-    lastValidSectionsRef.current = updatedSections;
-  };
   
   // Create all the section operation hooks
   const addSection = useAddSectionHook(caseStudyId, sections, setSections, setOpenSections);
   const removeSection = useRemoveSectionHook(setSections, setOpenSections);
   const toggleSectionPublished = useTogglePublishedHook(setSections);
+  
+  // Create a set of valid section IDs and clean up orphaned openSections
+  const validSectionIds = new Set(sections.map(section => section.id));
+  cleanupOrphanedSections(validSectionIds);
   
   // Return the public API for the hook
   return {

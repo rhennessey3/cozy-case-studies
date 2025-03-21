@@ -31,7 +31,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     toggleSection, 
     addSection, 
     removeSection,
-    moveSection,
     toggleSectionPublished
   } = useSectionState(caseStudyId); // Pass caseStudyId here
   
@@ -68,7 +67,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
       toggleSection={toggleSection}
       addSection={addSection}
       removeSection={removeSection}
-      moveSection={moveSection}
       toggleSectionPublished={toggleSectionPublished}
       formKey={formKey}
       form={form}

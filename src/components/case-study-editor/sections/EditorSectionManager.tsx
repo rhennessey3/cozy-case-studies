@@ -10,7 +10,6 @@ interface EditorSectionManagerProps {
   toggleSection: (id: string) => void;
   addSection: (type: string) => void;
   removeSection: (id: string) => void;
-  moveSection: (id: string, direction: 'up' | 'down') => void;
   toggleSectionPublished: (id: string, published: boolean) => void;
   formKey: string;
   form: any;
@@ -22,13 +21,15 @@ interface EditorSectionManagerProps {
   paragraphItems: any[];
 }
 
+/**
+ * Component that renders the section manager and section list
+ */
 const EditorSectionManager: React.FC<EditorSectionManagerProps> = ({
   sections,
   openSections,
   toggleSection,
   addSection,
   removeSection,
-  moveSection,
   toggleSectionPublished,
   formKey,
   form,
@@ -45,7 +46,6 @@ const EditorSectionManager: React.FC<EditorSectionManagerProps> = ({
         sections={sections}
         onAddSection={addSection}
         onRemoveSection={removeSection}
-        onMoveSection={moveSection}
         onTogglePublished={toggleSectionPublished}
       />
       
