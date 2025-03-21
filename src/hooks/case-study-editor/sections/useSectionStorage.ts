@@ -1,85 +1,120 @@
 
-import { useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
-import { toast } from 'sonner';
 
-/**
- * Hook to handle section storage in Supabase
- */
-export const useSectionStorage = (
-  sections: SectionWithOrder[],
-  sessionStorageKey: string,
-  caseStudyId?: string
-) => {
-  // Save sections to Supabase custom_sections metadata 
-  const saveSections = useCallback(async () => {
-    if (!caseStudyId || caseStudyId === 'new' || sections.length === 0) {
+// Define the interface for storing section state
+interface SectionState {
+  [key: string]: any;
+}
+
+export const useSectionStorage = (caseStudyId: string | null) => {
+  const [sectionsState, setSectionsState] = useState<SectionState | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load sections from Supabase
+  const loadSections = async () => {
+    if (!caseStudyId) {
+      setIsLoading(false);
       return;
     }
 
     try {
-      // Update the case_study record with the sections in the metadata
-      const { error } = await supabase
-        .from('case_studies')
-        .update({
-          custom_sections: sections
-        })
-        .eq('id', caseStudyId);
+      setIsLoading(true);
+      setError(null);
+
+      // Get the case study sections from the case_study_sections table
+      const { data, error } = await supabase
+        .from('case_study_sections')
+        .select('section_data')
+        .eq('case_study_id', caseStudyId)
+        .single();
 
       if (error) {
-        console.error("Failed to save sections to Supabase:", error);
-      } else {
-        console.log(`Saved ${sections.length} sections to Supabase for case study ${caseStudyId}`);
+        throw new Error(`Failed to load sections: ${error.message}`);
       }
-    } catch (e) {
-      console.error("Exception saving sections to Supabase:", e);
+
+      if (data && data.section_data) {
+        setSectionsState(data.section_data);
+      } else {
+        setSectionsState({});
+      }
+    } catch (err: any) {
+      console.error('Error loading sections:', err);
+      setError(err.message);
+      setSectionsState({});
+    } finally {
+      setIsLoading(false);
     }
-  }, [sections, caseStudyId]);
+  };
 
-  // Save sections whenever they change
-  useEffect(() => {
-    if (sections.length > 0 && caseStudyId && caseStudyId !== 'new') {
-      // Use a debounce to avoid too many API calls
-      const timer = setTimeout(() => {
-        saveSections();
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [sections, caseStudyId, saveSections]);
-
-  // Load sections from Supabase
-  const loadSections = useCallback(async (): Promise<SectionWithOrder[] | null> => {
-    if (!caseStudyId || caseStudyId === 'new') {
-      return null;
+  // Save sections to Supabase
+  const saveSections = async (sectionData: SectionState) => {
+    if (!caseStudyId) {
+      return;
     }
 
     try {
-      const { data, error } = await supabase
-        .from('case_studies')
-        .select('custom_sections')
-        .eq('id', caseStudyId)
+      setError(null);
+
+      // First check if there's an existing record
+      const { data, error: checkError } = await supabase
+        .from('case_study_sections')
+        .select('id')
+        .eq('case_study_id', caseStudyId)
         .maybeSingle();
 
-      if (error) {
-        console.error("Failed to load sections from Supabase:", error);
-        return null;
+      if (checkError) {
+        throw new Error(`Failed to check for existing sections: ${checkError.message}`);
       }
 
-      if (data && data.custom_sections) {
-        console.log(`Loaded sections from Supabase for case study ${caseStudyId}`);
-        return data.custom_sections;
+      let result;
+      
+      if (data) {
+        // Update existing record
+        result = await supabase
+          .from('case_study_sections')
+          .update({
+            section_data: sectionData,
+            updated_at: new Date().toISOString()
+          })
+          .eq('case_study_id', caseStudyId);
+      } else {
+        // Insert new record
+        result = await supabase
+          .from('case_study_sections')
+          .insert({
+            case_study_id: caseStudyId,
+            section_data: sectionData,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
       }
-    } catch (e) {
-      console.error("Exception loading sections from Supabase:", e);
+
+      if (result.error) {
+        throw new Error(`Failed to save sections: ${result.error.message}`);
+      }
+
+      setSectionsState(sectionData);
+    } catch (err: any) {
+      console.error('Error saving sections:', err);
+      setError(err.message);
     }
+  };
 
-    return null;
+  // Load sections on initial render and when caseStudyId changes
+  useEffect(() => {
+    loadSections();
   }, [caseStudyId]);
 
   return {
-    saveSections,
-    loadSections
+    sectionsState,
+    setSectionsState: (newState: SectionState) => {
+      setSectionsState(newState);
+      saveSections(newState);
+    },
+    isLoading,
+    error,
+    refresh: loadSections
   };
 };
