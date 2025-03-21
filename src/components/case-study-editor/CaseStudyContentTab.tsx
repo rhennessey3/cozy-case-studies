@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import SectionManager from '@/components/case-study-editor/sections/SectionManager';
 import SectionList from '@/components/case-study-editor/sections/SectionList';
 import { useSectionState } from './sections/useSectionState';
@@ -45,7 +45,7 @@ interface CaseStudyContentTabProps {
   handleImageUploaded?: (field: string, url: string) => void;
 }
 
-const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({ 
+const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({ 
   form, 
   handleContentChange,
   handleImageUploaded = () => {} 
@@ -100,6 +100,9 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = ({
       />
     </div>
   );
-};
+});
+
+// Add display name for debugging
+CaseStudyContentTab.displayName = 'CaseStudyContentTab';
 
 export default CaseStudyContentTab;

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { SectionWithOrder } from './types';
 import SectionRenderer from './SectionRenderer';
 
@@ -31,35 +31,18 @@ const SectionList: React.FC<SectionListProps> = ({
   carouselItems,
   paragraphItems
 }) => {
-  // Debug output to help troubleshoot missing sections
+  // Debug output to help troubleshoot missing sections (only in development)
   useEffect(() => {
-    console.log('Current sections in SectionList:', sections);
-    console.log('Open sections in SectionList:', openSections);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Current sections in SectionList:', sections);
+      console.log('Open sections in SectionList:', openSections);
+    }
   }, [sections, openSections]);
 
-  // Sort sections by order for display
-  const sortedSections = [...sections].sort((a, b) => a.order - b.order);
-
-  // Add an effect to ensure openSections stays in sync with actual sections
-  // This ensures that removed sections don't persist in the openSections state
-  useEffect(() => {
-    const sectionIds = new Set(sections.map(section => section.id));
-    const currentOpenSections = { ...openSections };
-    let changed = false;
-    
-    // Remove any openSections entries that don't correspond to actual sections
-    Object.keys(currentOpenSections).forEach(id => {
-      if (!sectionIds.has(id)) {
-        delete currentOpenSections[id];
-        changed = true;
-      }
-    });
-    
-    // If we found invalid entries, update the state
-    if (changed) {
-      toggleSection(''); // Trigger an update by toggling a non-existent section (no-op)
-    }
-  }, [sections, openSections, toggleSection]);
+  // Sort sections by order for display - memoized to prevent unnecessary re-renders
+  const sortedSections = useMemo(() => {
+    return [...sections].sort((a, b) => a.order - b.order);
+  }, [sections]);
 
   // Check if there are actual sections to render
   if (sections.length === 0) {
@@ -95,4 +78,4 @@ const SectionList: React.FC<SectionListProps> = ({
   );
 };
 
-export default SectionList;
+export default React.memo(SectionList);

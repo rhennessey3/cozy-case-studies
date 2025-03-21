@@ -24,26 +24,33 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
 
   // State to keep track of which sections are open
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  
+  // Track if sections have been initialized
+  const [initialized, setInitialized] = useState(false);
 
   // Initialize the default sections if none are saved
   useEffect(() => {
-    if (sections.length === 0) {
+    if (sections.length === 0 && !initialized) {
       const defaultSections = initializeDefaultSections(form);
       setSections(defaultSections);
       
       // Auto-open all sections by default for better UX
       const newOpenSections = getInitialOpenSectionsState(defaultSections);
       setOpenSections(newOpenSections);
+      setInitialized(true);
     }
-  }, []);
+  }, [sections.length, initialized, form]);
 
-  // Sync sections when form.customSections changes
+  // Sync sections when form.customSections changes, but only if it's not empty
+  // and different from current sections to prevent infinite loops
   useEffect(() => {
-    if (form.customSections) {
+    if (form.customSections && initialized) {
       try {
         const parsedSections = JSON.parse(form.customSections);
-        // Check if sections have actually changed
-        if (JSON.stringify(parsedSections) !== JSON.stringify(sections)) {
+        
+        // Only update if something actually changed and we have sections
+        if (parsedSections.length > 0 && 
+            JSON.stringify(parsedSections) !== JSON.stringify(sections)) {
           console.log("Updating sections from form data:", parsedSections);
           setSections(parsedSections.map((section: any, index: number) => ({
             ...section,
@@ -54,7 +61,7 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
         console.error("Failed to parse updated custom sections", e);
       }
     }
-  }, [form.customSections]);
+  }, [form.customSections, initialized]);
 
   // Utility function to clean up any orphaned openSection entries
   // This ensures we don't have stale references to removed sections
@@ -101,19 +108,27 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     moveSection(id, direction, setSections);
   };
   
-  // Update form whenever sections change
+  // Update form whenever sections change, but only after initialization
+  // and only if sections actually exist to prevent infinite loops
   useEffect(() => {
-    console.log("Sections updated, saving to form:", sections);
-    
-    const event = {
-      target: {
-        name: 'customSections',
-        value: JSON.stringify(sections)
-      }
-    } as React.ChangeEvent<HTMLInputElement>;
-    
-    handleContentChange(event);
-  }, [sections, handleContentChange]);
+    if (initialized && sections.length > 0) {
+      console.log("Sections updated, saving to form:", sections);
+      
+      // Debounce the update to form state
+      const timer = setTimeout(() => {
+        const event = {
+          target: {
+            name: 'customSections',
+            value: JSON.stringify(sections)
+          }
+        } as React.ChangeEvent<HTMLInputElement>;
+        
+        handleContentChange(event);
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [sections, handleContentChange, initialized]);
 
   return {
     sections,

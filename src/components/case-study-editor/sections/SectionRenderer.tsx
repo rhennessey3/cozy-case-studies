@@ -34,9 +34,11 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   carouselItems,
   paragraphItems
 }) => {
-  // Debug output to help troubleshoot sections
+  // Debug output to help troubleshoot sections (only in development)
   React.useEffect(() => {
-    console.log(`Rendering section ${section.id} of type ${section.type}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Rendering section ${section.id} of type ${section.type}`);
+    }
   }, [section]);
 
   switch (section.type) {
@@ -95,4 +97,5 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   }
 };
 
-export default SectionRenderer;
+// Use React.memo to prevent unnecessary re-renders
+export default React.memo(SectionRenderer);
