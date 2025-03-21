@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
@@ -6,7 +7,6 @@ import { supabase } from '@/integrations/supabase/client';
 import CaseStudyBasicInfoTab from './CaseStudyBasicInfoTab';
 import CaseStudyContentTab from './CaseStudyContentTab';
 import EditorTabsNav from './components/EditorTabsNav';
-import FormActions from './components/FormActions';
 import EditorLoading from './components/EditorLoading';
 import AuthErrorState from './components/AuthErrorState';
 
@@ -25,6 +25,8 @@ interface CaseStudyEditorContentProps {
   onPublish?: () => void;
   showViewLive?: boolean;
   showDelete?: boolean;
+  cancelHref?: string;
+  onCancel?: () => void;
 }
 
 const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
@@ -41,7 +43,9 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   onDelete,
   onPublish,
   showViewLive = false,
-  showDelete = false
+  showDelete = false,
+  cancelHref,
+  onCancel
 }) => {
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
   const [authError, setAuthError] = useState<string | null>(null);
@@ -129,6 +133,9 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
           onPublish={onPublish}
           saving={saving}
           isNew={isNew}
+          slug={slug}
+          cancelHref={cancelHref}
+          onCancel={onCancel}
         />
         
         <TabsContent value="basics">
@@ -147,12 +154,6 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
           />
         </TabsContent>
       </Tabs>
-      
-      <FormActions 
-        saving={saving} 
-        slug={slug} 
-        isDraft={isDraft}
-      />
     </form>
   );
 };

@@ -10,6 +10,7 @@ interface FormActionsProps {
   cancelHref?: string;
   onCancel?: () => void;
   isDraft?: boolean;
+  className?: string;
 }
 
 const FormActions: React.FC<FormActionsProps> = ({ 
@@ -17,7 +18,8 @@ const FormActions: React.FC<FormActionsProps> = ({
   slug,
   cancelHref = '/admin/case-studies',
   onCancel,
-  isDraft = true
+  isDraft = true,
+  className = ""
 }) => {
   const navigate = useNavigate();
   const isNew = !slug || slug === 'new' || slug === '';
@@ -36,7 +38,7 @@ const FormActions: React.FC<FormActionsProps> = ({
   };
   
   return (
-    <div className="flex justify-end gap-2 py-4">
+    <div className={`flex justify-end gap-2 ${className}`}>
       <Button 
         type="button" 
         variant="outline" 

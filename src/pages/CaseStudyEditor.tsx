@@ -43,6 +43,10 @@ const CaseStudyEditor = () => {
       window.open(`/case-studies/${slug}`, '_blank');
     }
   };
+  
+  const handleCancel = () => {
+    navigate('/admin/case-studies');
+  };
 
   const getHeadingText = () => {
     if (loading) return 'LOADING...';
@@ -91,6 +95,8 @@ const CaseStudyEditor = () => {
               onPublish={publishDraft}
               showViewLive={!!slug && slug !== 'new'}
               showDelete={!!slug && slug !== 'new'}
+              cancelHref="/admin/case-studies"
+              onCancel={handleCancel}
             />
           </div>
         </div>
