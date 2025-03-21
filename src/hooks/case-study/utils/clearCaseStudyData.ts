@@ -42,3 +42,19 @@ export const clearSpecificCaseStudy = (slug: string): void => {
     toast.error(`Failed to clear case study "${slug}"`);
   }
 };
+
+/**
+ * Clear sections state from session storage
+ * This helps with debugging the sections persistence issue
+ */
+export const clearSectionsState = (caseStudySlug: string): void => {
+  try {
+    const sessionKey = `case-study-sections-${caseStudySlug}`;
+    sessionStorage.removeItem(sessionKey);
+    toast.success('Sections state has been cleared');
+    console.log('Sections state has been cleared from session storage');
+  } catch (error) {
+    console.error('Error clearing sections state:', error);
+    toast.error('Failed to clear sections state');
+  }
+};

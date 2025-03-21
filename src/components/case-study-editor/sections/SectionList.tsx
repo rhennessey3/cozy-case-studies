@@ -40,11 +40,14 @@ const SectionList: React.FC<SectionListProps> = ({
 
   // Sort sections by order for display - memoized to prevent unnecessary re-renders
   const sortedSections = useMemo(() => {
+    if (!sections || sections.length === 0) {
+      return [];
+    }
     return [...sections].sort((a, b) => a.order - b.order);
   }, [sections]);
 
   // Check if there are actual sections to render
-  if (sections.length === 0) {
+  if (!sections || sections.length === 0) {
     return (
       <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
         <p className="text-gray-500">No sections added yet. Add a section using the controls above.</p>
@@ -59,7 +62,7 @@ const SectionList: React.FC<SectionListProps> = ({
         
         return (
           <SectionRenderer
-            key={section.id}
+            key={`section-${section.id}`}
             section={section}
             isOpen={isOpen}
             onToggle={() => toggleSection(section.id)}

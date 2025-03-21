@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { SectionWithOrder } from './types';
 import { SectionFormState, initializeDefaultSections, getInitialOpenSectionsState } from './utils/defaultSections';
@@ -8,8 +7,30 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   // Reference to track if we've initialized from custom sections
   const initializedFromCustomSections = useRef(false);
   
+  // Get case study slug to use for session storage key
+  const getSlugFromForm = (): string => {
+    return form.slug || 'new-case-study';
+  };
+  
+  // Session storage key for persisting sections state
+  const sessionStorageKey = `case-study-sections-${getSlugFromForm()}`;
+  
   // Parse custom sections from form if available
   const [sections, setSections] = useState<SectionWithOrder[]>(() => {
+    // First try to get from session storage (for tab switching persistence)
+    try {
+      const sessionData = sessionStorage.getItem(sessionStorageKey);
+      if (sessionData) {
+        const parsedSessionData = JSON.parse(sessionData);
+        console.log("Restored sections from session storage:", parsedSessionData.length);
+        initializedFromCustomSections.current = true;
+        return parsedSessionData;
+      }
+    } catch (e) {
+      console.error("Failed to parse session storage sections", e);
+    }
+    
+    // If not in session storage, try from form.customSections
     try {
       if (form.customSections) {
         const parsedSections = JSON.parse(form.customSections);
@@ -30,7 +51,18 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   });
 
   // State to keep track of which sections are open
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
+    // Try to load open sections state from session storage
+    try {
+      const openSectionsData = sessionStorage.getItem(`${sessionStorageKey}-open`);
+      if (openSectionsData) {
+        return JSON.parse(openSectionsData);
+      }
+    } catch (e) {
+      console.error("Failed to parse open sections from session storage", e);
+    }
+    return {};
+  });
   
   // Track if sections have been initialized
   const [initialized, setInitialized] = useState(initializedFromCustomSections.current);
@@ -43,6 +75,27 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   
   // Store the last valid sections to prevent reverting to default
   const lastValidSectionsRef = useRef<SectionWithOrder[]>(sections);
+
+  // Save sections to session storage whenever they change
+  useEffect(() => {
+    if (sections.length > 0) {
+      try {
+        sessionStorage.setItem(sessionStorageKey, JSON.stringify(sections));
+        console.log(`Saved ${sections.length} sections to session storage`);
+      } catch (e) {
+        console.error("Failed to save sections to session storage", e);
+      }
+    }
+  }, [sections, sessionStorageKey]);
+  
+  // Save open sections state to session storage
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(`${sessionStorageKey}-open`, JSON.stringify(openSections));
+    } catch (e) {
+      console.error("Failed to save open sections to session storage", e);
+    }
+  }, [openSections, sessionStorageKey]);
 
   // Initialize the default sections if none are saved
   useEffect(() => {
@@ -93,6 +146,9 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
             setSections(newSections);
             lastValidSectionsRef.current = newSections;
             
+            // Save to session storage immediately
+            sessionStorage.setItem(sessionStorageKey, JSON.stringify(newSections));
+            
             // After updating, allow future updates
             setTimeout(() => {
               isUpdatingRef.current = false;
@@ -106,7 +162,7 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
       // Update the ref to the current value
       prevCustomSectionsRef.current = form.customSections;
     }
-  }, [form.customSections, sections]);
+  }, [form.customSections, sections, sessionStorageKey]);
 
   // Utility function to clean up any orphaned openSection entries
   useEffect(() => {
@@ -151,6 +207,15 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
       section => section.id !== id
     );
+    
+    // Remove from session storage immediately to prevent reappearing on tab switch
+    try {
+      const updatedSections = sections.filter(section => section.id !== id);
+      sessionStorage.setItem(sessionStorageKey, JSON.stringify(updatedSections));
+      console.log(`Section ${id} removed from session storage`);
+    } catch (e) {
+      console.error("Failed to remove section from session storage", e);
+    }
   };
 
   const handleMoveSection = (id: string, direction: 'up' | 'down') => {

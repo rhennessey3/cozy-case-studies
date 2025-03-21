@@ -40,6 +40,7 @@ interface CaseStudyContentTabProps {
     fourPara4Content?: string;
     fourParaImage?: string;
     customSections?: string;
+    slug?: string;
   };
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
@@ -50,21 +51,22 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   handleContentChange,
   handleImageUploaded = () => {} 
 }) => {
-  // Generate a unique form key based on form content to help with re-rendering
-  // Use only customSections for the key to avoid unnecessary re-renders
+  // Generate a unique form key based on form content and slug to help with re-rendering
   const formKey = useMemo(() => {
+    const slugPart = form.slug ? `-${form.slug}` : '-new';
+    
     try {
       if (form.customSections) {
         // Extract sections IDs to create a stable key
         const sections = JSON.parse(form.customSections || '[]');
-        return `sections-${sections.map((s: any) => s.id).join('-')}`;
+        return `sections-${sections.map((s: any) => s.id).join('-')}${slugPart}`;
       }
     } catch (e) {
       console.error("Error parsing customSections for key", e);
     }
-    // Fallback to timestamp if parsing fails
-    return `form-${Date.now()}`;
-  }, [form.customSections]);
+    // Fallback to timestamp + slug if parsing fails
+    return `form-${Date.now()}${slugPart}`;
+  }, [form.customSections, form.slug]);
   
   const { 
     sections, 
