@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/constants/authConstants';
@@ -32,7 +31,7 @@ export const loginUser = async (password: string): Promise<boolean> => {
               email: ADMIN_EMAIL,
               password: ADMIN_PASSWORD,
               options: {
-                // Make sure the redirect goes to the admin page after email confirmation
+                // No need for email confirmation since it's disabled
                 emailRedirectTo: `${window.location.origin}/admin/case-studies`
               }
             });
@@ -51,9 +50,22 @@ export const loginUser = async (password: string): Promise<boolean> => {
             }
             
             if (signUpData.user) {
-              console.log('Admin user created successfully. Email confirmation may be required.');
-              toast.success('Admin user created. Please check your email for confirmation link or disable email confirmation in Supabase settings.');
-              // For new signups, return success but let user know about confirmation
+              console.log('Admin user created successfully:', signUpData.user);
+              
+              // Since email confirmation is disabled, try logging in immediately
+              const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+                email: ADMIN_EMAIL,
+                password: ADMIN_PASSWORD
+              });
+              
+              if (loginError) {
+                console.error('Login after signup failed:', loginError);
+                toast.error('Account created but login failed: ' + loginError.message);
+                return false;
+              }
+              
+              console.log('Successfully logged in after account creation');
+              toast.success('Admin account created and logged in successfully');
               return true;
             }
           } catch (signUpException: any) {
@@ -62,7 +74,8 @@ export const loginUser = async (password: string): Promise<boolean> => {
             return false;
           }
         } else if (error.message.includes('Email not confirmed')) {
-          toast.warning('Email not confirmed. Please check your inbox for a confirmation email.');
+          // This should no longer happen since email confirmation is disabled
+          toast.warning('Your account exists but email is not confirmed. Please check your email or contact your administrator.');
           return false;
         } else {
           toast.error('Authentication failed: ' + error.message);
@@ -72,14 +85,17 @@ export const loginUser = async (password: string): Promise<boolean> => {
       
       // Successfully authenticated with Supabase
       console.log('Successfully authenticated with Supabase:', data.session ? 'Session created' : 'No session');
+      toast.success('Login successful');
       return true;
     } catch (error: any) {
       console.error('Exception during login:', error);
       toast.error('An error occurred during login: ' + (error.message || 'Unknown error'));
       return false;
     }
+  } else {
+    toast.error('Incorrect password');
+    return false;
   }
-  return false;
 };
 
 /**

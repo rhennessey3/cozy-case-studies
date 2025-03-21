@@ -19,5 +19,6 @@ export const checkSupabaseAuth = async (): Promise<boolean> => {
  * and no longer supporting local authentication mode
  */
 export const isLocalAuthMode = (): boolean => {
+  // We're fully migrated to Supabase auth, so always return false
   return false;
 };

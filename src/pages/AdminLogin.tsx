@@ -11,7 +11,7 @@ import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, ArrowLeft, InfoIcon } from "lucide-react";
+import { Loader2, ArrowLeft, InfoIcon, CheckCircle } from "lucide-react";
 
 const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -108,11 +108,10 @@ const AdminLogin: React.FC = () => {
                 </Alert>
               )}
               
-              <Alert variant="info" className="bg-blue-50 border-blue-200">
-                <InfoIcon className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-700">
-                  First time logging in? The system will create an admin account.
-                  You may need to check your email for confirmation.
+              <Alert variant="info" className="bg-green-50 border-green-200">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-700">
+                  Email confirmation is disabled. New accounts will be activated immediately.
                 </AlertDescription>
               </Alert>
               
