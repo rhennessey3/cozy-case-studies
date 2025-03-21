@@ -3,13 +3,14 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from './test-utils';
 import { useSectionState } from '../useSectionState';
 import { supabase } from '@/integrations/supabase/client';
+import { SectionResponse } from '../types/sectionTypes';
 
 // Mock the component hooks that useSectionState depends on
 vi.mock('../useSectionFetch', () => ({
   useSectionFetch: vi.fn().mockReturnValue({
     sections: [
-      { id: 'section-1', case_study_id: 'case-1', component: 'carousel', title: 'Carousel', sort_order: 1, published: true },
-      { id: 'section-2', case_study_id: 'case-1', component: 'alignment', title: 'Alignment', sort_order: 2, published: false }
+      { id: 'section-1', case_study_id: 'case-1', component: 'carousel', title: 'Carousel', sort_order: 1, published: true, content: '' },
+      { id: 'section-2', case_study_id: 'case-1', component: 'alignment', title: 'Alignment', sort_order: 2, published: false, content: '' }
     ],
     loading: false,
     error: null,
@@ -22,14 +23,13 @@ vi.mock('../useOpenSections', () => ({
   useOpenSections: vi.fn().mockReturnValue({
     openSections: { 'section-1': true, 'section-2': false },
     setOpenSections: vi.fn(),
-    toggleSection: vi.fn(id => id),
-    cleanupOrphanedSections: vi.fn()
+    toggleSection: vi.fn(id => id)
   })
 }));
 
 vi.mock('../useSectionOperations', () => ({
   useSectionOperations: vi.fn().mockReturnValue({
-    addSection: vi.fn().mockImplementation(type => Promise.resolve({ id: 'new-section', component: type })),
+    addSection: vi.fn().mockImplementation(type => Promise.resolve({ id: 'new-section', component: type, content: '', published: true })),
     togglePublished: vi.fn().mockImplementation((id, published) => Promise.resolve(published)),
     removeSection: vi.fn().mockResolvedValue(undefined),
     moveSection: vi.fn().mockResolvedValue(undefined)

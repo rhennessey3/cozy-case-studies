@@ -4,6 +4,7 @@ import { renderHook, act } from './test-utils';
 import { useSectionOperations } from '../useSectionOperations';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { SectionResponse } from '../types/sectionTypes';
 
 // Mock supabase
 const mockedSupabase = supabase as any;
@@ -11,9 +12,9 @@ const mockedSupabase = supabase as any;
 describe('useSectionOperations', () => {
   const mockSetSections = vi.fn();
   const mockSetOpenSections = vi.fn();
-  const mockSections = [
-    { id: 'section-1', case_study_id: 'case-1', component: 'carousel', title: 'Section 1', sort_order: 1 },
-    { id: 'section-2', case_study_id: 'case-1', component: 'alignment', title: 'Section 2', sort_order: 2 }
+  const mockSections: SectionResponse[] = [
+    { id: 'section-1', case_study_id: 'case-1', component: 'carousel', title: 'Section 1', sort_order: 1, content: '', published: true },
+    { id: 'section-2', case_study_id: 'case-1', component: 'alignment', title: 'Section 2', sort_order: 2, content: '', published: false }
   ];
   
   beforeEach(() => {
@@ -33,7 +34,7 @@ describe('useSectionOperations', () => {
   
   test('should add a new section successfully', async () => {
     // Mock successful section insertion
-    const newSection = {
+    const newSection: SectionResponse = {
       id: 'new-section',
       case_study_id: 'case-1',
       component: 'carousel',
@@ -64,7 +65,7 @@ describe('useSectionOperations', () => {
     }));
     
     // Verify toast was called
-    expect(toast.success).toHaveBeenCalledWith(expect.stringContaining('carousel section added'));
+    expect(toast.success).toHaveBeenCalledWith(expect.stringContaining('Carousel section added'));
   });
   
   test('should handle add section failure', async () => {
@@ -116,6 +117,12 @@ describe('useSectionOperations', () => {
   });
   
   test('should remove section successfully', async () => {
+    // Mock successful fetch before delete
+    mockedSupabase.single.mockResolvedValue({ 
+      data: mockSections[0], 
+      error: null 
+    });
+    
     // Mock successful delete
     mockedSupabase.eq.mockResolvedValue({ error: null });
     
