@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
@@ -25,6 +26,7 @@ interface CaseStudyEditorContentProps {
   showDelete?: boolean;
   cancelHref?: string;
   onCancel?: () => void;
+  activeTab: string;
 }
 
 const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
@@ -43,7 +45,8 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   showViewLive = false,
   showDelete = false,
   cancelHref,
-  onCancel
+  onCancel,
+  activeTab
 }) => {
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
   const [authError, setAuthError] = useState<string | null>(null);
@@ -121,7 +124,7 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <Tabs defaultValue="basics">
+      <Tabs value={activeTab}>
         <TabsContent value="basics">
           <CaseStudyBasicInfoTab 
             form={form} 

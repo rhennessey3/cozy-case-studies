@@ -16,6 +16,7 @@ const CaseStudyEditor = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('basics');
   
   const {
     loading,
@@ -74,6 +75,8 @@ const CaseStudyEditor = () => {
           isDraft={isDraft}
           isNew={isNew}
           saving={saving}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
@@ -109,6 +112,7 @@ const CaseStudyEditor = () => {
               showDelete={!!slug && slug !== 'new'}
               cancelHref="/admin/case-studies"
               onCancel={handleCancel}
+              activeTab={activeTab}
             />
           </div>
         </div>

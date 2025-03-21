@@ -18,6 +18,8 @@ interface CaseStudyEditorHeaderProps {
   isNew?: boolean;
   saving?: boolean;
   children?: React.ReactNode;
+  activeTab: string;
+  onTabChange: (value: string) => void;
 }
 
 const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
@@ -33,7 +35,9 @@ const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
   isDraft = true,
   isNew = false,
   saving = false,
-  children
+  children,
+  activeTab,
+  onTabChange
 }) => {
   const getButtonText = () => {
     if (saving) return 'Saving...';
@@ -46,6 +50,10 @@ const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
       const formEvent = new Event('submit', { bubbles: true }) as unknown as React.FormEvent;
       onSubmit(formEvent);
     }
+  };
+
+  const handleTabChange = (value: string) => {
+    onTabChange(value);
   };
 
   return (
@@ -71,7 +79,7 @@ const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
         </div>
         
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-between">
-          <Tabs defaultValue="basics">
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="mb-0">
               <TabsTrigger value="basics">Basic Info</TabsTrigger>
               <TabsTrigger value="content">Content</TabsTrigger>

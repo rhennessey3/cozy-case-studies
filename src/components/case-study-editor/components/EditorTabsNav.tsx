@@ -17,6 +17,8 @@ interface EditorTabsNavProps {
   slug?: string;
   cancelHref?: string;
   onCancel?: () => void;
+  activeTab: string;
+  onTabChange: (value: string) => void;
 }
 
 const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
@@ -30,12 +32,14 @@ const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
   isNew = false,
   slug,
   cancelHref,
-  onCancel
+  onCancel,
+  activeTab,
+  onTabChange
 }) => {
   return (
     <div className="flex flex-col md:flex-row justify-between items-center mb-4 w-full">
       <div className="flex-shrink-0">
-        <Tabs defaultValue="basics">
+        <Tabs value={activeTab} onValueChange={onTabChange}>
           <TabsList className="mb-0">
             <TabsTrigger value="basics">Basic Info</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
