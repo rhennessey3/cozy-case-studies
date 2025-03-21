@@ -133,12 +133,18 @@ export const useSectionState = (
       // For existing case studies, try to update the published state in Supabase directly
       if (caseStudyId) {
         try {
-          // First find the corresponding database section
+          // First find the corresponding database section by type and case_study_id
+          const sectionToUpdate = sections.find(s => s.id === id);
+          if (!sectionToUpdate) {
+            console.error(`Section with ID ${id} not found`);
+            return;
+          }
+          
           const { data: sectionData, error: sectionError } = await supabase
             .from('case_study_sections')
             .select('id')
             .eq('case_study_id', caseStudyId)
-            .eq('component', sections.find(s => s.id === id)?.type || '')
+            .eq('component', sectionToUpdate.type)
             .maybeSingle();
             
           if (sectionError) {
@@ -159,6 +165,14 @@ export const useSectionState = (
               toast.error('Failed to update section published state in database');
               return;
             }
+            
+            // Fetch the updated record to verify the change
+            const { data: updatedData } = await supabase
+              .from('case_study_sections')
+              .select('*')
+              .eq('id', sectionData.id);
+              
+            console.log("Updated Section Data:", updatedData);
             
             console.log(`Updated published state for section ${id} to ${published} in database`);
             toast.success(`Section ${published ? 'published' : 'unpublished'}`);

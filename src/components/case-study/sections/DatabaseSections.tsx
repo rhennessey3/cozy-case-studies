@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import AlignmentSection from './AlignmentSection';
 import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
@@ -7,18 +7,42 @@ import IntroductionSection from './IntroductionSection';
 
 interface DatabaseSectionsProps {
   sections: any[];
+  isAdminView?: boolean;
 }
 
-const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections }) => {
+const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminView = false }) => {
+  useEffect(() => {
+    console.log("DatabaseSections - All sections received:", sections);
+    
+    // Show sections that will be rendered (published or in admin view)
+    const visibleSections = isAdminView ? sections : sections.filter(s => s.published !== false);
+    console.log(`DatabaseSections - ${isAdminView ? 'Admin view' : 'Public view'} sections:`, visibleSections);
+  }, [sections, isAdminView]);
+
   if (!sections || sections.length === 0) {
     return null;
   }
   
-  console.log(`Rendering ${sections.length} sections`);
+  // Filter sections to only include published ones, unless in admin view
+  const visibleSections = isAdminView ? sections : sections.filter(s => s.published !== false);
+  
+  if (visibleSections.length === 0) {
+    return (
+      <div className="max-w-5xl mx-auto my-12 p-6 text-center">
+        <p className="text-gray-500">
+          {isAdminView ? 
+            "No sections found for this case study." : 
+            "No published sections available for this case study yet."}
+        </p>
+      </div>
+    );
+  }
+  
+  console.log(`Rendering ${visibleSections.length} sections`);
   
   return (
     <>
-      {sections.map(section => {
+      {visibleSections.map(section => {
         const componentType = section.component;
         
         switch (componentType) {

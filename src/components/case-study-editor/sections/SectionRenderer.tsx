@@ -49,6 +49,13 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     }
   }, [section]);
 
+  const handlePublishedChange = (checked: boolean) => {
+    console.log(`Toggled Section ID: ${section.id}, New Published State: ${checked}`);
+    if (onPublishedChange) {
+      onPublishedChange(section.id, checked);
+    }
+  };
+
   const SectionContent = () => {
     switch (section.type) {
       case 'introduction':
@@ -129,7 +136,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
             <Switch 
               id={`publish-${section.id}`}
               checked={section.published !== false}
-              onCheckedChange={(checked) => onPublishedChange(section.id, checked)}
+              onCheckedChange={handlePublishedChange}
               className="data-[state=checked]:bg-green-500"
             />
             <Label htmlFor={`publish-${section.id}`} className="text-sm font-medium">

@@ -37,7 +37,7 @@ const SectionList: React.FC<SectionListProps> = ({
 }) => {
   // Debug output to help troubleshoot missing sections
   useEffect(() => {
-    console.log('SectionList rendering with sections:', sections);
+    console.log('Admin Panel - Sections Fetched:', sections);
     console.log('Open sections:', openSections);
     console.log('Form:', form);
   }, [sections, openSections, form]);

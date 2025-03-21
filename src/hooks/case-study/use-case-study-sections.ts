@@ -44,8 +44,9 @@ export const useCaseStudySections = (caseStudyId: string | undefined, onlyPublis
         
         console.log(`Sections fetched from database: ${sections?.length || 0}`, sections);
         
+        // Log more details about the sections
         if (sections) {
-          // Log more details about the sections
+          console.log("Live Page - Sections Rendered:", sections);
           sections.forEach(section => {
             console.log(`Section ${section.id} (${section.component}) - published: ${section.published}`);
           });

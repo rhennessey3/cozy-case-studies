@@ -37,7 +37,7 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy, isAdminV
     // Use DB sections if available
     if (dbSections && dbSections.length > 0) {
       console.log(`Rendering ${dbSections.length} sections from database`);
-      return <DatabaseSections sections={dbSections} />;
+      return <DatabaseSections sections={dbSections} isAdminView={isAdminView} />;
     } 
     // If no DB sections but we have custom sections in JSON
     else if (caseStudy.customSections) {
