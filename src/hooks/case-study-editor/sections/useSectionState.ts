@@ -5,6 +5,23 @@ import { toast } from 'sonner';
 import { createSection } from '@/components/case-study-editor/sections/utils/createSection';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
+// Helper to convert between database component types and our application types
+const mapComponentTypeToSectionType = (componentType: string): SectionWithOrder['type'] => {
+  switch (componentType) {
+    case 'alignment':
+      return 'alignment';
+    case 'carousel':
+      return 'carousel';
+    case 'fourParagraphs':
+      return 'fourParagraphs';
+    case 'introduction':
+      return 'introduction';
+    default:
+      console.warn(`Unknown component type: ${componentType}, defaulting to 'alignment'`);
+      return 'alignment';
+  }
+};
+
 export const useSectionState = (caseStudyId: string | null) => {
   const [sections, setSections] = useState<any[]>([]);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
@@ -71,8 +88,11 @@ export const useSectionState = (caseStudyId: string | null) => {
       ? Math.max(...sections.map(s => s.sort_order || 0))
       : 0;
     
+    // Convert the string componentType to a valid section type
+    const sectionType = mapComponentTypeToSectionType(componentType);
+    
     // Create section with next sort order
-    const newSection = createSection(componentType, maxSortOrder + 1);
+    const newSection = createSection(sectionType, maxSortOrder + 1);
     
     // Convert SectionWithOrder to the database format
     const dbSection = {
