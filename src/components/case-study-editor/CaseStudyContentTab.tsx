@@ -32,7 +32,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     removeSection,
     moveSection,
     toggleSectionPublished
-  } = useSectionState(form, handleContentChange, caseStudyId); // Pass caseStudyId here
+  } = useSectionState(caseStudyId); // Pass caseStudyId here
   
   // Initialize carousel and paragraph items
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(

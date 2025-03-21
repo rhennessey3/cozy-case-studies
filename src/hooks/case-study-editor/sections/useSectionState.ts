@@ -3,11 +3,21 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { createSection } from '@/components/case-study-editor/sections/utils/createSection';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
 export const useSectionState = (caseStudyId: string | null) => {
   const [sections, setSections] = useState<any[]>([]);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Toggle section open/closed state (UI only)
+  const toggleSection = useCallback((id: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  }, []);
   
   // Fetch sections from the database
   const fetchSections = useCallback(async () => {
@@ -62,12 +72,22 @@ export const useSectionState = (caseStudyId: string | null) => {
       : 0;
     
     // Create section with next sort order
-    const newSection = createSection(componentType, caseStudyId, maxSortOrder + 1);
+    const newSection = createSection(componentType, maxSortOrder + 1);
+    
+    // Convert SectionWithOrder to the database format
+    const dbSection = {
+      case_study_id: caseStudyId,
+      component: componentType,
+      title: newSection.name,
+      sort_order: newSection.order,
+      published: newSection.published,
+      content: '',
+    };
     
     try {
       const { data, error } = await supabase
         .from('case_study_sections')
-        .insert(newSection)
+        .insert(dbSection)
         .select()
         .single();
       
@@ -79,6 +99,13 @@ export const useSectionState = (caseStudyId: string | null) => {
       
       // Add the new section to the local state
       setSections(prev => [...prev, data]);
+      
+      // Auto-open the new section
+      setOpenSections(prev => ({
+        ...prev,
+        [data.id]: true
+      }));
+      
       toast.success(`${componentType} section added`);
       
       // Return the new section
@@ -155,6 +182,14 @@ export const useSectionState = (caseStudyId: string | null) => {
       
       // Remove the section from local state
       setSections(prev => prev.filter(section => section.id !== sectionId));
+      
+      // Remove from open sections state
+      setOpenSections(prev => {
+        const updated = { ...prev };
+        delete updated[sectionId];
+        return updated;
+      });
+      
       toast.success('Section removed');
     } catch (err) {
       console.error('Failed to remove section:', err);
@@ -162,13 +197,81 @@ export const useSectionState = (caseStudyId: string | null) => {
     }
   }, []);
   
+  // Move a section up or down
+  const moveSection = useCallback(async (sectionId: string, direction: 'up' | 'down') => {
+    const sectionsList = [...sections];
+    const sectionIndex = sectionsList.findIndex(s => s.id === sectionId);
+    
+    if (sectionIndex === -1) {
+      toast.error('Section not found');
+      return;
+    }
+    
+    // Cannot move up if already at the top
+    if (direction === 'up' && sectionIndex === 0) return;
+    
+    // Cannot move down if already at the bottom
+    if (direction === 'down' && sectionIndex === sectionsList.length - 1) return;
+    
+    const targetIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1;
+    const section = sectionsList[sectionIndex];
+    const targetSection = sectionsList[targetIndex];
+    
+    // Swap sort orders
+    const tempOrder = section.sort_order;
+    
+    try {
+      // Update the current section
+      const { error: error1 } = await supabase
+        .from('case_study_sections')
+        .update({ sort_order: targetSection.sort_order })
+        .eq('id', section.id);
+      
+      if (error1) {
+        console.error('Error updating section order:', error1);
+        toast.error('Error reordering sections');
+        return;
+      }
+      
+      // Update the target section
+      const { error: error2 } = await supabase
+        .from('case_study_sections')
+        .update({ sort_order: tempOrder })
+        .eq('id', targetSection.id);
+      
+      if (error2) {
+        console.error('Error updating section order:', error2);
+        toast.error('Error reordering sections');
+        return;
+      }
+      
+      // Update the local state
+      section.sort_order = targetSection.sort_order;
+      targetSection.sort_order = tempOrder;
+      sectionsList.sort((a, b) => a.sort_order - b.sort_order);
+      setSections(sectionsList);
+      
+      toast.success(`Section moved ${direction}`);
+    } catch (err) {
+      console.error('Failed to move section:', err);
+      toast.error('Failed to reorder sections');
+    }
+  }, [sections]);
+  
+  // Alias for togglePublished to match legacy interface
+  const toggleSectionPublished = togglePublished;
+  
   return {
     sections,
+    openSections,
+    toggleSection,
     loading,
     error,
     fetchSections,
     addSection,
     togglePublished,
-    removeSection
+    removeSection,
+    moveSection,
+    toggleSectionPublished
   };
 };
