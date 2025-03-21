@@ -32,7 +32,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     addSection, 
     removeSection,
     moveSection,
-    togglePublished: toggleSectionPublished
+    toggleSectionPublished
   } = useSectionState(caseStudyId); // Pass caseStudyId here
   
   // Map section responses to section with orders for UI components

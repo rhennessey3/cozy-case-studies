@@ -18,7 +18,7 @@ export const processAlignmentSection = async (
   const sectionId = `alignment-${caseStudyId}`;
   
   try {
-    console.log(`Processing alignment section with published=${published}`);
+    console.log(`Processing alignment section with published=${published}, alignment=${form.alignment || 'left'}`);
     
     // Check if this section already exists - but get ALL matching sections
     const { data: existingSections, error: fetchError } = await supabase

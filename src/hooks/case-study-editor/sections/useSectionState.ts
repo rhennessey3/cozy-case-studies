@@ -2,19 +2,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 import { useOpenSections } from './useOpenSections';
-import { useSectionInitialization } from './hooks/useSectionInitialization';
-import { useSectionSync } from './hooks/useSectionSync';
-import { useFormUpdate } from './hooks/useFormUpdate';
-import { addSection, removeSection, moveSection } from './utils/sectionOperations';
 import { toast } from 'sonner';
 import { useSectionStorage } from './useSectionStorage';
 
 export const useSectionState = (caseStudyId: string | null = null) => {
-  // Session storage key for UI state only (open/closed sections)
-  const sessionStorageKey = `case-study-ui-state-${caseStudyId || 'new'}`;
-  // Ref to prevent recalculation of the session storage key on every render
-  const sessionStorageKeyRef = useRef(sessionStorageKey);
-  
   // Use Supabase for section data persistence
   const { 
     sections: supabaseSections, 
@@ -23,13 +14,9 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   } = useSectionStorage(caseStudyId);
   
   // Initialize sections state
-  const {
-    sections,
-    setSections,
-    initialized,
-    setInitialized,
-    lastValidSectionsRef
-  } = useSectionInitialization(supabaseSections, supabaseLoading);
+  const [sections, setSections] = useState<SectionWithOrder[]>([]);
+  const [initialized, setInitialized] = useState(false);
+  const lastValidSectionsRef = useRef<SectionWithOrder[]>([]);
   
   // Manage open/closed state for sections (UI state only)
   const {
@@ -37,7 +24,18 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     setOpenSections,
     toggleSection,
     cleanupOrphanedSections
-  } = useOpenSections(sessionStorageKeyRef.current);
+  } = useOpenSections();
+  
+  // Load initial sections from Supabase
+  useEffect(() => {
+    if (supabaseSections && supabaseSections.length > 0 && !initialized) {
+      setSections(supabaseSections);
+      lastValidSectionsRef.current = supabaseSections;
+      setInitialized(true);
+    } else if (!supabaseLoading && !initialized) {
+      setInitialized(true);
+    }
+  }, [supabaseSections, supabaseLoading, initialized]);
   
   // Update state when sections change
   const isUpdatingRef = useRef(false);
@@ -59,62 +57,154 @@ export const useSectionState = (caseStudyId: string | null = null) => {
       cleanupOrphanedSections(validSectionIds);
     }
   }, [sections, cleanupOrphanedSections]);
-  
-  // Use refs for handler functions to ensure they don't change between renders
-  const handlersRef = useRef({
-    addSection: (type: SectionWithOrder['type']) => {
-      console.log('Adding section of type:', type);
-      const newSection = addSection(sections, type, setSections, setOpenSections);
-      lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
-    },
-    
-    removeSection: (id: string) => {
-      console.log('Removing section:', id);
-      removeSection(id, setSections, setOpenSections);
-      // Update lastValidSections after removal
-      lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
-        section => section.id !== id
-      );
-    },
-    
-    moveSection: (id: string, direction: 'up' | 'down') => {
-      console.log('Moving section:', id, direction);
-      moveSection(id, direction, setSections);
-      // Update lastValidSections after moving - reordering happens in moveSection
-      const updatedSections = [...sections];
-      updatedSections.sort((a, b) => a.order - b.order);
-      lastValidSectionsRef.current = updatedSections;
-    },
-    
-    toggleSectionPublished: (id: string, published: boolean) => {
-      console.log(`Toggling published state for section ${id} to ${published}`);
+
+  // Add a new section
+  const addSection = (type: SectionWithOrder['type']) => {
+    console.log('Adding section of type:', type);
+    const newOrder = sections.length > 0 
+      ? Math.max(...sections.map(s => s.order)) + 1 
+      : 1;
       
-      setSections(prevSections => {
-        const updatedSections = prevSections.map(section => {
-          if (section.id === id) {
-            return { ...section, published };
-          }
-          return section;
-        });
-        
-        // Update lastValidSections
-        lastValidSectionsRef.current = updatedSections;
-        
-        // Show toast notification
-        toast.success(`Section ${published ? 'published' : 'unpublished'}`);
-        
-        return updatedSections;
+    const newSection: SectionWithOrder = {
+      id: crypto.randomUUID(),
+      type,
+      name: type.charAt(0).toUpperCase() + type.slice(1),
+      order: newOrder,
+      published: true
+    };
+    
+    setSections(prev => [...prev, newSection]);
+    
+    // Auto open the new section
+    setOpenSections(prev => ({
+      ...prev,
+      [newSection.id]: true
+    }));
+    
+    // Show success toast when section is added
+    toast.success(`${newSection.name} section added`);
+    
+    lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
+    return newSection;
+  };
+  
+  // Remove a section
+  const removeSection = (id: string) => {
+    console.log(`Removing section with ID: ${id}`);
+    
+    // Clear any existing toast notifications
+    toast.dismiss();
+    
+    // Create a unique toast ID for this specific section removal
+    const toastId = `remove-section-${id}`;
+    
+    // Show a temporary removing message
+    toast.loading("Removing section...", { id: toastId, duration: 2000 });
+    
+    setSections(prev => {
+      const sectionToRemove = prev.find(section => section.id === id);
+      if (!sectionToRemove) {
+        console.warn(`Section with ID ${id} not found for removal`);
+        toast.dismiss(toastId);
+        toast.error("Section not found");
+        return prev;
+      }
+      
+      console.log(`Found section to remove:`, sectionToRemove);
+      const removedOrder = sectionToRemove.order;
+      const sectionName = sectionToRemove.name;
+      
+      const filteredSections = prev.filter(section => section.id !== id);
+      
+      // Adjust order for sections after the removed one
+      const adjustedSections = filteredSections.map(section => ({
+        ...section,
+        order: section.order > removedOrder ? section.order - 1 : section.order
+      }));
+      
+      console.log(`Updated sections after removal:`, adjustedSections);
+      
+      // Clear the loading toast and show success message
+      toast.dismiss(toastId);
+      toast.success(`${sectionName} section removed`, { id: `success-remove-${id}`, duration: 2000 });
+      
+      // Update lastValidSections
+      lastValidSectionsRef.current = adjustedSections;
+      
+      return adjustedSections;
+    });
+    
+    // Remove from open sections
+    setOpenSections(prev => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
+  };
+  
+  // Move a section up or down
+  const moveSection = (id: string, direction: 'up' | 'down') => {
+    setSections(prev => {
+      const sectionIndex = prev.findIndex(section => section.id === id);
+      if (sectionIndex === -1) return prev;
+      
+      // Cannot move up if already at the top
+      if (direction === 'up' && sectionIndex === 0) return prev;
+      
+      // Cannot move down if already at the bottom
+      if (direction === 'down' && sectionIndex === prev.length - 1) return prev;
+      
+      const newSections = [...prev];
+      const section = newSections[sectionIndex];
+      const targetIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1;
+      const targetSection = newSections[targetIndex];
+      
+      // Swap orders
+      const tempOrder = section.order;
+      section.order = targetSection.order;
+      targetSection.order = tempOrder;
+      
+      // Show success toast
+      toast.success(`Section moved ${direction}`, { id: `move-section-${id}`, duration: 2000 });
+      
+      // Update lastValidSections
+      const sortedSections = [...newSections].sort((a, b) => a.order - b.order);
+      lastValidSectionsRef.current = sortedSections;
+      
+      // Sort by order
+      return sortedSections;
+    });
+  };
+  
+  // Toggle section published state
+  const toggleSectionPublished = (id: string, published: boolean) => {
+    console.log(`Toggling published state for section ${id} to ${published}`);
+    
+    setSections(prevSections => {
+      const updatedSections = prevSections.map(section => {
+        if (section.id === id) {
+          return { ...section, published };
+        }
+        return section;
       });
-    }
-  });
+      
+      // Update lastValidSections
+      lastValidSectionsRef.current = updatedSections;
+      
+      // Show toast notification
+      toast.success(`Section ${published ? 'published' : 'unpublished'}`);
+      
+      return updatedSections;
+    });
+  };
 
   return {
     sections,
     openSections,
     toggleSection,
-    addSection: handlersRef.current.addSection,
-    removeSection: handlersRef.current.removeSection,
-    moveSection: handlersRef.current.moveSection,
-    toggleSectionPublished: handlersRef.current.toggleSectionPublished
+    addSection,
+    removeSection,
+    moveSection,
+    toggleSectionPublished
   };
 };

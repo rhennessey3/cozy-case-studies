@@ -12,9 +12,27 @@ export const useOpenSections = () => {
     }));
   }, []);
   
+  // Clean up orphaned open sections
+  const cleanupOrphanedSections = useCallback((validSectionIds: Set<string>) => {
+    setOpenSections(prev => {
+      const updated = { ...prev };
+      let hasChanges = false;
+      
+      Object.keys(updated).forEach(id => {
+        if (!validSectionIds.has(id)) {
+          delete updated[id];
+          hasChanges = true;
+        }
+      });
+      
+      return hasChanges ? updated : prev;
+    });
+  }, []);
+  
   return {
     openSections,
     setOpenSections,
-    toggleSection
+    toggleSection,
+    cleanupOrphanedSections
   };
 };
