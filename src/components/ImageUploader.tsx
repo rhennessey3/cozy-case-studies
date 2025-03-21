@@ -7,21 +7,25 @@ import { cn } from '@/lib/utils';
 
 interface ImageUploaderProps {
   onImageUploaded: (imageUrl: string) => void;
-  imageUrl?: string; // Changed from currentImageUrl to imageUrl for consistency
+  currentImageUrl?: string;
+  imageUrl?: string; // Add support for both prop names for backwards compatibility
   label?: string;
   className?: string;
-  aspectRatio?: string; // Added aspect ratio prop
+  aspectRatio?: string;
 }
 
 const ImageUploader = ({ 
   onImageUploaded, 
-  imageUrl, // Updated prop name
+  currentImageUrl,
+  imageUrl, // Support both property names
   label = 'Image', 
   className,
   aspectRatio 
 }: ImageUploaderProps) => {
+  // Use either currentImageUrl or imageUrl, with currentImageUrl taking precedence
+  const initialImageUrl = currentImageUrl || imageUrl;
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(imageUrl || null);
+  const [preview, setPreview] = useState<string | null>(initialImageUrl || null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {

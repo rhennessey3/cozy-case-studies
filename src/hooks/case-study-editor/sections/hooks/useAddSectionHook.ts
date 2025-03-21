@@ -32,14 +32,17 @@ export const useAddSectionHook = (
     // Create a temporary section with the proper structure
     const tempSection = createSection(sectionType, newOrder);
     
+    // Convert to a SectionResponse compatible object
     const newSection: SectionResponse = {
-      id: crypto.randomUUID(),
+      id: tempSection.id,
       case_study_id: caseStudyId,
       component: type,
       title: tempSection.title,
-      content: '',
-      sort_order: newOrder,
-      published: true
+      content: tempSection.content || '',
+      sort_order: tempSection.sort_order,
+      published: tempSection.published !== undefined ? tempSection.published : true,
+      image_url: tempSection.image_url,
+      metadata: tempSection.metadata
     };
     
     setSections(prev => [...prev, newSection]);

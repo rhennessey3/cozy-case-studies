@@ -10,7 +10,11 @@ import { useMoveSectionHook } from './hooks/useMoveSectionHook';
 import { useTogglePublishedHook } from './hooks/useTogglePublishedHook';
 import { useSectionInitHook } from './hooks/useSectionInitHook';
 import { useSyncWithOpenSections } from './hooks/useSyncWithOpenSections';
-import { mapSectionResponseToSectionWithOrder, mapSectionResponsesToSectionWithOrders } from './utils/sectionResponseMapper';
+import { 
+  mapSectionResponseToSectionWithOrder, 
+  mapSectionResponsesToSectionWithOrders,
+  mapSectionWithOrdersToSectionResponses 
+} from './utils/sectionResponseMapper';
 
 /**
  * Main hook for managing sections state
