@@ -16,7 +16,7 @@ export const useCaseStudyEditor = (slug?: string) => {
   
   // Only fetch case study if we have a valid slug (not undefined, empty, or "new")
   const shouldFetchCaseStudy = slug && slug !== '' && slug !== 'new';
-  const { caseStudy, loading: fetchLoading, form: fetchedForm } = useFetchCaseStudy(shouldFetchCaseStudy ? slug : undefined);
+  const { caseStudy, loading: fetchLoading, form: fetchedForm, refetch } = useFetchCaseStudy(shouldFetchCaseStudy ? slug : undefined);
   
   // Initialize with empty form
   const [formInitialized, setFormInitialized] = useState(false);
@@ -32,6 +32,7 @@ export const useCaseStudyEditor = (slug?: string) => {
   // Update form when fetchedForm changes
   useEffect(() => {
     if (fetchedForm) {
+      console.log("Received updated form from fetch:", fetchedForm);
       setForm(fetchedForm);
       setFormInitialized(true);
     } else if (!shouldFetchCaseStudy) {
@@ -73,6 +74,11 @@ export const useCaseStudyEditor = (slug?: string) => {
       // Immediately refetch the case studies to update the sidebar
       await refetchCaseStudies();
       
+      // Also refetch the current case study to get latest data
+      if (shouldFetchCaseStudy) {
+        await refetch();
+      }
+      
       // Fix: Only access result.slug when it exists
       // Navigate to the newly created/updated case study
       if ((!slug || slug === 'new' || slug === '') && result && 'slug' in result && result.slug) {
@@ -101,6 +107,7 @@ export const useCaseStudyEditor = (slug?: string) => {
     handleContentChange,
     handleImageUploaded,
     handleSubmit,
-    createNewCaseStudy
+    createNewCaseStudy,
+    refetch
   };
 };

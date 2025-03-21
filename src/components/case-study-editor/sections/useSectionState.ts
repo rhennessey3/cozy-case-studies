@@ -37,6 +37,25 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     }
   }, []);
 
+  // Sync sections when form.customSections changes
+  useEffect(() => {
+    if (form.customSections) {
+      try {
+        const parsedSections = JSON.parse(form.customSections);
+        // Check if sections have actually changed
+        if (JSON.stringify(parsedSections) !== JSON.stringify(sections)) {
+          console.log("Updating sections from form data:", parsedSections);
+          setSections(parsedSections.map((section: any, index: number) => ({
+            ...section,
+            order: section.order !== undefined ? section.order : index + 1
+          })));
+        }
+      } catch (e) {
+        console.error("Failed to parse updated custom sections", e);
+      }
+    }
+  }, [form.customSections]);
+
   // Utility function to clean up any orphaned openSection entries
   // This ensures we don't have stale references to removed sections
   useEffect(() => {
