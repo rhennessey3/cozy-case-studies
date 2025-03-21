@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { LogOut, Eye, Trash2, Upload, Save, Loader2 } from 'lucide-react';
-import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CaseStudyEditorHeaderProps {
   headingText: string;
@@ -71,10 +71,12 @@ const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
         </div>
         
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-between">
-          <TabsList className="mb-0">
-            <TabsTrigger value="basics">Basic Info</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
-          </TabsList>
+          <Tabs defaultValue="basics">
+            <TabsList className="mb-0">
+              <TabsTrigger value="basics">Basic Info</TabsTrigger>
+              <TabsTrigger value="content">Content</TabsTrigger>
+            </TabsList>
+          </Tabs>
           
           <div className="flex items-center gap-2 mt-3 md:mt-0">
             {!isNew && isDraft && onPublish && (

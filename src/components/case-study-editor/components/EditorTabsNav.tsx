@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Eye, Trash2, Upload } from 'lucide-react';
 import FormActions from './FormActions';
@@ -34,10 +35,12 @@ const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
   return (
     <div className="flex flex-col md:flex-row justify-between items-center mb-4 w-full">
       <div className="flex-shrink-0">
-        <TabsList className="mb-0">
-          <TabsTrigger value="basics">Basic Info</TabsTrigger>
-          <TabsTrigger value="content">Content</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="basics">
+          <TabsList className="mb-0">
+            <TabsTrigger value="basics">Basic Info</TabsTrigger>
+            <TabsTrigger value="content">Content</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
       
       <div className="flex items-center gap-2 ml-auto">
