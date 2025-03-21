@@ -4,6 +4,7 @@ import AlignmentSection from './AlignmentSection';
 import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
 import IntroductionSection from './IntroductionSection';
+import { getComponentDisplayName } from '@/hooks/case-study-editor/sections/utils/sectionTypeMapping';
 
 interface DatabaseSectionsProps {
   sections: any[];
@@ -50,13 +51,16 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
     <>
       {visibleSections.map(section => {
         const componentType = section.component;
+        // Get proper display name for logging
+        const displayName = getComponentDisplayName(componentType);
+        console.log(`Rendering section: ${displayName} (${componentType})`);
         
         switch (componentType) {
           case 'introduction':
             return (
               <IntroductionSection 
                 key={section.id}
-                title={section.title || 'Introduction'}
+                title={section.title || 'Case Study Introduction'}
                 content={section.content || ''}
                 challengeContent={section.metadata?.challenge || ''}
                 approachContent={section.metadata?.approach || ''}
