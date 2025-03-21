@@ -50,23 +50,32 @@ export const useSectionState = (
     cleanupOrphanedSections
   } = useOpenSections(sessionStorageKeyRef.current);
   
-  // Sync sections with form.customSections
-  const { isUpdatingRef } = useSectionSync(
-    sections,
+  // Convert sections to SectionWithOrder[] before passing to useSyncWithOpenSections
+  const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(sections);
+  
+  // Sync sections with open sections state
+  useSectionSync(
+    sectionsWithOrder,
     form,
-    setSections,
+    (updatedSections) => {
+      // Convert back to the original type when setting
+      setSections(updatedSections);
+    },
     lastValidSectionsRef,
     sessionStorageKeyRef.current
   );
   
   // Update form with sections changes
   useFormUpdate(
-    sections,
+    sectionsWithOrder,
     initialized,
     isUpdatingRef,
     form,
     handleContentChange
   );
+  
+  // Use refs for handler functions to ensure they don't change between renders
+  const isUpdatingRef = useRef(false);
   
   // Add debugging to track section changes
   useEffect(() => {
