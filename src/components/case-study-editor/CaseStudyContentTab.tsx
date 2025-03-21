@@ -50,6 +50,12 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   handleContentChange,
   handleImageUploaded = () => {} 
 }) => {
+  // Generate a unique form key based on form content to help with re-rendering
+  const formKey = useMemo(() => {
+    const timestamp = Date.now();
+    return `form-${timestamp}`;
+  }, []);
+  
   const { 
     sections, 
     openSections, 
@@ -87,6 +93,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
       />
       
       <SectionList 
+        key={formKey}
         sections={sections}
         openSections={openSections}
         toggleSection={toggleSection}

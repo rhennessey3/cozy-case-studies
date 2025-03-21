@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SectionWithOrder } from './types';
 import { SectionFormState, initializeDefaultSections, getInitialOpenSectionsState } from './utils/defaultSections';
 import { addSection, removeSection, moveSection } from './utils/sectionOperations';
@@ -27,6 +27,12 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   
   // Track if sections have been initialized
   const [initialized, setInitialized] = useState(false);
+  
+  // Reference to the previous customSections value
+  const prevCustomSectionsRef = useRef(form.customSections);
+  
+  // Use a ref to track if we're currently updating to avoid loops
+  const isUpdatingRef = useRef(false);
 
   // Initialize the default sections if none are saved
   useEffect(() => {
@@ -44,24 +50,38 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   // Sync sections when form.customSections changes, but only if it's not empty
   // and different from current sections to prevent infinite loops
   useEffect(() => {
-    if (form.customSections && initialized) {
+    if (form.customSections && 
+        form.customSections !== prevCustomSectionsRef.current && 
+        !isUpdatingRef.current) {
+      
       try {
         const parsedSections = JSON.parse(form.customSections);
         
         // Only update if something actually changed and we have sections
-        if (parsedSections.length > 0 && 
-            JSON.stringify(parsedSections) !== JSON.stringify(sections)) {
-          console.log("Updating sections from form data:", parsedSections);
+        if (parsedSections.length > 0) {
+          console.log("Updating sections from form data");
+          
+          // Mark that we're updating to prevent loops
+          isUpdatingRef.current = true;
+          
           setSections(parsedSections.map((section: any, index: number) => ({
             ...section,
             order: section.order !== undefined ? section.order : index + 1
           })));
+          
+          // After updating, allow future updates
+          setTimeout(() => {
+            isUpdatingRef.current = false;
+          }, 100);
         }
       } catch (e) {
         console.error("Failed to parse updated custom sections", e);
       }
+      
+      // Update the ref to the current value
+      prevCustomSectionsRef.current = form.customSections;
     }
-  }, [form.customSections, initialized]);
+  }, [form.customSections]);
 
   // Utility function to clean up any orphaned openSection entries
   // This ensures we don't have stale references to removed sections
@@ -108,14 +128,12 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
     moveSection(id, direction, setSections);
   };
   
-  // Update form whenever sections change, but only after initialization
-  // and only if sections actually exist to prevent infinite loops
+  // Debounced update to form whenever sections change
   useEffect(() => {
-    if (initialized && sections.length > 0) {
-      console.log("Sections updated, saving to form:", sections);
-      
-      // Debounce the update to form state
+    if (initialized && sections.length > 0 && !isUpdatingRef.current) {
       const timer = setTimeout(() => {
+        isUpdatingRef.current = true;
+        
         const event = {
           target: {
             name: 'customSections',
@@ -124,7 +142,12 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
         } as React.ChangeEvent<HTMLInputElement>;
         
         handleContentChange(event);
-      }, 50);
+        
+        // Reset the updating flag after a delay
+        setTimeout(() => {
+          isUpdatingRef.current = false;
+        }, 100);
+      }, 300); // 300ms debounce
       
       return () => clearTimeout(timer);
     }

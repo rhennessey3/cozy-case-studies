@@ -35,9 +35,8 @@ const SectionList: React.FC<SectionListProps> = ({
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log('Current sections in SectionList:', sections);
-      console.log('Open sections in SectionList:', openSections);
     }
-  }, [sections, openSections]);
+  }, [sections]);
 
   // Sort sections by order for display - memoized to prevent unnecessary re-renders
   const sortedSections = useMemo(() => {
