@@ -1,10 +1,10 @@
 
-import React, { useMemo } from 'react';
-import SectionManager from '@/components/case-study-editor/sections/SectionManager';
-import SectionList from '@/components/case-study-editor/sections/SectionList';
+import React from 'react';
+import EditorSectionManager from '@/components/case-study-editor/sections/EditorSectionManager';
 import { useSectionState } from './sections/useSectionState';
 import { useCarouselItems } from '@/hooks/case-study-editor/sections/useCarouselItems';
 import { useParagraphItems } from './sections/useParagraphItems';
+import { useFormKey } from '@/hooks/case-study-editor/sections/useFormKey';
 
 interface CaseStudyContentTabProps {
   form: {
@@ -51,23 +51,10 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   handleContentChange,
   handleImageUploaded = () => {} 
 }) => {
-  // Generate a unique form key based on form content and slug to help with re-rendering
-  const formKey = useMemo(() => {
-    const slugPart = form.slug ? `-${form.slug}` : '-new';
-    
-    try {
-      if (form.customSections) {
-        // Extract sections IDs to create a stable key
-        const sections = JSON.parse(form.customSections || '[]');
-        return `sections-${sections.map((s: any) => s.id).join('-')}${slugPart}`;
-      }
-    } catch (e) {
-      console.error("Error parsing customSections for key", e);
-    }
-    // Fallback to timestamp + slug if parsing fails
-    return `form-${Date.now()}${slugPart}`;
-  }, [form.customSections, form.slug]);
+  // Generate form key for stable rendering
+  const formKey = useFormKey(form);
   
+  // Initialize section management
   const { 
     sections, 
     openSections, 
@@ -77,6 +64,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     moveSection
   } = useSectionState(form, handleContentChange);
   
+  // Initialize carousel and paragraph items
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(
     form, 
     handleContentChange, 
@@ -96,28 +84,22 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   };
 
   return (
-    <div className="space-y-8">
-      <SectionManager 
-        sections={sections}
-        onAddSection={addSection}
-        onRemoveSection={removeSection}
-        onMoveSection={moveSection}
-      />
-      
-      <SectionList 
-        key={formKey}
-        sections={sections}
-        openSections={openSections}
-        toggleSection={toggleSection}
-        form={form}
-        handleContentChange={handleContentChange}
-        handleImageUploaded={handleImageUploaded}
-        handleAlignmentChange={handleAlignmentChange}
-        handleReorderCarouselItems={handleReorderCarouselItems}
-        carouselItems={carouselItems}
-        paragraphItems={paragraphItems}
-      />
-    </div>
+    <EditorSectionManager 
+      sections={sections}
+      openSections={openSections}
+      toggleSection={toggleSection}
+      addSection={addSection}
+      removeSection={removeSection}
+      moveSection={moveSection}
+      formKey={formKey}
+      form={form}
+      handleContentChange={handleContentChange}
+      handleImageUploaded={handleImageUploaded}
+      handleAlignmentChange={handleAlignmentChange}
+      handleReorderCarouselItems={handleReorderCarouselItems}
+      carouselItems={carouselItems}
+      paragraphItems={paragraphItems}
+    />
   );
 });
 
