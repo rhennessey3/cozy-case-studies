@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -29,7 +30,6 @@ const CaseStudyEditor = () => {
     handleSubmit,
     createNewCaseStudy,
     isDraft,
-    toggleMode,
     publishDraft
   } = useCaseStudyEditor(slug);
   
@@ -88,7 +88,6 @@ const CaseStudyEditor = () => {
               handleSubmit={handleSubmit}
               onViewLive={handleViewLive}
               onDelete={() => setDeleteDialogOpen(true)}
-              onToggleMode={toggleMode}
               onPublish={publishDraft}
               showViewLive={!!slug && slug !== 'new'}
               showDelete={!!slug && slug !== 'new'}

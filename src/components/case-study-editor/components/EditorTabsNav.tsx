@@ -2,7 +2,7 @@
 import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Eye, Trash2, Upload, Save, Layers } from 'lucide-react';
+import { Eye, Trash2, Upload, Save } from 'lucide-react';
 
 interface EditorTabsNavProps {
   showViewLive: boolean;
@@ -10,9 +10,9 @@ interface EditorTabsNavProps {
   isDraft?: boolean;
   onViewLive?: () => void;
   onDelete?: () => void;
-  onToggleMode?: () => void;
   onPublish?: () => void;
   saving?: boolean;
+  isNew?: boolean;
 }
 
 const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
@@ -21,9 +21,9 @@ const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
   isDraft = true,
   onViewLive,
   onDelete,
-  onToggleMode,
   onPublish,
-  saving = false
+  saving = false,
+  isNew = false
 }) => {
   return (
     <div className="flex flex-col md:flex-row justify-between items-center mb-4">
@@ -32,28 +32,10 @@ const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
           <TabsTrigger value="basics">Basic Info</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
         </TabsList>
-        
-        {onToggleMode && (
-          <div className="flex items-center gap-2 text-sm">
-            <span className={`px-2 py-1 rounded-md ${isDraft ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-              {isDraft ? 'Draft Mode' : 'Live Mode'}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onToggleMode}
-              className="flex items-center gap-1 text-xs"
-            >
-              <Layers className="h-3 w-3" />
-              Switch to {isDraft ? 'Live' : 'Draft'} Mode
-            </Button>
-          </div>
-        )}
       </div>
       
       <div className="flex gap-2 mt-4 md:mt-0">
-        {isDraft && onPublish && (
+        {!isNew && isDraft && onPublish && (
           <Button
             type="button"
             variant="outline"

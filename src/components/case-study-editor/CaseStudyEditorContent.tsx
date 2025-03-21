@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
@@ -23,7 +22,6 @@ interface CaseStudyEditorContentProps {
   handleSubmit: (e: React.FormEvent) => Promise<{ success: boolean, slug?: string } | undefined>;
   onViewLive?: () => void;
   onDelete?: () => void;
-  onToggleMode?: () => void;
   onPublish?: () => void;
   showViewLive?: boolean;
   showDelete?: boolean;
@@ -41,7 +39,6 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   handleSubmit,
   onViewLive,
   onDelete,
-  onToggleMode,
   onPublish,
   showViewLive = false,
   showDelete = false
@@ -49,6 +46,7 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
   const [authError, setAuthError] = useState<string | null>(null);
   const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
+  const isNew = !slug || slug === 'new' || slug === '';
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -128,9 +126,9 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
           isDraft={isDraft}
           onViewLive={onViewLive}
           onDelete={onDelete}
-          onToggleMode={onToggleMode}
           onPublish={onPublish}
           saving={saving}
+          isNew={isNew}
         />
         
         <TabsContent value="basics">

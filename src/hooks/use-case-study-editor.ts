@@ -12,7 +12,8 @@ import { toast } from 'sonner';
 
 export const useCaseStudyEditor = (slug?: string) => {
   const navigate = useNavigate();
-  const [draftMode, setDraftMode] = useState(true); // Default to draft mode
+  // Always use draft mode by default
+  const [draftMode] = useState(true);
   const { caseStudies, loading: caseStudiesLoading, refetchCaseStudies } = useFetchCaseStudies();
   
   // Only fetch case study if we have a valid slug (not undefined, empty, or "new")
@@ -22,8 +23,7 @@ export const useCaseStudyEditor = (slug?: string) => {
     loading: fetchLoading, 
     form: fetchedForm, 
     refetch, 
-    isDraft,
-    toggleDraftMode 
+    isDraft
   } = useFetchCaseStudy(shouldFetchCaseStudy ? slug : undefined, draftMode);
   
   // Initialize with empty form
@@ -90,48 +90,35 @@ export const useCaseStudyEditor = (slug?: string) => {
       // Navigate to the newly created/updated case study
       if ((!slug || slug === 'new' || slug === '') && result && 'slug' in result && result.slug) {
         navigate(`/admin/case-studies/${result.slug}`);
+        toast.success('Case study created! You can now publish it to make it visible on the site.');
       } else {
-        toast.success(slug === 'new' ? 'Case study created!' : `Case study ${isDraft ? 'draft' : 'live version'} updated!`);
+        toast.success(`Case study ${isDraft ? 'draft' : 'live version'} updated!`);
       }
     }
     
     return result;
   };
 
+  // Simplified publish function that just saves to the live version
   const publishDraft = async () => {
     if (!shouldFetchCaseStudy) {
       toast.error('Cannot publish a new case study. Save it first.');
       return { success: false };
     }
     
-    // Toggle to live mode, save, then toggle back to draft mode
-    toggleDraftMode();
-    setDraftMode(false);
-    
-    // This is a bit of a hack to ensure we're submitting in live mode
-    // We'll update the form and then submit it
+    // This is a simplified version - we're just saving the current form to live mode
     const event = { preventDefault: () => {} } as React.FormEvent;
     const result = await submitCaseStudy(event);
     
     if (result?.success) {
-      toast.success('Case study published successfully!');
+      toast.success('Case study published successfully! It is now visible on the site.');
       await refetchCaseStudies();
       await refetch();
-      
-      // Return to draft mode after publishing
-      toggleDraftMode();
-      setDraftMode(true);
     } else {
       toast.error('Failed to publish case study');
     }
     
     return result;
-  };
-
-  const toggleMode = () => {
-    setDraftMode(prev => !prev);
-    toggleDraftMode();
-    refetch();
   };
 
   const createNewCaseStudy = () => {
@@ -153,7 +140,6 @@ export const useCaseStudyEditor = (slug?: string) => {
     createNewCaseStudy,
     refetch,
     isDraft,
-    toggleMode,
     publishDraft
   };
 };

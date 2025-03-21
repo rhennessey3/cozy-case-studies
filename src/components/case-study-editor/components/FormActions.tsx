@@ -20,6 +20,7 @@ const FormActions: React.FC<FormActionsProps> = ({
   isDraft = true
 }) => {
   const navigate = useNavigate();
+  const isNew = !slug || slug === 'new' || slug === '';
   
   const handleCancel = () => {
     if (onCancel) {
@@ -31,11 +32,7 @@ const FormActions: React.FC<FormActionsProps> = ({
   
   const getButtonText = () => {
     if (saving) return 'Saving...';
-    
-    const actionText = !slug || slug === 'new' ? 'Create' : 'Update';
-    const modeText = isDraft ? 'Draft' : 'Live';
-    
-    return `${actionText} ${modeText}`;
+    return isNew ? 'Save Case Study' : 'Save Changes';
   };
   
   return (
@@ -50,7 +47,7 @@ const FormActions: React.FC<FormActionsProps> = ({
       <Button 
         type="submit"
         disabled={saving}
-        className={`flex items-center gap-2 ${isDraft ? 'bg-yellow-600 hover:bg-yellow-700' : ''}`}
+        className="flex items-center gap-2"
       >
         {saving && <Loader2 size={16} className="animate-spin" />}
         {!saving && <Save size={16} />}
