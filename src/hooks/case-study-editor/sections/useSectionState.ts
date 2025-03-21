@@ -46,12 +46,8 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     cleanupOrphanedSections
   } = useOpenSections();
   
-  // Sync sections with open sections state
-  // Convert SectionResponse[] to SectionWithOrder[] for the hook
-  useSyncWithOpenSections(
-    mapSectionResponsesToSectionWithOrders(sections), 
-    cleanupOrphanedSections
-  );
+  // Sync sections with open sections state by converting SectionResponse[] to SectionWithOrder[]
+  useSyncWithOpenSections(sections, cleanupOrphanedSections);
   
   // Use refs for handler functions to ensure they don't change between renders
   const isUpdatingRef = useRef(false);
