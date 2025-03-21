@@ -9,10 +9,9 @@ export const processCarouselSection = async (
   sortOrder: number = 2,
   published: boolean = true // Default to published if not specified
 ) => {
-  // Validation: check if we have the essential data
-  if (!form.carouselItem1Title || !form.carouselItem1Content) {
-    console.log('Missing required data for carousel section, skipping');
-    return;
+  // Make validation less strict - only log a warning but still proceed
+  if (!form.carouselItem1Title && !form.carouselItem1Content && !form.carouselItem1Image) {
+    console.log('Carousel section has minimal data, but proceeding anyway');
   }
   
   // Generate a stable ID based on section type and case study
@@ -39,8 +38,8 @@ export const processCarouselSection = async (
       title: form.carouselTitle || 'Carousel',
       items: [
         {
-          title: form.carouselItem1Title,
-          content: form.carouselItem1Content,
+          title: form.carouselItem1Title || '',
+          content: form.carouselItem1Content || '',
           image: form.carouselItem1Image || null
         },
         {

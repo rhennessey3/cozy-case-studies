@@ -9,10 +9,9 @@ export const processFourParagraphsSection = async (
   sortOrder: number = 3,
   published: boolean = true // Default to published if not specified
 ) => {
-  // Validation: check if we have the essential data
-  if (!form.fourPara1Title || !form.fourPara1Content) {
-    console.log('Missing required data for four paragraphs section, skipping');
-    return;
+  // Make validation less strict - only log a warning but still proceed
+  if (!form.fourPara1Title && !form.fourPara1Content) {
+    console.log('Four paragraphs section has minimal data, but proceeding anyway');
   }
   
   // Generate a stable ID based on section type and case study
@@ -41,8 +40,8 @@ export const processFourParagraphsSection = async (
       image: form.fourParaImage || null,
       paragraphs: [
         {
-          title: form.fourPara1Title,
-          content: form.fourPara1Content
+          title: form.fourPara1Title || '',
+          content: form.fourPara1Content || ''
         },
         {
           title: form.fourPara2Title || '',

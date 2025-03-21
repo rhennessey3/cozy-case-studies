@@ -91,11 +91,17 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
           await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder, published);
         } else if (section.type === 'fourParagraphs') {
           await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder, published);
+        } else if (section.type === 'introduction') {
+          // Just log that we're skipping the introduction section, as it's handled differently
+          console.log('Introduction section will be handled separately');
+        } else {
+          console.log(`Unknown section type: ${section.type}, skipping`);
         }
       } catch (sectionError: any) {
         console.error(`Error processing ${section.type} section:`, sectionError);
         toast.error(`Failed to process ${section.type} section`);
-        throw new Error(`Failed to process ${section.type} section: ${sectionError.message}`);
+        // Continue with other sections rather than throwing
+        console.log(`Continuing with other sections despite error in ${section.type}`);
       }
     }
   }

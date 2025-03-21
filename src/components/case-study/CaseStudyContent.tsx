@@ -44,7 +44,7 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
           .from('case_study_sections')
           .select('*')
           .eq('case_study_id', caseStudy.id)
-          .eq('published', true)
+          .eq('published', true)  // Only fetch published sections
           .order('sort_order', { ascending: true });
         
         if (error) {
@@ -62,32 +62,24 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
     fetchSectionsFromDb();
   }, [caseStudy]);
 
-  // Process and render sections from both sources
+  // Process and render sections from database
   useEffect(() => {
     const sections: React.ReactNode[] = [];
     
     // Log data for debugging
     console.log("Case study for rendering:", caseStudy);
+    console.log("Database sections for rendering:", dbSections);
     
-    let customSectionsData: any[] = [];
-    
-    // Try to parse custom sections if they exist
-    try {
-      if (caseStudy.customSections && caseStudy.customSections !== '[]') {
-        console.log("Custom sections found:", caseStudy.customSections);
-        customSectionsData = JSON.parse(caseStudy.customSections as string);
-        console.log("Parsed custom sections:", customSectionsData);
-      }
-    } catch (error) {
-      console.error("Failed to parse custom sections:", error);
-    }
-    
-    // Check if we have DB sections
+    // Use DB sections if available
     if (dbSections && dbSections.length > 0) {
-      console.log("Using database sections:", dbSections);
+      console.log(`Rendering ${dbSections.length} sections from database`);
+      
+      // Filter to only include published sections
+      const publishedSections = dbSections.filter(section => section.published !== false);
+      console.log(`After filtering, ${publishedSections.length} published sections will be rendered`);
       
       // Map each section to its corresponding component
-      dbSections.forEach(section => {
+      publishedSections.forEach(section => {
         const componentType = section.component;
         
         switch (componentType) {
@@ -95,9 +87,9 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
             sections.push(
               <AlignmentSection 
                 key={section.id}
-                title={section.title || caseStudy.subhead || ''}
-                content={section.content || caseStudy.introductionParagraph || ''}
-                imageUrl={section.image_url || caseStudy.alignmentImage || ''}
+                title={section.title || 'Alignment Section'}
+                content={section.content || ''}
+                imageUrl={section.image_url || ''}
                 alignment={(section.metadata && section.metadata.alignment) || 'left'}
               />
             );
@@ -134,98 +126,115 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
       
       console.log(`Prepared ${sections.length} sections for rendering from database sections`);
     } 
-    // If no DB sections but we have custom sections data
-    else if (customSectionsData && customSectionsData.length > 0) {
-      console.log("Using custom sections from JSON:", customSectionsData);
+    // If no DB sections but we have custom sections in JSON
+    else if (caseStudy.customSections) {
+      console.log("No database sections found, checking for customSections JSON");
       
-      // Filter out unpublished sections
-      const publishedSections = customSectionsData.filter(section => section.published !== false);
-      
-      // Debug: Log published sections after filtering
-      console.log("Published sections for display:", publishedSections);
-      
-      // Map each section to its corresponding component
-      publishedSections.forEach(section => {
-        const componentType = section.type;
-        
-        switch (componentType) {
-          case 'alignment':
-            sections.push(
-              <AlignmentSection 
-                key={section.id}
-                title={caseStudy.subhead || ''}
-                content={caseStudy.introductionParagraph || ''}
-                imageUrl={caseStudy.alignmentImage || ''}
-                alignment={caseStudy.alignment || 'left'}
-              />
+      try {
+        if (caseStudy.customSections && caseStudy.customSections !== '[]') {
+          console.log("Custom sections found:", caseStudy.customSections);
+          const customSectionsData = JSON.parse(caseStudy.customSections as string);
+          console.log("Parsed custom sections:", customSectionsData);
+          
+          if (customSectionsData && customSectionsData.length > 0) {
+            // Filter out unpublished sections
+            const publishedSections = customSectionsData.filter(
+              (section: any) => section.published !== false
             );
-            break;
-          case 'carousel':
-            if (caseStudy.carouselItem1Title) {
-              sections.push(
-                <CarouselSection 
-                  key={section.id}
-                  title={caseStudy.carouselTitle || '3 Column Slider'}
-                  items={[
-                    {
-                      title: caseStudy.carouselItem1Title || '',
-                      content: caseStudy.carouselItem1Content || '',
-                      image: caseStudy.carouselItem1Image || ''
-                    },
-                    {
-                      title: caseStudy.carouselItem2Title || '',
-                      content: caseStudy.carouselItem2Content || '',
-                      image: caseStudy.carouselItem2Image || ''
-                    },
-                    {
-                      title: caseStudy.carouselItem3Title || '',
-                      content: caseStudy.carouselItem3Content || '',
-                      image: caseStudy.carouselItem3Image || ''
-                    }
-                  ]}
-                />
-              );
-            }
-            break;
-          case 'fourParagraphs':
-            if (caseStudy.fourPara1Title) {
-              sections.push(
-                <FourParagraphsSection 
-                  key={section.id}
-                  title={caseStudy.fourParaTitle || '4 Small Paragraphs'}
-                  subtitle={caseStudy.fourParaSubtitle || 'With Photo'}
-                  imageUrl={caseStudy.fourParaImage || ''}
-                  paragraphs={[
-                    {
-                      title: caseStudy.fourPara1Title || '',
-                      content: caseStudy.fourPara1Content || ''
-                    },
-                    {
-                      title: caseStudy.fourPara2Title || '',
-                      content: caseStudy.fourPara2Content || ''
-                    },
-                    {
-                      title: caseStudy.fourPara3Title || '',
-                      content: caseStudy.fourPara3Content || ''
-                    },
-                    {
-                      title: caseStudy.fourPara4Title || '',
-                      content: caseStudy.fourPara4Content || ''
-                    }
-                  ]}
-                />
-              );
-            }
-            break;
-          default:
-            console.log(`Custom section type not recognized: ${componentType}`);
-            break;
+            
+            console.log("Published sections from JSON:", publishedSections);
+            
+            // Legacy handling for custom sections
+            publishedSections.forEach((section: any) => {
+              const componentType = section.type;
+              
+              switch (componentType) {
+                case 'alignment':
+                  sections.push(
+                    <AlignmentSection 
+                      key={section.id}
+                      title={caseStudy.subhead || ''}
+                      content={caseStudy.introductionParagraph || ''}
+                      imageUrl={caseStudy.alignmentImage || ''}
+                      alignment={caseStudy.alignment || 'left'}
+                    />
+                  );
+                  break;
+                case 'carousel':
+                  if (caseStudy.carouselItem1Title) {
+                    sections.push(
+                      <CarouselSection 
+                        key={section.id}
+                        title={caseStudy.carouselTitle || '3 Column Slider'}
+                        items={[
+                          {
+                            title: caseStudy.carouselItem1Title || '',
+                            content: caseStudy.carouselItem1Content || '',
+                            image: caseStudy.carouselItem1Image || ''
+                          },
+                          {
+                            title: caseStudy.carouselItem2Title || '',
+                            content: caseStudy.carouselItem2Content || '',
+                            image: caseStudy.carouselItem2Image || ''
+                          },
+                          {
+                            title: caseStudy.carouselItem3Title || '',
+                            content: caseStudy.carouselItem3Content || '',
+                            image: caseStudy.carouselItem3Image || ''
+                          }
+                        ]}
+                      />
+                    );
+                  }
+                  break;
+                case 'fourParagraphs':
+                  if (caseStudy.fourPara1Title) {
+                    sections.push(
+                      <FourParagraphsSection 
+                        key={section.id}
+                        title={caseStudy.fourParaTitle || '4 Small Paragraphs'}
+                        subtitle={caseStudy.fourParaSubtitle || 'With Photo'}
+                        imageUrl={caseStudy.fourParaImage || ''}
+                        paragraphs={[
+                          {
+                            title: caseStudy.fourPara1Title || '',
+                            content: caseStudy.fourPara1Content || ''
+                          },
+                          {
+                            title: caseStudy.fourPara2Title || '',
+                            content: caseStudy.fourPara2Content || ''
+                          },
+                          {
+                            title: caseStudy.fourPara3Title || '',
+                            content: caseStudy.fourPara3Content || ''
+                          },
+                          {
+                            title: caseStudy.fourPara4Title || '',
+                            content: caseStudy.fourPara4Content || ''
+                          }
+                        ]}
+                      />
+                    );
+                  }
+                  break;
+                default:
+                  console.log(`Custom section type not recognized: ${componentType}`);
+                  break;
+              }
+            });
+            
+            console.log(`Prepared ${sections.length} sections for rendering from custom sections JSON`);
+          } else {
+            console.log("No custom sections found in JSON data");
+          }
+        } else {
+          console.log("No custom sections JSON found, or it was empty");
         }
-      });
-      
-      console.log(`Prepared ${sections.length} sections for rendering from custom sections`);
+      } catch (error) {
+        console.error("Failed to parse custom sections JSON:", error);
+      }
     } else {
-      console.log("No sections found (neither in database nor in custom sections)");
+      console.log("No sections found (neither in database nor in custom sections JSON)");
     }
     
     console.log("Final sections to render:", sections.length);

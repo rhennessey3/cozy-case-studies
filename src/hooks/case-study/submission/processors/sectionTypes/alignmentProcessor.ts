@@ -9,10 +9,9 @@ export const processAlignmentSection = async (
   sortOrder: number = 1,
   published: boolean = true // Default to published if not specified
 ) => {
-  // Validation: check if we have the essential data
-  if (!form.subhead || !form.introductionParagraph) {
-    console.log('Missing required data for alignment section, skipping');
-    return;
+  // Make validation less strict - only log a warning but still proceed
+  if (!form.subhead && !form.introductionParagraph && !form.alignmentImage) {
+    console.log('Alignment section has minimal data, but proceeding anyway');
   }
   
   // Generate a stable ID based on section type and case study
@@ -38,8 +37,8 @@ export const processAlignmentSection = async (
     const sectionData = {
       case_study_id: caseStudyId,
       component: 'alignment',
-      title: form.subhead,
-      content: form.introductionParagraph,
+      title: form.subhead || 'Alignment Section',
+      content: form.introductionParagraph || '',
       image_url: form.alignmentImage || null,
       sort_order: sortOrder,
       published: published, // Explicitly include the published state
