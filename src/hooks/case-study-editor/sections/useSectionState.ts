@@ -9,29 +9,25 @@ import { useFormUpdate } from '@/components/case-study-editor/sections/hooks/use
 import { addSection, removeSection, moveSection } from '@/components/case-study-editor/sections/utils/sectionOperations';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useSectionStorage } from '@/hooks/case-study-editor/sections/useSectionStorage';
 
 export const useSectionState = (
   form: SectionFormState & { slug?: string }, 
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
 ) => {
-  // Get case study slug to use for session storage key (for backward compatibility)
-  const getSlugFromForm = (): string => {
-    return form.slug || 'new-case-study';
-  };
+  // Get case study ID from form slug (if available)
+  const caseStudyId = useRef<string | null>(null);
   
-  // Session storage key for persisting sections state during editing
-  // (maintains backward compatibility while transitioning to Supabase)
-  const sessionStorageKey = `case-study-sections-${getSlugFromForm()}`;
+  // Use session storage key for UI state only (not for section data)
+  const sessionStorageKey = `case-study-ui-state-${form.slug || 'new-case-study'}`;
   const sessionStorageKeyRef = useRef(sessionStorageKey);
   
-  // Initialize sections state
-  const {
-    sections,
-    setSections,
-    initialized,
-    setInitialized,
-    lastValidSectionsRef
-  } = useSectionInitialization(form, sessionStorageKeyRef.current);
+  // Supabase integration for section data persistence
+  const { 
+    sections: storageStateSections, 
+    setSections: saveToStorage,
+    isLoading: storageLoading 
+  } = useSectionStorage(caseStudyId.current);
   
   // Manage open/closed state for sections (UI state only)
   const {
@@ -40,6 +36,15 @@ export const useSectionState = (
     toggleSection,
     cleanupOrphanedSections
   } = useOpenSections(sessionStorageKeyRef.current);
+  
+  // Initialize sections state (now considers Supabase data)
+  const {
+    sections,
+    setSections,
+    initialized,
+    setInitialized,
+    lastValidSectionsRef
+  } = useSectionInitialization(form, sessionStorageKeyRef.current, storageStateSections, storageLoading);
   
   // Sync sections with form.customSections
   const { isUpdatingRef } = useSectionSync(
@@ -59,10 +64,45 @@ export const useSectionState = (
     handleContentChange
   );
   
+  // Effect to update caseStudyId ref when form.slug changes
+  useEffect(() => {
+    // Only attempt to get caseStudyId if we have a valid slug (not new or empty)
+    if (form.slug && form.slug !== 'new-case-study' && form.slug !== 'new') {
+      const fetchCaseStudyId = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('case_studies')
+            .select('id')
+            .eq('slug', form.slug)
+            .maybeSingle();
+            
+          if (error) {
+            console.error('Error fetching case study ID:', error);
+            return;
+          }
+          
+          if (data) {
+            console.log(`Found case study ID for slug ${form.slug}:`, data.id);
+            caseStudyId.current = data.id;
+          }
+        } catch (e) {
+          console.error('Failed to fetch case study ID:', e);
+        }
+      };
+      
+      fetchCaseStudyId();
+    }
+  }, [form.slug]);
+  
   // Add debugging to track section changes
   useEffect(() => {
     console.log('useSectionState: Sections updated', sections);
-  }, [sections]);
+    
+    // Save to Supabase if we have sections and a case study ID
+    if (sections.length > 0 && caseStudyId.current && initialized) {
+      saveToStorage(sections);
+    }
+  }, [sections, initialized, saveToStorage]);
   
   // Clean up orphaned openSection entries when sections change
   useEffect(() => {
@@ -79,34 +119,26 @@ export const useSectionState = (
       const newSection = addSection(sections, type, setSections, setOpenSections);
       lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
       
-      // If we're editing an existing case study with a valid slug, 
-      // we should be relying on Supabase instead of session storage for persistence
-      if (form.slug && form.slug !== 'new-case-study') {
-        console.log('Case study has a valid slug, consider using Supabase for section persistence');
+      // If we have a valid case study ID, log that we're adding to Supabase
+      if (caseStudyId.current) {
+        console.log(`Adding section for case study ID: ${caseStudyId.current}`);
       }
     },
     
     removeSection: (id: string) => {
       console.log('Removing section:', id);
       removeSection(id, setSections, setOpenSections);
+      
       // Update lastValidSections after removal
       lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
         section => section.id !== id
       );
-      
-      // Remove from session storage for backward compatibility
-      try {
-        const updatedSections = sections.filter(section => section.id !== id);
-        sessionStorage.setItem(sessionStorageKeyRef.current, JSON.stringify(updatedSections));
-        console.log(`Section ${id} removed from session storage`);
-      } catch (e) {
-        console.error("Failed to remove section from session storage", e);
-      }
     },
     
     moveSection: (id: string, direction: 'up' | 'down') => {
       console.log('Moving section:', id, direction);
       moveSection(id, direction, setSections);
+      
       // Update lastValidSections after moving - reordering happens in moveSection
       const updatedSections = [...sections];
       updatedSections.sort((a, b) => a.order - b.order);
@@ -127,37 +159,48 @@ export const useSectionState = (
         
         // Update lastValidSections
         lastValidSectionsRef.current = updatedSections;
-        
-        // For backward compatibility, still update session storage
-        try {
-          sessionStorage.setItem(sessionStorageKeyRef.current, JSON.stringify(updatedSections));
-        } catch (e) {
-          console.error("Failed to update section published state in session storage", e);
-        }
-        
         return updatedSections;
       });
       
       // For existing case studies, try to update the published state in Supabase directly
-      if (form.slug && form.slug !== 'new-case-study') {
+      if (caseStudyId.current) {
         try {
-          // Check if we're authenticated
-          const { data: sessionData } = await supabase.auth.getSession();
-          
-          if (sessionData && sessionData.session) {
-            // If authenticated, find the database section ID that corresponds to this section
-            // This would require additional mapping logic in a production app
-            console.log(`Would update published state in Supabase for case study ${form.slug}, section ${id}`);
+          // First find the corresponding database section
+          const { data: sectionData, error: sectionError } = await supabase
+            .from('case_study_sections')
+            .select('id')
+            .eq('case_study_id', caseStudyId.current)
+            .eq('component', sections.find(s => s.id === id)?.type || '')
+            .maybeSingle();
             
-            // Show success message
+          if (sectionError) {
+            console.error('Error finding section in database:', sectionError);
+            toast.error('Could not find section in database');
+            return;
+          }
+          
+          if (sectionData) {
+            // Update the published state in Supabase
+            const { error: updateError } = await supabase
+              .from('case_study_sections')
+              .update({ published })
+              .eq('id', sectionData.id);
+              
+            if (updateError) {
+              console.error('Error updating section published state:', updateError);
+              toast.error('Failed to update section published state in database');
+              return;
+            }
+            
+            console.log(`Updated published state for section ${id} to ${published} in database`);
             toast.success(`Section ${published ? 'published' : 'unpublished'}`);
           } else {
-            console.log('Not authenticated with Supabase, relying on local storage only');
-            toast.success(`Section ${published ? 'published' : 'unpublished'} (local only)`);
+            console.log(`No existing section found in database for ${id}, skipping update`);
+            toast.success(`Section ${published ? 'published' : 'unpublished'} (will be saved with case study)`);
           }
         } catch (error) {
-          console.error('Error updating section published state in Supabase:', error);
-          toast.error('Failed to update published state in the database');
+          console.error('Error updating section published state:', error);
+          toast.error('Failed to update published state');
         }
       } else {
         // For new case studies, just show a success message

@@ -8,10 +8,14 @@ import { SectionFormState, initializeDefaultSections } from '../utils/defaultSec
  */
 export const useSectionInitialization = (
   form: SectionFormState & { slug?: string },
-  sessionStorageKey: string
+  sessionStorageKey: string,
+  supabaseSections: SectionWithOrder[] = [],
+  supabaseLoading: boolean = false
 ) => {
   // Reference to track if we've initialized from custom sections
   const initializedFromCustomSections = useRef(false);
+  // Reference to track if we've initialized from Supabase
+  const initializedFromSupabase = useRef(false);
   
   // Store the last valid sections to prevent reverting to default
   const lastValidSectionsRef = useRef<SectionWithOrder[]>([]);
@@ -21,12 +25,19 @@ export const useSectionInitialization = (
 
   // Parse custom sections from form if available
   const [sections, setSections] = useState<SectionWithOrder[]>(() => {
-    // First try to get from session storage (for tab switching persistence)
+    // First try to use the Supabase sections if they're available
+    if (supabaseSections && supabaseSections.length > 0) {
+      console.log("Initializing sections from Supabase:", supabaseSections.length);
+      initializedFromSupabase.current = true;
+      return supabaseSections;
+    }
+    
+    // For backward compatibility, try to get from session storage (for tab switching persistence)
     try {
       const sessionData = sessionStorage.getItem(sessionStorageKey);
       if (sessionData) {
         const parsedSessionData = JSON.parse(sessionData);
-        console.log("Restored sections from session storage:", parsedSessionData.length);
+        console.log("For backward compatibility: Restored sections from session storage:", parsedSessionData.length);
         initializedFromCustomSections.current = true;
         return parsedSessionData;
       }
@@ -34,7 +45,7 @@ export const useSectionInitialization = (
       console.error("Failed to parse session storage sections", e);
     }
     
-    // If not in session storage, try from form.customSections
+    // If not in Supabase or session storage, try from form.customSections
     try {
       if (form.customSections) {
         const parsedSections = JSON.parse(form.customSections);
@@ -54,10 +65,22 @@ export const useSectionInitialization = (
     return [];
   });
 
+  // Update sections when Supabase data changes
+  useEffect(() => {
+    if (!supabaseLoading && supabaseSections.length > 0 && !initializedFromSupabase.current) {
+      console.log("Updating sections from Supabase:", supabaseSections.length);
+      setSections(supabaseSections);
+      lastValidSectionsRef.current = supabaseSections;
+      initializedFromSupabase.current = true;
+      setInitialized(true);
+    }
+  }, [supabaseSections, supabaseLoading]);
+
   // Initialize the default sections if none are saved
   useEffect(() => {
-    if (sections.length === 0 && !initialized) {
-      // Only create default sections if we didn't initialize from custom sections
+    if (sections.length === 0 && !initialized && !supabaseLoading) {
+      // Only create default sections if we didn't initialize from custom sections or Supabase
+      console.log("No sections found, creating default sections");
       const defaultSections = initializeDefaultSections(form);
       setSections(defaultSections);
       lastValidSectionsRef.current = defaultSections;
@@ -67,14 +90,14 @@ export const useSectionInitialization = (
       lastValidSectionsRef.current = sections;
       setInitialized(true);
     }
-  }, [sections.length, initialized, form]);
+  }, [sections.length, initialized, form, supabaseLoading]);
 
-  // Save sections to session storage whenever they change
+  // For backward compatibility only: Save sections to session storage whenever they change
   useEffect(() => {
     if (sections.length > 0) {
       try {
         sessionStorage.setItem(sessionStorageKey, JSON.stringify(sections));
-        console.log(`Saved ${sections.length} sections to session storage`);
+        console.log(`Backward compatibility: Saved ${sections.length} sections to session storage`);
       } catch (e) {
         console.error("Failed to save sections to session storage", e);
       }

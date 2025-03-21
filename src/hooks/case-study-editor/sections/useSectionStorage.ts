@@ -1,10 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
 // Define the interface for storing section state
 interface SectionState {
-  [key: string]: any;
+  sections: SectionWithOrder[];
+  lastUpdated: string;
 }
 
 export const useSectionStorage = (caseStudyId: string | null) => {
@@ -22,9 +25,9 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     try {
       setIsLoading(true);
       setError(null);
+      console.log(`Loading sections for case study ID: ${caseStudyId}`);
 
       // Get the case study sections container from the database
-      // Using a specific component name to store the editor state
       const { data, error } = await supabase
         .from('case_study_sections')
         .select('metadata, id')
@@ -37,27 +40,41 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       }
 
       if (data && data.metadata) {
+        console.log('Loaded sections from Supabase:', data.metadata);
         setSectionsState(data.metadata as SectionState);
       } else {
-        setSectionsState({});
+        setSectionsState({
+          sections: [],
+          lastUpdated: new Date().toISOString()
+        });
       }
     } catch (err: any) {
       console.error('Error loading sections:', err);
       setError(err.message);
-      setSectionsState({});
+      setSectionsState({
+        sections: [],
+        lastUpdated: new Date().toISOString()
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   // Save sections to Supabase
-  const saveSections = async (sectionData: SectionState) => {
+  const saveSections = async (sections: SectionWithOrder[]) => {
     if (!caseStudyId) {
+      console.log('No case study ID, skipping save');
       return;
     }
 
     try {
       setError(null);
+      console.log(`Saving ${sections.length} sections for case study ID: ${caseStudyId}`);
+
+      const sectionState: SectionState = {
+        sections,
+        lastUpdated: new Date().toISOString()
+      };
 
       // First check if there's an existing record
       const { data, error: checkError } = await supabase
@@ -78,7 +95,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         result = await supabase
           .from('case_study_sections')
           .update({
-            metadata: sectionData,
+            metadata: sectionState,
             content: 'Editor state storage',
             updated_at: new Date().toISOString()
           })
@@ -92,8 +109,9 @@ export const useSectionStorage = (caseStudyId: string | null) => {
             component: 'editor_state',
             title: 'Editor State',
             content: 'Editor state storage',
-            metadata: sectionData,
-            sort_order: 0
+            metadata: sectionState,
+            sort_order: 0,
+            published: false // This is just internal state, should not be published
           });
       }
 
@@ -101,10 +119,12 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         throw new Error(`Failed to save sections: ${result.error.message}`);
       }
 
-      setSectionsState(sectionData);
+      console.log('Sections saved successfully to Supabase');
+      setSectionsState(sectionState);
     } catch (err: any) {
       console.error('Error saving sections:', err);
       setError(err.message);
+      toast.error(`Failed to save section data: ${err.message}`);
     }
   };
 
@@ -114,10 +134,9 @@ export const useSectionStorage = (caseStudyId: string | null) => {
   }, [caseStudyId]);
 
   return {
-    sectionsState,
-    setSectionsState: (newState: SectionState) => {
-      setSectionsState(newState);
-      saveSections(newState);
+    sections: sectionsState?.sections || [],
+    setSections: (newSections: SectionWithOrder[]) => {
+      saveSections(newSections);
     },
     isLoading,
     error,

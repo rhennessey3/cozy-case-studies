@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +10,8 @@ import CaseStudyEditorContent from '@/components/case-study-editor/CaseStudyEdit
 import CaseStudyEditorLayout from '@/components/case-study-editor/CaseStudyEditorLayout';
 import DeleteCaseStudyDialog from '@/components/case-study-editor/DeleteCaseStudyDialog';
 import CaseStudyEditorAuth from '@/components/case-study-editor/CaseStudyEditorAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const CaseStudyEditor = () => {
   const { slug } = useParams();
@@ -17,6 +19,42 @@ const CaseStudyEditor = () => {
   const { logout } = useAuth();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('basics');
+  const [caseStudyId, setCaseStudyId] = useState<string | null>(null);
+  
+  // Fetch the case study ID for this slug (used for section persistence)
+  useEffect(() => {
+    const fetchCaseStudyId = async () => {
+      if (slug && slug !== 'new') {
+        try {
+          const { data, error } = await supabase
+            .from('case_studies')
+            .select('id')
+            .eq('slug', slug)
+            .maybeSingle();
+            
+          if (error) {
+            console.error('Error fetching case study ID:', error);
+            return;
+          }
+          
+          if (data) {
+            console.log(`Found case study ID for slug ${slug}:`, data.id);
+            setCaseStudyId(data.id);
+          } else {
+            console.log(`No case study found with slug ${slug}`);
+            setCaseStudyId(null);
+          }
+        } catch (e) {
+          console.error('Failed to fetch case study ID:', e);
+          toast.error('Error connecting to database');
+        }
+      } else {
+        setCaseStudyId(null);
+      }
+    };
+    
+    fetchCaseStudyId();
+  }, [slug]);
   
   const {
     loading,
@@ -113,6 +151,7 @@ const CaseStudyEditor = () => {
               cancelHref="/admin/case-studies"
               onCancel={handleCancel}
               activeTab={activeTab}
+              caseStudyId={caseStudyId}
             />
           </div>
         </div>
