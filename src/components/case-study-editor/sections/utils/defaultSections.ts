@@ -32,6 +32,7 @@ export interface SectionFormState {
   intro?: string;
   challenge?: string;
   approach?: string;
+  // Note: slug is not part of this interface, it's added by the parent component
 }
 
 export const initializeDefaultSections = (form: SectionFormState): SectionWithOrder[] => {

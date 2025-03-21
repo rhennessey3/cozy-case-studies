@@ -7,7 +7,7 @@ interface SectionListProps {
   sections: SectionWithOrder[];
   openSections: Record<string, boolean>;
   toggleSection: (id: string) => void;
-  form: any;
+  form: any; // Using any since the form structure varies
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded: (field: string, url: string) => void;
   handleAlignmentChange: (value: string) => void;

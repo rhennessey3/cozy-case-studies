@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { SectionWithOrder } from './types';
 import { SectionFormState, initializeDefaultSections, getInitialOpenSectionsState } from './utils/defaultSections';
-import { addSection, removeSection, moveSection } from './utils/sectionOperations';
 
-export const useSectionState = (form: SectionFormState, handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void) => {
+export const useSectionState = (form: SectionFormState & { slug?: string }, handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void) => {
   // Reference to track if we've initialized from custom sections
   const initializedFromCustomSections = useRef(false);
   
   // Get case study slug to use for session storage key
   const getSlugFromForm = (): string => {
-    return form.slug || 'new-case-study';
+    // Access slug from the extended form type (now properly typed)
+    return (form as any).slug || 'new-case-study';
   };
   
   // Session storage key for persisting sections state
