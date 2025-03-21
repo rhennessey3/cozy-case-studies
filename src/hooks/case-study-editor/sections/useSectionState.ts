@@ -1,203 +1,174 @@
 
-import { useState, useRef, useEffect } from 'react';
-import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
-import { SectionFormState } from '@/components/case-study-editor/sections/utils/defaultSections';
-import { useOpenSections } from '@/components/case-study-editor/sections/hooks/useOpenSections';
-import { useSectionInitialization } from '@/components/case-study-editor/sections/hooks/useSectionInitialization';
-import { useSectionSync } from '@/components/case-study-editor/sections/hooks/useSectionSync';
-import { useFormUpdate } from '@/components/case-study-editor/sections/hooks/useFormUpdate';
-import { addSection, removeSection, moveSection } from '@/components/case-study-editor/sections/utils/sectionOperations';
-import { toast } from 'sonner';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useSectionStorage } from '@/hooks/case-study-editor/sections/useSectionStorage';
+import { toast } from 'sonner';
+import { createSection } from '@/components/case-study-editor/sections/utils/createSection';
 
-export const useSectionState = (
-  form: SectionFormState & { slug?: string }, 
-  handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void,
-  caseStudyId?: string | null // Accept caseStudyId as a parameter
-) => {
-  // Use session storage key for UI state only (not for section data)
-  const sessionStorageKey = `case-study-ui-state-${form.slug || 'new-case-study'}`;
-  const sessionStorageKeyRef = useRef(sessionStorageKey);
+export const useSectionState = (caseStudyId: string | null) => {
+  const [sections, setSections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Supabase integration for section data persistence
-  const { 
-    sections: storageStateSections, 
-    setSections: saveToStorage,
-    isLoading: storageLoading 
-  } = useSectionStorage(caseStudyId || null);
-  
-  // Manage open/closed state for sections (UI state only)
-  const {
-    openSections,
-    setOpenSections,
-    toggleSection,
-    cleanupOrphanedSections
-  } = useOpenSections(sessionStorageKeyRef.current);
-  
-  // Initialize sections state (now considers Supabase data)
-  const {
-    sections,
-    setSections,
-    initialized,
-    setInitialized,
-    lastValidSectionsRef
-  } = useSectionInitialization(form, sessionStorageKeyRef.current, storageStateSections, storageLoading);
-  
-  // Sync sections with form.customSections
-  const { isUpdatingRef } = useSectionSync(
-    sections,
-    form,
-    setSections,
-    lastValidSectionsRef,
-    sessionStorageKeyRef.current
-  );
-  
-  // Update form with sections changes
-  useFormUpdate(
-    sections,
-    initialized,
-    isUpdatingRef,
-    form,
-    handleContentChange
-  );
-  
-  // Add debugging to track section changes
-  useEffect(() => {
-    console.log('useSectionState: Sections updated', sections);
+  // Fetch sections from the database
+  const fetchSections = useCallback(async () => {
+    if (!caseStudyId) {
+      setLoading(false);
+      return;
+    }
     
-    // Save to Supabase if we have sections and a case study ID
-    if (sections.length > 0 && caseStudyId && initialized) {
-      saveToStorage(sections);
-    }
-  }, [sections, initialized, saveToStorage, caseStudyId]);
-  
-  // Clean up orphaned openSection entries when sections change
-  useEffect(() => {
-    if (sections.length > 0) {
-      const validSectionIds = new Set(sections.map(section => section.id));
-      cleanupOrphanedSections(validSectionIds);
-    }
-  }, [sections, cleanupOrphanedSections]);
-  
-  // Use refs for handler functions to ensure they don't change between renders
-  const handlersRef = useRef({
-    addSection: (type: SectionWithOrder['type']) => {
-      console.log('Adding section of type:', type);
-      const newSection = addSection(sections, type, setSections, setOpenSections);
-      lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase
+        .from('case_study_sections')
+        .select('*')
+        .eq('case_study_id', caseStudyId)
+        .order('sort_order', { ascending: true });
       
-      // If we have a valid case study ID, log that we're adding to Supabase
-      if (caseStudyId) {
-        console.log(`Adding section for case study ID: ${caseStudyId}`);
+      if (error) {
+        console.error('Error fetching sections:', error);
+        setError(error.message);
+        toast.error('Error loading sections: ' + error.message);
+        setLoading(false);
+        return;
       }
-    },
-    
-    removeSection: (id: string) => {
-      console.log('Removing section:', id);
-      removeSection(id, setSections, setOpenSections);
       
-      // Update lastValidSections after removal
-      lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
-        section => section.id !== id
+      console.log('Admin Panel - Sections Fetched:', data);
+      setSections(data || []);
+      setLoading(false);
+    } catch (err) {
+      console.error('Failed to fetch sections:', err);
+      setError('Failed to fetch sections: ' + (err instanceof Error ? err.message : String(err)));
+      toast.error('Error loading sections');
+      setLoading(false);
+    }
+  }, [caseStudyId]);
+  
+  // Load sections on initial render and when caseStudyId changes
+  useEffect(() => {
+    fetchSections();
+  }, [fetchSections, caseStudyId]);
+  
+  // Add a new section
+  const addSection = useCallback(async (componentType: string) => {
+    if (!caseStudyId) {
+      toast.error('Cannot add section: No case study selected');
+      return;
+    }
+    
+    // Get max sort order
+    const maxSortOrder = sections.length > 0
+      ? Math.max(...sections.map(s => s.sort_order || 0))
+      : 0;
+    
+    // Create section with next sort order
+    const newSection = createSection(componentType, caseStudyId, maxSortOrder + 1);
+    
+    try {
+      const { data, error } = await supabase
+        .from('case_study_sections')
+        .insert(newSection)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error adding section:', error);
+        toast.error('Error adding section: ' + error.message);
+        return;
+      }
+      
+      // Add the new section to the local state
+      setSections(prev => [...prev, data]);
+      toast.success(`${componentType} section added`);
+      
+      // Return the new section
+      return data;
+    } catch (err) {
+      console.error('Failed to add section:', err);
+      toast.error('Failed to add section');
+      return null;
+    }
+  }, [caseStudyId, sections]);
+  
+  // Toggle published state for a section
+  const togglePublished = useCallback(async (sectionId: string, isPublished: boolean) => {
+    console.log(`Toggling Section ID: ${sectionId}, New Published State: ${isPublished}`);
+    
+    try {
+      // Update the published state in the database
+      const { error: updateError } = await supabase
+        .from('case_study_sections')
+        .update({ published: isPublished })
+        .eq('id', sectionId);
+      
+      if (updateError) {
+        console.error('Error updating section published state:', updateError);
+        toast.error('Error updating section: ' + updateError.message);
+        return false;
+      }
+      
+      // Fetch the updated data to verify the change
+      const { data, error: selectError } = await supabase
+        .from('case_study_sections')
+        .select('*')
+        .eq('id', sectionId)
+        .single();
+      
+      if (selectError) {
+        console.error('Error verifying section update:', selectError);
+        return false;
+      }
+      
+      console.log("Updated Section Data:", data);
+      
+      // Update the local state
+      setSections(prev => 
+        prev.map(section => 
+          section.id === sectionId 
+            ? { ...section, published: isPublished } 
+            : section
+        )
       );
-    },
-    
-    moveSection: (id: string, direction: 'up' | 'down') => {
-      console.log('Moving section:', id, direction);
-      moveSection(id, direction, setSections);
       
-      // Update lastValidSections after moving - reordering happens in moveSection
-      const updatedSections = [...sections];
-      updatedSections.sort((a, b) => a.order - b.order);
-      lastValidSectionsRef.current = updatedSections;
-    },
-    
-    toggleSectionPublished: async (id: string, published: boolean) => {
-      console.log(`Toggling published state for section ${id} to ${published}`);
-      
-      // First, update the local state for immediate feedback
-      setSections(prevSections => {
-        const updatedSections = prevSections.map(section => {
-          if (section.id === id) {
-            return { ...section, published };
-          }
-          return section;
-        });
-        
-        // Update lastValidSections
-        lastValidSectionsRef.current = updatedSections;
-        return updatedSections;
-      });
-      
-      // For existing case studies, try to update the published state in Supabase directly
-      if (caseStudyId) {
-        try {
-          // First find the corresponding database section by type and case_study_id
-          const sectionToUpdate = sections.find(s => s.id === id);
-          if (!sectionToUpdate) {
-            console.error(`Section with ID ${id} not found`);
-            return;
-          }
-          
-          const { data: sectionData, error: sectionError } = await supabase
-            .from('case_study_sections')
-            .select('id')
-            .eq('case_study_id', caseStudyId)
-            .eq('component', sectionToUpdate.type)
-            .maybeSingle();
-            
-          if (sectionError) {
-            console.error('Error finding section in database:', sectionError);
-            toast.error('Could not find section in database');
-            return;
-          }
-          
-          if (sectionData) {
-            // Update the published state in Supabase
-            const { error: updateError } = await supabase
-              .from('case_study_sections')
-              .update({ published })
-              .eq('id', sectionData.id);
-              
-            if (updateError) {
-              console.error('Error updating section published state:', updateError);
-              toast.error('Failed to update section published state in database');
-              return;
-            }
-            
-            // Fetch the updated record to verify the change
-            const { data: updatedData } = await supabase
-              .from('case_study_sections')
-              .select('*')
-              .eq('id', sectionData.id);
-              
-            console.log("Updated Section Data:", updatedData);
-            
-            console.log(`Updated published state for section ${id} to ${published} in database`);
-            toast.success(`Section ${published ? 'published' : 'unpublished'}`);
-          } else {
-            console.log(`No existing section found in database for ${id}, skipping update`);
-            toast.success(`Section ${published ? 'published' : 'unpublished'} (will be saved with case study)`);
-          }
-        } catch (error) {
-          console.error('Error updating section published state:', error);
-          toast.error('Failed to update published state');
-        }
-      } else {
-        // For new case studies, just show a success message
-        toast.success(`Section ${published ? 'published' : 'unpublished'}`);
-      }
+      toast.success(`Section ${isPublished ? 'published' : 'unpublished'}`);
+      return true;
+    } catch (err) {
+      console.error('Failed to toggle published state:', err);
+      toast.error('Failed to update section');
+      return false;
     }
-  });
-
+  }, []);
+  
+  // Remove a section
+  const removeSection = useCallback(async (sectionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('case_study_sections')
+        .delete()
+        .eq('id', sectionId);
+      
+      if (error) {
+        console.error('Error removing section:', error);
+        toast.error('Error removing section: ' + error.message);
+        return;
+      }
+      
+      // Remove the section from local state
+      setSections(prev => prev.filter(section => section.id !== sectionId));
+      toast.success('Section removed');
+    } catch (err) {
+      console.error('Failed to remove section:', err);
+      toast.error('Failed to remove section');
+    }
+  }, []);
+  
   return {
     sections,
-    openSections,
-    toggleSection,
-    addSection: handlersRef.current.addSection,
-    removeSection: handlersRef.current.removeSection,
-    moveSection: handlersRef.current.moveSection,
-    toggleSectionPublished: handlersRef.current.toggleSectionPublished
+    loading,
+    error,
+    fetchSections,
+    addSection,
+    togglePublished,
+    removeSection
   };
 };

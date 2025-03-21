@@ -46,7 +46,7 @@ export const useCaseStudySections = (caseStudyId: string | undefined, onlyPublis
         
         // Log more details about the sections
         if (sections) {
-          console.log("Live Page - Sections Rendered:", sections);
+          console.log(`${onlyPublished ? 'Live Page' : 'Admin Panel'} - Sections Rendered:`, sections);
           sections.forEach(section => {
             console.log(`Section ${section.id} (${section.component}) - published: ${section.published}`);
           });
