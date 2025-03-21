@@ -3,85 +3,51 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
 
-interface IntroductionSectionProps {
-  isOpen: boolean;
-  onToggle: () => void;
-  introValue: string;
-  challengeValue: string;
-  approachValue: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
+export interface IntroductionSectionProps {
+  formData: any;
+  onContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
 }
 
-const IntroductionSection: React.FC<IntroductionSectionProps> = ({
-  isOpen,
-  onToggle,
-  introValue,
-  challengeValue,
-  approachValue,
-  onChange
-}) => {
+const IntroductionSection: React.FC<IntroductionSectionProps> = ({ formData, onContentChange }) => {
   return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={onToggle}
-      className="w-full"
-    >
-      <Card className="p-6 bg-white rounded-lg border border-gray-200 shadow-none">
-        <CollapsibleTrigger className="w-full text-left focus:outline-none">
-          <div className="flex items-center justify-between w-full">
-            <h2 className="text-xl font-bold">Case Study Introduction</h2>
-            <ChevronDown 
-              className={`h-5 w-5 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} 
-            />
-          </div>
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent className="pt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="space-y-2">
-              <Label htmlFor="challenge" className="text-gray-500">Subhead</Label>
-              <Input 
-                id="challenge" 
-                name="challenge" 
-                value={challengeValue} 
-                onChange={onChange} 
-                placeholder="This is the introduction of the case study"
-                className="bg-gray-50 border-gray-200"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="approach" className="text-gray-500">Subhead two</Label>
-              <Input 
-                id="approach" 
-                name="approach" 
-                value={approachValue} 
-                onChange={onChange} 
-                placeholder="This is the subhead to the introduction"
-                className="bg-gray-50 border-gray-200"
-              />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="intro" className="text-gray-500">Case Study Introduction Paragraph</Label>
-            <Textarea 
-              id="intro" 
-              name="intro" 
-              value={introValue} 
-              onChange={onChange} 
-              placeholder="This is the dummy text for the introduction paragraph."
-              className="bg-gray-50 border-gray-200 w-full"
-              rows={6}
-            />
-          </div>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="intro">Introduction</Label>
+        <Textarea 
+          id="intro"
+          name="intro"
+          value={formData.intro || ''}
+          onChange={onContentChange}
+          placeholder="Brief introduction for the case study"
+          className="h-24"
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="challenge">Challenge</Label>
+        <Textarea 
+          id="challenge"
+          name="challenge"
+          value={formData.challenge || ''}
+          onChange={onContentChange}
+          placeholder="What challenge did this project address?"
+          className="h-24"
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="approach">Approach</Label>
+        <Textarea 
+          id="approach"
+          name="approach"
+          value={formData.approach || ''}
+          onChange={onContentChange}
+          placeholder="What was your approach to solving the challenge?"
+          className="h-24"
+        />
+      </div>
+    </div>
   );
 };
 

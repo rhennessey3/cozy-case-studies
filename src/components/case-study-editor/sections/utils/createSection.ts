@@ -18,7 +18,9 @@ export const createSection = (type: SectionWithOrder['type'], order: number): Se
     content: '',
     sort_order: order,
     published: true, // Default to published
-    name: displayName, // For backward compatibility
-    order: order // For backward compatibility
+    
+    // For backward compatibility
+    name: displayName,
+    order: order
   };
 };

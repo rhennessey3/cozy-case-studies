@@ -15,9 +15,10 @@ export interface ParagraphItem {
   contentField: string;
 }
 
+// Updated to include the backward compatibility fields as optional
 export interface SectionWithOrder {
   id: string;
-  type: 'alignment' | 'carousel' | 'fourParagraphs' | 'introduction';
+  type: 'alignment' | 'carousel' | 'fourParagraphs' | 'introduction'; 
   component: string; 
   title: string;
   content: string;
@@ -26,6 +27,8 @@ export interface SectionWithOrder {
   case_study_id?: string;
   image_url?: string;
   metadata?: any;
-  name?: string; // For backward compatibility
-  order?: number; // For backward compatibility
+  
+  // For backward compatibility - added as documented in the comments
+  name?: string;
+  order?: number;
 }
