@@ -7,6 +7,8 @@ import FourParagraphsSection from './FourParagraphsSection';
 import IntroductionSection from './IntroductionSection';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Trash2 } from 'lucide-react';
 
 interface SectionRendererProps {
   section: SectionWithOrder;
@@ -20,6 +22,7 @@ interface SectionRendererProps {
   carouselItems: any[];
   paragraphItems: any[];
   onPublishedChange?: (id: string, value: boolean) => void;
+  onRemoveSection?: (id: string) => void;
 }
 
 /**
@@ -36,7 +39,8 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   handleReorderCarouselItems,
   carouselItems,
   paragraphItems,
-  onPublishedChange
+  onPublishedChange,
+  onRemoveSection
 }) => {
   // Debug output to help troubleshoot sections (only in development)
   React.useEffect(() => {
@@ -102,22 +106,38 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     }
   };
 
-  // Add a wrapper that includes the publish toggle
+  // Add a wrapper that includes the publish toggle and delete button
   return (
     <div className="relative">
-      {/* Publication toggle */}
-      {onPublishedChange && (
-        <div className="absolute right-4 top-4 flex items-center space-x-2 z-10">
-          <Switch 
-            id={`publish-${section.id}`}
-            checked={section.published !== false}
-            onCheckedChange={(checked) => onPublishedChange(section.id, checked)}
-          />
-          <Label htmlFor={`publish-${section.id}`} className="text-sm font-medium">
-            {section.published !== false ? "Published" : "Draft"}
-          </Label>
-        </div>
-      )}
+      {/* Publication toggle and delete button */}
+      <div className="absolute right-4 top-4 flex items-center space-x-3 z-10">
+        {/* Delete button */}
+        {onRemoveSection && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => onRemoveSection(section.id)}
+            className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+        
+        {/* Publication toggle */}
+        {onPublishedChange && (
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id={`publish-${section.id}`}
+              checked={section.published !== false}
+              onCheckedChange={(checked) => onPublishedChange(section.id, checked)}
+              className="data-[state=checked]:bg-green-500"
+            />
+            <Label htmlFor={`publish-${section.id}`} className="text-sm font-medium">
+              {section.published !== false ? "Published" : "Draft"}
+            </Label>
+          </div>
+        )}
+      </div>
       
       {/* Render the actual section content */}
       <SectionContent />

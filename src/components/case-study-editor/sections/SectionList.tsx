@@ -15,6 +15,7 @@ interface SectionListProps {
   carouselItems: any[];
   paragraphItems: any[];
   onPublishedChange?: (id: string, value: boolean) => void;
+  onRemoveSection?: (id: string) => void;
 }
 
 /**
@@ -31,7 +32,8 @@ const SectionList: React.FC<SectionListProps> = ({
   handleReorderCarouselItems,
   carouselItems,
   paragraphItems,
-  onPublishedChange
+  onPublishedChange,
+  onRemoveSection
 }) => {
   // Debug output to help troubleshoot missing sections
   useEffect(() => {
@@ -76,6 +78,7 @@ const SectionList: React.FC<SectionListProps> = ({
             carouselItems={carouselItems}
             paragraphItems={paragraphItems}
             onPublishedChange={onPublishedChange}
+            onRemoveSection={onRemoveSection}
           />
         );
       })}

@@ -2,9 +2,10 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Trash2, MoveUp, MoveDown } from 'lucide-react';
+import { PlusCircle, MoveUp, MoveDown, Eye, EyeOff } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { SectionWithOrder } from './types';
 
 interface SectionManagerProps {
@@ -12,13 +13,15 @@ interface SectionManagerProps {
   onAddSection: (type: SectionWithOrder['type']) => void;
   onRemoveSection: (id: string) => void;
   onMoveSection: (id: string, direction: 'up' | 'down') => void;
+  onTogglePublished?: (id: string, published: boolean) => void;
 }
 
 const SectionManager: React.FC<SectionManagerProps> = ({
   sections,
   onAddSection,
   onRemoveSection,
-  onMoveSection
+  onMoveSection,
+  onTogglePublished
 }) => {
   const [selectedType, setSelectedType] = React.useState<SectionWithOrder['type']>('alignment');
 
@@ -63,14 +66,21 @@ const SectionManager: React.FC<SectionManagerProps> = ({
                     >
                       <MoveDown className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      onClick={() => onRemoveSection(section.id)}
-                      className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    
+                    {/* Replace trash icon with published/unpublished toggle */}
+                    <div className="flex items-center space-x-1">
+                      <Switch 
+                        id={`publish-toggle-${section.id}`}
+                        checked={section.published !== false}
+                        onCheckedChange={(checked) => onTogglePublished && onTogglePublished(section.id, checked)}
+                        className="data-[state=checked]:bg-green-500"
+                      />
+                      {section.published !== false ? (
+                        <Eye className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      )}
+                    </div>
                   </div>
                 </li>
               ))}

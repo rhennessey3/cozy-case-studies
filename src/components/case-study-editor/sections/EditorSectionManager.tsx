@@ -1,20 +1,19 @@
 
 import React from 'react';
-import SectionManager from '@/components/case-study-editor/sections/SectionManager';
-import SectionList from '@/components/case-study-editor/sections/SectionList';
+import SectionManager from './SectionManager';
+import SectionList from './SectionList';
 import { SectionWithOrder } from './types';
-import { CaseStudyForm } from '@/types/caseStudy';
 
-interface Editor {
+interface EditorSectionManagerProps {
   sections: SectionWithOrder[];
   openSections: Record<string, boolean>;
   toggleSection: (id: string) => void;
   addSection: (type: SectionWithOrder['type']) => void;
   removeSection: (id: string) => void;
   moveSection: (id: string, direction: 'up' | 'down') => void;
-  toggleSectionPublished?: (id: string, published: boolean) => void;
+  toggleSectionPublished: (id: string, published: boolean) => void;
   formKey: string;
-  form: Partial<CaseStudyForm>;
+  form: any;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded: (field: string, url: string) => void;
   handleAlignmentChange: (value: string) => void;
@@ -23,7 +22,7 @@ interface Editor {
   paragraphItems: any[];
 }
 
-const EditorSectionManager: React.FC<Editor> = ({
+const EditorSectionManager: React.FC<EditorSectionManagerProps> = ({
   sections,
   openSections,
   toggleSection,
@@ -41,12 +40,13 @@ const EditorSectionManager: React.FC<Editor> = ({
   paragraphItems
 }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <SectionManager 
         sections={sections}
         onAddSection={addSection}
         onRemoveSection={removeSection}
         onMoveSection={moveSection}
+        onTogglePublished={toggleSectionPublished}
       />
       
       <SectionList 
