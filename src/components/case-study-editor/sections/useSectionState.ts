@@ -57,7 +57,15 @@ export const useSectionState = (
   } = useOpenSections(sessionStorageKeyRef.current);
   
   // Sync sections with open sections state
-  useSyncWithOpenSections(sections, cleanupOrphanedSections);
+  useEffect(() => {
+    if (sections.length > 0) {
+      // Create a set of valid section IDs
+      const validSectionIds = new Set(sections.map(section => section.id));
+      
+      // Clean up orphaned entries in openSections
+      cleanupOrphanedSections(validSectionIds);
+    }
+  }, [sections, cleanupOrphanedSections]);
   
   // Sync sections with form.customSections
   useSectionSync(
@@ -120,45 +128,6 @@ export const useSectionState = (
       );
     },
     
-    moveSection: (id: string, direction: 'up' | 'down') => {
-      console.log('Moving section:', id, direction);
-      const sectionsArray = [...sections];
-      let currentIndex = sectionsArray.findIndex(s => s.id === id);
-      if (currentIndex === -1) return;
-      
-      let targetIndex;
-      if (direction === 'up' && currentIndex > 0) {
-        targetIndex = currentIndex - 1;
-      } else if (direction === 'down' && currentIndex < sectionsArray.length - 1) {
-        targetIndex = currentIndex + 1;
-      } else {
-        // Can't move in this direction
-        toast.info(`Cannot move section ${direction}`);
-        return;
-      }
-      
-      // Swap order values
-      const tempOrder = sectionsArray[currentIndex].sort_order;
-      sectionsArray[currentIndex].sort_order = sectionsArray[targetIndex].sort_order;
-      sectionsArray[targetIndex].sort_order = tempOrder;
-      
-      // Update legacy order field as well if it exists
-      if ('order' in sectionsArray[currentIndex]) {
-        sectionsArray[currentIndex].order = sectionsArray[currentIndex].sort_order;
-      }
-      if ('order' in sectionsArray[targetIndex]) {
-        sectionsArray[targetIndex].order = sectionsArray[targetIndex].sort_order;
-      }
-      
-      // Update state
-      setSections([...sectionsArray]);
-      
-      // Update lastValidSections after moving
-      lastValidSectionsRef.current = [...sectionsArray];
-      
-      toast.success(`Section moved ${direction}`);
-    },
-    
     toggleSectionPublished: (id: string, published: boolean) => {
       console.log(`Toggling published state for section ${id} to ${published}`);
       
@@ -187,7 +156,6 @@ export const useSectionState = (
     toggleSection,
     addSection: handlersRef.current.addSection,
     removeSection: handlersRef.current.removeSection,
-    moveSection: handlersRef.current.moveSection,
     toggleSectionPublished: handlersRef.current.toggleSectionPublished
   };
 };

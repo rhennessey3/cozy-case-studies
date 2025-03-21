@@ -6,10 +6,8 @@ import { useOpenSections } from './useOpenSections';
 import { useSectionStorage } from './useSectionStorage';
 import { useAddSectionHook } from './hooks/useAddSectionHook';
 import { useRemoveSectionHook } from './hooks/useRemoveSectionHook';
-import { useMoveSectionHook } from './hooks/useMoveSectionHook';
 import { useTogglePublishedHook } from './hooks/useTogglePublishedHook';
 import { useSectionInitHook } from './hooks/useSectionInitHook';
-import { useSyncWithOpenSections } from './hooks/useSyncWithOpenSections';
 import { 
   mapSectionResponseToSectionWithOrder, 
   mapSectionResponsesToSectionWithOrders,
@@ -46,8 +44,9 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     cleanupOrphanedSections
   } = useOpenSections();
   
-  // Sync sections with open sections state (works with both types)
-  useSyncWithOpenSections(sections, cleanupOrphanedSections);
+  // Sync sections with open sections state
+  const validSectionIds = new Set(sections.map(section => section.id));
+  cleanupOrphanedSections(validSectionIds);
   
   // Use refs for handler functions to ensure they don't change between renders
   const isUpdatingRef = useRef(false);
@@ -73,20 +72,6 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   // Create all the section operation hooks
   const addSection = useAddSectionHook(caseStudyId, sections, setSections, setOpenSections);
   const removeSection = useRemoveSectionHook(setSections, setOpenSections);
-  
-  // For moveSection, we need to handle the type conversion
-  const moveSectionInternal = useMoveSectionHook(
-    sections, 
-    (updatedSections: SectionResponse[]) => {
-      setSections(updatedSections);
-    }
-  );
-  
-  // Create a wrapper that handles the conversion
-  const moveSection = (id: string, direction: 'up' | 'down') => {
-    moveSectionInternal(id, direction);
-  };
-  
   const toggleSectionPublished = useTogglePublishedHook(setSections);
   
   // Return the public API for the hook
@@ -96,7 +81,6 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     toggleSection,
     addSection,
     removeSection,
-    moveSection,
     toggleSectionPublished
   };
 };

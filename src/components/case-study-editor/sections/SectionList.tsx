@@ -42,14 +42,6 @@ const SectionList: React.FC<SectionListProps> = ({
     console.log('Form:', form);
   }, [sections, openSections, form]);
 
-  // Sort sections by order for display - memoized to prevent unnecessary re-renders
-  const sortedSections = useMemo(() => {
-    if (!sections || sections.length === 0) {
-      return [];
-    }
-    return [...sections].sort((a, b) => a.sort_order - b.sort_order);
-  }, [sections]);
-
   // Check if there are actual sections to render
   if (!sections || sections.length === 0) {
     return (
@@ -61,7 +53,7 @@ const SectionList: React.FC<SectionListProps> = ({
 
   return (
     <div className="space-y-4">
-      {sortedSections.map(section => {
+      {sections.map(section => {
         const isOpen = openSections[section.id] || false;
         
         return (

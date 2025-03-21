@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -21,7 +20,6 @@ const CaseStudyEditor = () => {
   const [activeTab, setActiveTab] = useState('basics');
   const [caseStudyId, setCaseStudyId] = useState<string | null>(null);
   
-  // Fetch the case study ID for this slug (used for section persistence)
   useEffect(() => {
     const fetchCaseStudyId = async () => {
       if (slug && slug !== 'new') {
