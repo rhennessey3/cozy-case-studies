@@ -2,9 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CaseStudy } from '@/data/caseStudies';
 import { CaseStudyForm } from '@/types/caseStudy';
-import { isLocalAuthMode } from './utils/authUtils';
 import { fetchCaseStudyFromService } from './services/caseStudyService';
-import { fetchLocalCaseStudy } from './services/localCaseStudyService';
 import { toast } from 'sonner';
 
 export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => {
@@ -26,19 +24,7 @@ export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => 
     setLoading(true);
     
     try {
-      // Check if we're in local auth mode
-      if (isLocalAuthMode()) {
-        // Fix: fetchLocalCaseStudy expects only slug parameter
-        const { caseStudy: localCaseStudy, form: localForm } = fetchLocalCaseStudy(slug);
-        
-        setCaseStudy(localCaseStudy);
-        setForm(localForm);
-        setLoading(false);
-        return;
-      }
-      
-      // Not in local auth mode, fetch from service with draft flag
-      // Fix: fetchCaseStudyFromService expects only slug parameter
+      // Fetch from Supabase service
       const { caseStudy: remoteCaseStudy, form: remoteForm } = await fetchCaseStudyFromService(slug);
       
       setCaseStudy(remoteCaseStudy);

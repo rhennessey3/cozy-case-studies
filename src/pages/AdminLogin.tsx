@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { ADMIN_PASSWORD, AUTH_STORAGE_KEY } from '@/constants/authConstants';
+import { ADMIN_PASSWORD } from '@/constants/authConstants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Info, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 
 const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -20,10 +21,6 @@ const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isSmallScreen = useMediaQuery('(max-width: 1000px)');
-  const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
-  
-  const isLocallyAuthenticated = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
-  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated) || isLocallyAuthenticated;
 
   useEffect(() => {
     setIsLoggingIn(false);
@@ -33,11 +30,10 @@ const AdminLogin: React.FC = () => {
   useEffect(() => {
     if (import.meta.env.DEV) {
       console.log(`Hint: The admin password is "${ADMIN_PASSWORD}"`);
-      console.log(`Authentication mode: ${isLocalAuthOnly ? 'Local Auth Only' : 'Supabase Auth'}`);
     }
-  }, [isLocalAuthOnly]);
+  }, []);
 
-  if (effectivelyAuthenticated) {
+  if (isAuthenticated) {
     return <Navigate to="/admin/case-studies" />;
   }
 
@@ -47,28 +43,6 @@ const AdminLogin: React.FC = () => {
     setLoginError(null);
     
     try {
-      if (isLocalAuthOnly || password === ADMIN_PASSWORD) {
-        if (isLocalAuthOnly || password === ADMIN_PASSWORD) {
-          localStorage.setItem(AUTH_STORAGE_KEY, 'true');
-          
-          toast({
-            title: "Login Successful",
-            description: "Welcome to the admin panel"
-          });
-          
-          if (!isLocalAuthOnly) {
-            try {
-              await login(password);
-            } catch (error) {
-              console.warn("Supabase login failed, but proceeding with local auth:", error);
-            }
-          }
-          
-          navigate('/admin/case-studies');
-          return;
-        }
-      }
-      
       const success = await login(password);
       
       if (success) {
@@ -128,16 +102,6 @@ const AdminLogin: React.FC = () => {
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
-              {isLocalAuthOnly && (
-                <Alert variant="info" className="bg-blue-50 border-blue-200">
-                  <Info className="h-4 w-4 text-blue-600" />
-                  <AlertTitle className="text-blue-700">Development Mode</AlertTitle>
-                  <AlertDescription className="text-blue-600">
-                    Using local authentication only. Supabase authentication is bypassed.
-                  </AlertDescription>
-                </Alert>
-              )}
-              
               {loginError && (
                 <Alert variant="destructive">
                   <AlertDescription>{loginError}</AlertDescription>

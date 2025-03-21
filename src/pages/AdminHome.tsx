@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import CaseStudyEditorLayout from '@/components/case-study-editor/CaseStudyEditorLayout';
@@ -8,26 +8,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { FileText, Settings, Home } from 'lucide-react';
 import { toast } from 'sonner';
-import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
 
 const AdminHome = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   
-  // Check local authentication as a fallback
-  const isLocallyAuthenticated = localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
-  const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
-  
-  // User is authenticated if they're authenticated via context OR locally authenticated in local auth mode
-  const effectivelyAuthenticated = isAuthenticated || (isLocalAuthOnly && isLocallyAuthenticated) || isLocallyAuthenticated;
-  
-  React.useEffect(() => {
-    // If not authenticated at all, redirect to login
-    if (!effectivelyAuthenticated) {
+  useEffect(() => {
+    // If not authenticated, redirect to login
+    if (!isAuthenticated) {
       navigate('/admin/login');
       toast.error('You must be logged in to access this page');
     }
-  }, [effectivelyAuthenticated, navigate]);
+  }, [isAuthenticated, navigate]);
 
   const handleLogout = async () => {
     await logout();
