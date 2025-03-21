@@ -43,6 +43,14 @@ export const useCaseStudySections = (caseStudyId: string | undefined, onlyPublis
         }
         
         console.log(`Sections fetched from database: ${sections?.length || 0}`, sections);
+        
+        if (sections) {
+          // Log more details about the sections
+          sections.forEach(section => {
+            console.log(`Section ${section.id} (${section.component}) - published: ${section.published}`);
+          });
+        }
+        
         setDbSections(sections || []);
         setLoading(false);
       } catch (err: any) {

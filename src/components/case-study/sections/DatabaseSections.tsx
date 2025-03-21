@@ -3,6 +3,7 @@ import React from 'react';
 import AlignmentSection from './AlignmentSection';
 import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
+import IntroductionSection from './IntroductionSection';
 
 interface DatabaseSectionsProps {
   sections: any[];
@@ -21,6 +22,16 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections }) => {
         const componentType = section.component;
         
         switch (componentType) {
+          case 'introduction':
+            return (
+              <IntroductionSection 
+                key={section.id}
+                title={section.title || 'Introduction'}
+                content={section.content || ''}
+                challengeContent={section.metadata?.challenge || ''}
+                approachContent={section.metadata?.approach || ''}
+              />
+            );
           case 'alignment':
             return (
               <AlignmentSection 
