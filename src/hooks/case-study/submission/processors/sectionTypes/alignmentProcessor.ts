@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 
@@ -20,17 +19,16 @@ export const processAlignmentSection = async (
   try {
     console.log(`Processing alignment section with published=${published}`);
     
-    // Check if this section already exists
-    const { data: existingSection, error: fetchError } = await supabase
+    // Check if this section already exists - but get ALL matching sections
+    const { data: existingSections, error: fetchError } = await supabase
       .from('case_study_sections')
       .select('id')
       .eq('case_study_id', caseStudyId)
-      .eq('component', 'alignment')
-      .maybeSingle();
+      .eq('component', 'alignment');
       
     if (fetchError) {
-      console.error('Error checking for existing alignment section:', fetchError);
-      throw new Error(`Failed to check for existing alignment section: ${fetchError.message}`);
+      console.error('Error checking for existing alignment sections:', fetchError);
+      throw new Error(`Failed to check for existing alignment sections: ${fetchError.message}`);
     }
     
     // Prepare the section data
@@ -49,17 +47,25 @@ export const processAlignmentSection = async (
     
     let result;
     
-    if (existingSection) {
-      // Update existing section
-      console.log(`Updating existing alignment section (ID: ${existingSection.id}) with published=${published}`);
+    if (existingSections && existingSections.length > 0) {
+      // If multiple sections exist, we'll update the first one and delete the others
+      console.log(`Found ${existingSections.length} existing alignment sections. Updating the first one and marking others for deletion.`);
       
+      // Keep the first one
+      const firstSection = existingSections[0];
       result = await supabase
         .from('case_study_sections')
         .update(sectionData)
-        .eq('id', existingSection.id);
+        .eq('id', firstSection.id);
       
       // Remove this ID from the set of sections to delete
-      existingSectionIds.delete(existingSection.id);
+      existingSectionIds.delete(firstSection.id);
+      
+      // Add all other alignment sections to the delete list
+      for (let i = 1; i < existingSections.length; i++) {
+        console.log(`Marking extra alignment section ${existingSections[i].id} for deletion`);
+        // Let the main section processor handle deletion
+      }
     } else {
       // Insert new section
       console.log(`Creating new alignment section with published=${published}`);

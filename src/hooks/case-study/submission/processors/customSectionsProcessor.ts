@@ -52,8 +52,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   const { data: existingSections, error: sectionsQueryError } = await supabase
     .from('case_study_sections')
     .select('id, component, published')
-    .eq('case_study_id', caseStudyId)
-    .in('component', ['alignment', 'carousel', 'fourParagraphs']);
+    .eq('case_study_id', caseStudyId);
     
   if (sectionsQueryError) {
     console.error('Error fetching existing sections:', sectionsQueryError);
