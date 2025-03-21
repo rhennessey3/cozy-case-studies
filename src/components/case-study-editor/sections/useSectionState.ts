@@ -9,7 +9,10 @@ import { useFormUpdate } from './hooks/useFormUpdate';
 import { addSection, removeSection } from './utils/sectionOperations';
 import { toast } from 'sonner';
 import { useSectionStorage } from '@/hooks/case-study-editor/sections/useSectionStorage';
-import { mapSectionWithOrdersToSectionResponses, mapSectionResponsesToSectionWithOrders } from '@/hooks/case-study-editor/sections/utils/sectionResponseMapper';
+import { 
+  mapSectionWithOrdersToSectionResponses, 
+  mapSectionResponsesToSectionWithOrders 
+} from '@/hooks/case-study-editor/sections/utils/sectionResponseMapper';
 
 export const useSectionState = (
   form: SectionFormState & { slug?: string }, 
@@ -33,6 +36,9 @@ export const useSectionState = (
     isLoading: supabaseLoading
   } = useSectionStorage(caseStudyId);
   
+  // Use refs for handler functions to ensure they don't change between renders
+  const isUpdatingRef = useRef(false);
+  
   // Initialize sections state
   const {
     sections,
@@ -42,9 +48,6 @@ export const useSectionState = (
     lastValidSectionsRef
   } = useSectionInitialization(form, sessionStorageKeyRef.current, supabaseSections, supabaseLoading);
   
-  // Use refs for handler functions to ensure they don't change between renders
-  const isUpdatingRef = useRef(false);
-  
   // Manage open/closed state for sections (UI state only)
   const {
     openSections,
@@ -53,28 +56,27 @@ export const useSectionState = (
     cleanupOrphanedSections
   } = useOpenSections(sessionStorageKeyRef.current);
   
-  // Convert sections to SectionWithOrder[] before passing to hooks that expect that type
-  const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(sections);
-  
   // Sync sections with open sections state
+  useSyncWithOpenSections(sections, cleanupOrphanedSections);
+  
+  // Sync sections with form.customSections
   useSectionSync(
-    sectionsWithOrder,
+    sections,
     form,
     (updatedSections) => {
-      // Convert back to the original type when setting
-      const convertedSections = updatedSections.map(section => {
-        if ('case_study_id' in section && section.case_study_id) {
+      // Ensure case_study_id is properly set when updating sections
+      if (Array.isArray(updatedSections)) {
+        const processedSections = updatedSections.map(section => {
+          if (caseStudyId && (!section.case_study_id || section.case_study_id === '')) {
+            return { ...section, case_study_id: caseStudyId };
+          }
           return section;
-        } else if (caseStudyId) {
-          // Ensure case_study_id is set for SectionResponse compatibility
-          return {
-            ...section,
-            case_study_id: caseStudyId
-          };
-        }
-        return section;
-      });
-      setSections(convertedSections);
+        });
+        setSections(processedSections);
+      } else {
+        // Handle the case where it might be a function
+        setSections(updatedSections);
+      }
     },
     lastValidSectionsRef,
     sessionStorageKeyRef.current
@@ -82,7 +84,7 @@ export const useSectionState = (
   
   // Update form with sections changes
   useFormUpdate(
-    sectionsWithOrder,
+    sections,
     initialized,
     isUpdatingRef,
     form,
@@ -100,14 +102,6 @@ export const useSectionState = (
       saveToSupabase(sectionResponses);
     }
   }, [sections, caseStudyId, initialized, saveToSupabase]);
-  
-  // Clean up orphaned openSection entries when sections change
-  useEffect(() => {
-    if (sections.length > 0) {
-      const validSectionIds = new Set(sections.map(section => section.id));
-      cleanupOrphanedSections(validSectionIds);
-    }
-  }, [sections, cleanupOrphanedSections]);
   
   // Use refs for handler functions to ensure they don't change between renders
   const handlersRef = useRef({
@@ -128,14 +122,14 @@ export const useSectionState = (
     
     moveSection: (id: string, direction: 'up' | 'down') => {
       console.log('Moving section:', id, direction);
-      const sectionsWithOrder = [...sections];
-      let currentIndex = sectionsWithOrder.findIndex(s => s.id === id);
+      const sectionsArray = [...sections];
+      let currentIndex = sectionsArray.findIndex(s => s.id === id);
       if (currentIndex === -1) return;
       
       let targetIndex;
       if (direction === 'up' && currentIndex > 0) {
         targetIndex = currentIndex - 1;
-      } else if (direction === 'down' && currentIndex < sectionsWithOrder.length - 1) {
+      } else if (direction === 'down' && currentIndex < sectionsArray.length - 1) {
         targetIndex = currentIndex + 1;
       } else {
         // Can't move in this direction
@@ -144,23 +138,23 @@ export const useSectionState = (
       }
       
       // Swap order values
-      const tempOrder = sectionsWithOrder[currentIndex].sort_order;
-      sectionsWithOrder[currentIndex].sort_order = sectionsWithOrder[targetIndex].sort_order;
-      sectionsWithOrder[targetIndex].sort_order = tempOrder;
+      const tempOrder = sectionsArray[currentIndex].sort_order;
+      sectionsArray[currentIndex].sort_order = sectionsArray[targetIndex].sort_order;
+      sectionsArray[targetIndex].sort_order = tempOrder;
       
-      // Update legacy order field as well
-      if ('order' in sectionsWithOrder[currentIndex]) {
-        sectionsWithOrder[currentIndex].order = sectionsWithOrder[currentIndex].sort_order;
+      // Update legacy order field as well if it exists
+      if ('order' in sectionsArray[currentIndex]) {
+        sectionsArray[currentIndex].order = sectionsArray[currentIndex].sort_order;
       }
-      if ('order' in sectionsWithOrder[targetIndex]) {
-        sectionsWithOrder[targetIndex].order = sectionsWithOrder[targetIndex].sort_order;
+      if ('order' in sectionsArray[targetIndex]) {
+        sectionsArray[targetIndex].order = sectionsArray[targetIndex].sort_order;
       }
       
       // Update state
-      setSections([...sectionsWithOrder]);
+      setSections([...sectionsArray]);
       
       // Update lastValidSections after moving
-      lastValidSectionsRef.current = [...sectionsWithOrder];
+      lastValidSectionsRef.current = [...sectionsArray];
       
       toast.success(`Section moved ${direction}`);
     },

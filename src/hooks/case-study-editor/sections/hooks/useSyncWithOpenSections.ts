@@ -3,11 +3,13 @@ import { useEffect } from 'react';
 import { SectionResponse } from '../types/sectionTypes';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
+type SectionType = SectionResponse | SectionWithOrder;
+
 /**
  * Hook to sync sections with open sections state to clean up orphaned entries
  */
 export const useSyncWithOpenSections = (
-  sections: SectionResponse[] | SectionWithOrder[],
+  sections: SectionType[],
   cleanupOrphanedSections: (validIds: Set<string>) => void
 ) => {
   useEffect(() => {
