@@ -23,6 +23,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   try {
     if (form.customSections) {
       customSections = JSON.parse(form.customSections);
+      console.log('Parsed custom sections before saving:', customSections);
     }
   } catch (e) {
     console.error("Failed to parse custom sections", e);
@@ -50,7 +51,7 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   // First, get all existing custom sections
   const { data: existingSections, error: sectionsQueryError } = await supabase
     .from('case_study_sections')
-    .select('id, component')
+    .select('id, component, published')
     .eq('case_study_id', caseStudyId)
     .in('component', ['alignment', 'carousel', 'fourParagraphs']);
     
@@ -59,6 +60,8 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
     toast.error(`Database error: ${sectionsQueryError.message}`);
     throw new Error(`Failed to fetch existing sections: ${sectionsQueryError.message}`);
   }
+  
+  console.log('Existing sections in database:', existingSections);
   
   const existingSectionIds = new Set(existingSections?.map(s => s.id) || []);
   
@@ -78,7 +81,9 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
       
       try {
         // Extract published state from the section
-        const published = section.published !== false; // Default to true if not specified
+        // Explicitly check if published is false (default is true if not specified)
+        const published = section.published !== false;
+        console.log(`Section ${section.id} (${section.type}) published state:`, published);
         
         if (section.type === 'alignment') {
           await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder, published);

@@ -6,80 +6,98 @@ export const processCarouselSection = async (
   form: CaseStudyForm,
   caseStudyId: string,
   existingSectionIds: Set<string>,
-  sortOrder: number,
-  published = true
+  sortOrder: number = 2,
+  published: boolean = true // Default to published if not specified
 ) => {
-  // Check if the carousel section already exists
-  const { data: existingSection, error: sectionQueryError } = await supabase
-    .from('case_study_sections')
-    .select('id')
-    .eq('case_study_id', caseStudyId)
-    .eq('component', 'carousel')
-    .maybeSingle();
-  
-  if (sectionQueryError && !sectionQueryError.message.includes('No rows found')) {
-    console.error('Error checking for carousel section:', sectionQueryError);
-    throw new Error(`Failed to check for carousel section: ${sectionQueryError.message}`);
+  // Validation: check if we have the essential data
+  if (!form.carouselItem1Title || !form.carouselItem1Content) {
+    console.log('Missing required data for carousel section, skipping');
+    return;
   }
   
-  // Prepare carousel items metadata
-  const metadata = {
-    items: [
-      {
-        title: form.carouselItem1Title || '',
-        content: form.carouselItem1Content || '',
-        image: form.carouselItem1Image || ''
-      },
-      {
-        title: form.carouselItem2Title || '',
-        content: form.carouselItem2Content || '',
-        image: form.carouselItem2Image || ''
-      },
-      {
-        title: form.carouselItem3Title || '',
-        content: form.carouselItem3Content || '',
-        image: form.carouselItem3Image || ''
-      }
-    ]
-  };
+  // Generate a stable ID based on section type and case study
+  const sectionId = `carousel-${caseStudyId}`;
   
-  if (existingSection) {
-    // Remove from the set of sections to delete
-    existingSectionIds.delete(existingSection.id);
+  try {
+    console.log(`Processing carousel section with published=${published}`);
     
-    // Update existing section
-    const { error: updateError } = await supabase
+    // Check if this section already exists
+    const { data: existingSection, error: fetchError } = await supabase
       .from('case_study_sections')
-      .update({
-        title: form.carouselTitle || '3 Column Slider',
-        content: '', // No main content for carousel
-        metadata,
-        sort_order: sortOrder,
-        published
-      })
-      .eq('id', existingSection.id);
-    
-    if (updateError) {
-      console.error('Error updating carousel section:', updateError);
-      throw new Error(`Failed to update carousel section: ${updateError.message}`);
+      .select('id')
+      .eq('case_study_id', caseStudyId)
+      .eq('component', 'carousel')
+      .maybeSingle();
+      
+    if (fetchError) {
+      console.error('Error checking for existing carousel section:', fetchError);
+      throw new Error(`Failed to check for existing carousel section: ${fetchError.message}`);
     }
-  } else {
-    // Create new section
-    const { error: insertError } = await supabase
-      .from('case_study_sections')
-      .insert({
-        case_study_id: caseStudyId,
-        component: 'carousel',
-        title: form.carouselTitle || '3 Column Slider',
-        content: '', // No main content for carousel
-        metadata,
-        sort_order: sortOrder,
-        published
-      });
     
-    if (insertError) {
-      console.error('Error creating carousel section:', insertError);
-      throw new Error(`Failed to create carousel section: ${insertError.message}`);
+    // Prepare the metadata for carousel items
+    const metadata = {
+      title: form.carouselTitle || 'Carousel',
+      items: [
+        {
+          title: form.carouselItem1Title,
+          content: form.carouselItem1Content,
+          image: form.carouselItem1Image || null
+        },
+        {
+          title: form.carouselItem2Title || '',
+          content: form.carouselItem2Content || '',
+          image: form.carouselItem2Image || null
+        },
+        {
+          title: form.carouselItem3Title || '',
+          content: form.carouselItem3Content || '',
+          image: form.carouselItem3Image || null
+        }
+      ]
+    };
+    
+    // Prepare the section data
+    const sectionData = {
+      case_study_id: caseStudyId,
+      component: 'carousel',
+      title: form.carouselTitle || 'Carousel',
+      content: 'Carousel section with multiple items',
+      image_url: form.carouselItem1Image || null, // Use first image as representative
+      sort_order: sortOrder,
+      published: published, // Explicitly include the published state
+      metadata: metadata
+    };
+    
+    let result;
+    
+    if (existingSection) {
+      // Update existing section
+      console.log(`Updating existing carousel section (ID: ${existingSection.id}) with published=${published}`);
+      
+      result = await supabase
+        .from('case_study_sections')
+        .update(sectionData)
+        .eq('id', existingSection.id);
+      
+      // Remove this ID from the set of sections to delete
+      existingSectionIds.delete(existingSection.id);
+    } else {
+      // Insert new section
+      console.log(`Creating new carousel section with published=${published}`);
+      
+      result = await supabase
+        .from('case_study_sections')
+        .insert(sectionData);
     }
+    
+    if (result.error) {
+      console.error('Error saving carousel section:', result.error);
+      throw new Error(`Failed to save carousel section: ${result.error.message}`);
+    }
+    
+    console.log('Carousel section processed successfully');
+  } catch (error: any) {
+    console.error('Error in processCarouselSection:', error);
+    throw new Error(`Failed to process carousel section: ${error.message}`);
   }
 };
