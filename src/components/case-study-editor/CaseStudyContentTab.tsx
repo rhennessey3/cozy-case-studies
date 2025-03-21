@@ -1,7 +1,7 @@
 
 import React from 'react';
 import EditorSectionManager from '@/components/case-study-editor/sections/EditorSectionManager';
-import { useSectionState } from './sections/useSectionState';
+import { useSectionState } from '@/hooks/case-study-editor/sections/useSectionState';
 import { useCarouselItems } from '@/hooks/case-study-editor/sections/useCarouselItems';
 import { useParagraphItems } from './sections/useParagraphItems';
 import { useFormKey } from '@/hooks/case-study-editor/sections/useFormKey';
@@ -11,12 +11,14 @@ interface CaseStudyContentTabProps {
   form: Partial<CaseStudyForm>;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
+  caseStudyId?: string | null; // Add this prop to accept caseStudyId
 }
 
 const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({ 
   form, 
   handleContentChange,
-  handleImageUploaded = () => {} 
+  handleImageUploaded = () => {},
+  caseStudyId // Include the new prop
 }) => {
   // Generate form key for stable rendering
   const formKey = useFormKey(form);
@@ -30,7 +32,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     removeSection,
     moveSection,
     toggleSectionPublished
-  } = useSectionState(form, handleContentChange);
+  } = useSectionState(form, handleContentChange, caseStudyId); // Pass caseStudyId here
   
   // Initialize carousel and paragraph items
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(
@@ -55,7 +57,8 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   React.useEffect(() => {
     console.log('CaseStudyContentTab rendering with form:', form);
     console.log('Sections:', sections);
-  }, [form, sections]);
+    console.log('Case Study ID:', caseStudyId);
+  }, [form, sections, caseStudyId]);
 
   return (
     <EditorSectionManager 

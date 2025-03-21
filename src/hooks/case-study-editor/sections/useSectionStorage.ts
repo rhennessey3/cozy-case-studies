@@ -41,7 +41,16 @@ export const useSectionStorage = (caseStudyId: string | null) => {
 
       if (data && data.metadata) {
         console.log('Loaded sections from Supabase:', data.metadata);
-        setSectionsState(data.metadata as SectionState);
+        // Using type assertion with 'as' after verifying the structure
+        const metadata = data.metadata as any;
+        if (metadata.sections && metadata.lastUpdated) {
+          setSectionsState({
+            sections: metadata.sections as SectionWithOrder[],
+            lastUpdated: metadata.lastUpdated as string
+          });
+        } else {
+          throw new Error('Invalid metadata structure');
+        }
       } else {
         setSectionsState({
           sections: [],
@@ -95,7 +104,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         result = await supabase
           .from('case_study_sections')
           .update({
-            metadata: sectionState,
+            metadata: sectionState as any, // Cast to any to bypass type checking temporarily
             content: 'Editor state storage',
             updated_at: new Date().toISOString()
           })
@@ -109,7 +118,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
             component: 'editor_state',
             title: 'Editor State',
             content: 'Editor state storage',
-            metadata: sectionState,
+            metadata: sectionState as any, // Cast to any to bypass type checking temporarily
             sort_order: 0,
             published: false // This is just internal state, should not be published
           });

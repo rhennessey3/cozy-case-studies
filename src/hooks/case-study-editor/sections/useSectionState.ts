@@ -13,11 +13,9 @@ import { useSectionStorage } from '@/hooks/case-study-editor/sections/useSection
 
 export const useSectionState = (
   form: SectionFormState & { slug?: string }, 
-  handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
+  handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void,
+  caseStudyId?: string | null // Accept caseStudyId as a parameter
 ) => {
-  // Get case study ID from form slug (if available)
-  const caseStudyId = useRef<string | null>(null);
-  
   // Use session storage key for UI state only (not for section data)
   const sessionStorageKey = `case-study-ui-state-${form.slug || 'new-case-study'}`;
   const sessionStorageKeyRef = useRef(sessionStorageKey);
@@ -27,7 +25,7 @@ export const useSectionState = (
     sections: storageStateSections, 
     setSections: saveToStorage,
     isLoading: storageLoading 
-  } = useSectionStorage(caseStudyId.current);
+  } = useSectionStorage(caseStudyId || null);
   
   // Manage open/closed state for sections (UI state only)
   const {
@@ -64,45 +62,15 @@ export const useSectionState = (
     handleContentChange
   );
   
-  // Effect to update caseStudyId ref when form.slug changes
-  useEffect(() => {
-    // Only attempt to get caseStudyId if we have a valid slug (not new or empty)
-    if (form.slug && form.slug !== 'new-case-study' && form.slug !== 'new') {
-      const fetchCaseStudyId = async () => {
-        try {
-          const { data, error } = await supabase
-            .from('case_studies')
-            .select('id')
-            .eq('slug', form.slug)
-            .maybeSingle();
-            
-          if (error) {
-            console.error('Error fetching case study ID:', error);
-            return;
-          }
-          
-          if (data) {
-            console.log(`Found case study ID for slug ${form.slug}:`, data.id);
-            caseStudyId.current = data.id;
-          }
-        } catch (e) {
-          console.error('Failed to fetch case study ID:', e);
-        }
-      };
-      
-      fetchCaseStudyId();
-    }
-  }, [form.slug]);
-  
   // Add debugging to track section changes
   useEffect(() => {
     console.log('useSectionState: Sections updated', sections);
     
     // Save to Supabase if we have sections and a case study ID
-    if (sections.length > 0 && caseStudyId.current && initialized) {
+    if (sections.length > 0 && caseStudyId && initialized) {
       saveToStorage(sections);
     }
-  }, [sections, initialized, saveToStorage]);
+  }, [sections, initialized, saveToStorage, caseStudyId]);
   
   // Clean up orphaned openSection entries when sections change
   useEffect(() => {
@@ -120,8 +88,8 @@ export const useSectionState = (
       lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
       
       // If we have a valid case study ID, log that we're adding to Supabase
-      if (caseStudyId.current) {
-        console.log(`Adding section for case study ID: ${caseStudyId.current}`);
+      if (caseStudyId) {
+        console.log(`Adding section for case study ID: ${caseStudyId}`);
       }
     },
     
@@ -163,13 +131,13 @@ export const useSectionState = (
       });
       
       // For existing case studies, try to update the published state in Supabase directly
-      if (caseStudyId.current) {
+      if (caseStudyId) {
         try {
           // First find the corresponding database section
           const { data: sectionData, error: sectionError } = await supabase
             .from('case_study_sections')
             .select('id')
-            .eq('case_study_id', caseStudyId.current)
+            .eq('case_study_id', caseStudyId)
             .eq('component', sections.find(s => s.id === id)?.type || '')
             .maybeSingle();
             

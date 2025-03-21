@@ -27,6 +27,7 @@ interface CaseStudyEditorContentProps {
   cancelHref?: string;
   onCancel?: () => void;
   activeTab: string;
+  caseStudyId?: string | null; // Add this prop to accept caseStudyId
 }
 
 const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
@@ -46,7 +47,8 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   showDelete = false,
   cancelHref,
   onCancel,
-  activeTab
+  activeTab,
+  caseStudyId // Include the prop here
 }) => {
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
   const [authError, setAuthError] = useState<string | null>(null);
@@ -138,6 +140,7 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
             form={form} 
             handleContentChange={handleContentChange} 
             handleImageUploaded={handleImageUploaded}
+            caseStudyId={caseStudyId} // Pass the caseStudyId to CaseStudyContentTab
           />
         </TabsContent>
       </Tabs>
