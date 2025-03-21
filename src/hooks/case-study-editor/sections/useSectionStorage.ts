@@ -44,9 +44,14 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         // Using type assertion with 'as' after verifying the structure
         const metadata = data.metadata as any;
         if (metadata.sections && metadata.lastUpdated) {
-          // Filter out any 'editor_state' sections that might have been saved
+          // Filter out any sections with component type 'editor_state' using string comparison
+          // instead of comparing with the SectionWithOrder['type'] union
           const filteredSections = metadata.sections.filter(
-            (section: SectionWithOrder) => section.type !== 'editor_state'
+            (section: SectionWithOrder) => {
+              // We use a string literal here instead of comparing with the type
+              const componentName = (section as any).component;
+              return componentName !== 'editor_state';
+            }
           );
           
           setSectionsState({
@@ -85,8 +90,11 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       setError(null);
       console.log(`Saving ${sections.length} sections for case study ID: ${caseStudyId}`);
       
-      // Filter out any potential 'editor_state' entries
-      const filteredSections = sections.filter(section => section.type !== 'editor_state');
+      // Filter out any potential 'editor_state' entries using string comparison instead of type comparison
+      const filteredSections = sections.filter(section => {
+        const componentName = (section as any).component;
+        return componentName !== 'editor_state';
+      });
 
       const sectionState: SectionState = {
         sections: filteredSections,
