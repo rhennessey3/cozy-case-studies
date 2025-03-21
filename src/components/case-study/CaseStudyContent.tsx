@@ -10,6 +10,9 @@ import PrototypingSection from './PrototypingSection';
 import ContactSection from '@/components/sections/ContactSection';
 import CaseStudyHero from './CaseStudyHero';
 import { toast } from 'sonner';
+import AlignmentSection from './sections/AlignmentSection';
+import CarouselSection from './sections/CarouselSection';
+import FourParagraphsSection from './sections/FourParagraphsSection';
 
 interface CaseStudyContentProps {
   caseStudy: CaseStudy;
@@ -54,10 +57,76 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
         const componentType = section.type;
         
         switch (componentType) {
-          case 'intro':
           case 'introduction':
-            // Only render if we need the introduction section
             sections.push(<CaseStudyIntro key={section.id} caseStudy={caseStudy} />);
+            break;
+          case 'alignment':
+            sections.push(
+              <AlignmentSection 
+                key={section.id}
+                title={caseStudy.subhead || ''}
+                content={caseStudy.introductionParagraph || ''}
+                imageUrl={caseStudy.alignmentImage || ''}
+                alignment={caseStudy.alignment || 'left'}
+              />
+            );
+            break;
+          case 'carousel':
+            if (caseStudy.carouselItem1Title) {
+              sections.push(
+                <CarouselSection 
+                  key={section.id}
+                  title={caseStudy.carouselTitle || '3 Column Slider'}
+                  items={[
+                    {
+                      title: caseStudy.carouselItem1Title || '',
+                      content: caseStudy.carouselItem1Content || '',
+                      image: caseStudy.carouselItem1Image || ''
+                    },
+                    {
+                      title: caseStudy.carouselItem2Title || '',
+                      content: caseStudy.carouselItem2Content || '',
+                      image: caseStudy.carouselItem2Image || ''
+                    },
+                    {
+                      title: caseStudy.carouselItem3Title || '',
+                      content: caseStudy.carouselItem3Content || '',
+                      image: caseStudy.carouselItem3Image || ''
+                    }
+                  ]}
+                />
+              );
+            }
+            break;
+          case 'fourParagraphs':
+            if (caseStudy.fourPara1Title) {
+              sections.push(
+                <FourParagraphsSection 
+                  key={section.id}
+                  title={caseStudy.fourParaTitle || '4 Small Paragraphs'}
+                  subtitle={caseStudy.fourParaSubtitle || 'With Photo'}
+                  imageUrl={caseStudy.fourParaImage || ''}
+                  paragraphs={[
+                    {
+                      title: caseStudy.fourPara1Title || '',
+                      content: caseStudy.fourPara1Content || ''
+                    },
+                    {
+                      title: caseStudy.fourPara2Title || '',
+                      content: caseStudy.fourPara2Content || ''
+                    },
+                    {
+                      title: caseStudy.fourPara3Title || '',
+                      content: caseStudy.fourPara3Content || ''
+                    },
+                    {
+                      title: caseStudy.fourPara4Title || '',
+                      content: caseStudy.fourPara4Content || ''
+                    }
+                  ]}
+                />
+              );
+            }
             break;
           case 'research':
             sections.push(<UserResearchSection key={section.id} caseStudy={caseStudy} />);
@@ -74,18 +143,14 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
           case 'prototype':
             sections.push(<PrototypingSection key={section.id} caseStudy={caseStudy} />);
             break;
-          // Handle other custom section types here
           default:
             console.log(`Custom section type not recognized: ${componentType}`);
             break;
         }
       });
       
-      // Log the sections we've prepared for rendering
       console.log(`Prepared ${sections.length} sections for rendering from custom sections`);
     } else {
-      // Important change: Don't automatically add all sections as fallback
-      // This was causing deleted sections to still appear
       console.log("No custom sections found, NOT using fallback sections");
     }
     
