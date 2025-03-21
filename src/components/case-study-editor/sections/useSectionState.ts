@@ -42,6 +42,9 @@ export const useSectionState = (
     lastValidSectionsRef
   } = useSectionInitialization(form, sessionStorageKeyRef.current, supabaseSections, supabaseLoading);
   
+  // Use refs for handler functions to ensure they don't change between renders
+  const isUpdatingRef = useRef(false);
+  
   // Manage open/closed state for sections (UI state only)
   const {
     openSections,
@@ -50,7 +53,7 @@ export const useSectionState = (
     cleanupOrphanedSections
   } = useOpenSections(sessionStorageKeyRef.current);
   
-  // Convert sections to SectionWithOrder[] before passing to useSyncWithOpenSections
+  // Convert sections to SectionWithOrder[] before passing to hooks that expect that type
   const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(sections);
   
   // Sync sections with open sections state
@@ -59,7 +62,19 @@ export const useSectionState = (
     form,
     (updatedSections) => {
       // Convert back to the original type when setting
-      setSections(updatedSections);
+      const convertedSections = updatedSections.map(section => {
+        if ('case_study_id' in section && section.case_study_id) {
+          return section;
+        } else if (caseStudyId) {
+          // Ensure case_study_id is set for SectionResponse compatibility
+          return {
+            ...section,
+            case_study_id: caseStudyId
+          };
+        }
+        return section;
+      });
+      setSections(convertedSections);
     },
     lastValidSectionsRef,
     sessionStorageKeyRef.current
@@ -73,9 +88,6 @@ export const useSectionState = (
     form,
     handleContentChange
   );
-  
-  // Use refs for handler functions to ensure they don't change between renders
-  const isUpdatingRef = useRef(false);
   
   // Add debugging to track section changes
   useEffect(() => {

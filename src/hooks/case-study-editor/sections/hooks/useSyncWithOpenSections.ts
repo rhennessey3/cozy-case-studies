@@ -2,7 +2,6 @@
 import { useEffect } from 'react';
 import { SectionResponse } from '../types/sectionTypes';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
-import { mapSectionResponsesToSectionWithOrders } from '../utils/sectionResponseMapper';
 
 /**
  * Hook to sync sections with open sections state to clean up orphaned entries

@@ -46,7 +46,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     cleanupOrphanedSections
   } = useOpenSections();
   
-  // Sync sections with open sections state by converting SectionResponse[] to SectionWithOrder[]
+  // Sync sections with open sections state (works with both types)
   useSyncWithOpenSections(sections, cleanupOrphanedSections);
   
   // Use refs for handler functions to ensure they don't change between renders
@@ -76,12 +76,9 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   
   // For moveSection, we need to handle the type conversion
   const moveSectionInternal = useMoveSectionHook(
-    mapSectionResponsesToSectionWithOrders(sections), 
-    (updatedSections: SectionWithOrder[]) => {
-      // Convert back to SectionResponse[] when setting sections
-      if (caseStudyId) {
-        setSections(mapSectionWithOrdersToSectionResponses(updatedSections, caseStudyId));
-      }
+    sections, 
+    (updatedSections: SectionResponse[]) => {
+      setSections(updatedSections);
     }
   );
   
