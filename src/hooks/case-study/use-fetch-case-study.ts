@@ -28,7 +28,8 @@ export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => 
     try {
       // Check if we're in local auth mode
       if (isLocalAuthMode()) {
-        const { caseStudy: localCaseStudy, form: localForm } = fetchLocalCaseStudy(slug, isDraft);
+        // Fix: fetchLocalCaseStudy expects only slug parameter
+        const { caseStudy: localCaseStudy, form: localForm } = fetchLocalCaseStudy(slug);
         
         setCaseStudy(localCaseStudy);
         setForm(localForm);
@@ -37,7 +38,8 @@ export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => 
       }
       
       // Not in local auth mode, fetch from service with draft flag
-      const { caseStudy: remoteCaseStudy, form: remoteForm } = await fetchCaseStudyFromService(slug, isDraft);
+      // Fix: fetchCaseStudyFromService expects only slug parameter
+      const { caseStudy: remoteCaseStudy, form: remoteForm } = await fetchCaseStudyFromService(slug);
       
       setCaseStudy(remoteCaseStudy);
       setForm(remoteForm);

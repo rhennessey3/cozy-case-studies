@@ -58,7 +58,8 @@ export const useFormSubmitHandling = (
           }
         }
         
-        const result = saveLocalCaseStudy(form, isNew, slug, isDraft);
+        // Fix: Remove isDraft parameter as saveLocalCaseStudy expects only 3 args
+        const result = saveLocalCaseStudy(form, isNew, slug);
         
         toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (${isDraft ? 'Draft' : 'Live'} Mode)`);
         
@@ -95,7 +96,8 @@ export const useFormSubmitHandling = (
       
       // Process database operations
       try {
-        const result = await processSupabaseDatabase(form, isNew, slug, isDraft);
+        // Fix: Remove isDraft parameter as processSupabaseDatabase expects only 3 args
+        const result = await processSupabaseDatabase(form, isNew, slug);
         
         toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (${isDraft ? 'Draft' : 'Live'} Mode)`);
         
