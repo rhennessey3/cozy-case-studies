@@ -51,10 +51,20 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   handleImageUploaded = () => {} 
 }) => {
   // Generate a unique form key based on form content to help with re-rendering
+  // Use only customSections for the key to avoid unnecessary re-renders
   const formKey = useMemo(() => {
-    const timestamp = Date.now();
-    return `form-${timestamp}`;
-  }, []);
+    try {
+      if (form.customSections) {
+        // Extract sections IDs to create a stable key
+        const sections = JSON.parse(form.customSections || '[]');
+        return `sections-${sections.map((s: any) => s.id).join('-')}`;
+      }
+    } catch (e) {
+      console.error("Error parsing customSections for key", e);
+    }
+    // Fallback to timestamp if parsing fails
+    return `form-${Date.now()}`;
+  }, [form.customSections]);
   
   const { 
     sections, 

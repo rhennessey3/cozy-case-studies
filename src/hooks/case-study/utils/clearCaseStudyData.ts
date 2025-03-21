@@ -15,3 +15,30 @@ export const clearLocalCaseStudyData = (): void => {
     toast.error('Failed to clear local case study data');
   }
 };
+
+/**
+ * Clear data for a specific case study from local storage
+ */
+export const clearSpecificCaseStudy = (slug: string): void => {
+  try {
+    // Get current case studies
+    const storedData = localStorage.getItem(LOCAL_CASE_STUDIES_KEY);
+    if (!storedData) {
+      toast.info('No case study data found to clear');
+      return;
+    }
+    
+    // Parse and filter out the specific case study
+    const caseStudies = JSON.parse(storedData);
+    const filteredStudies = caseStudies.filter((study: any) => study.slug !== slug);
+    
+    // Save the filtered list back to local storage
+    localStorage.setItem(LOCAL_CASE_STUDIES_KEY, JSON.stringify(filteredStudies));
+    
+    toast.success(`Case study "${slug}" has been cleared`);
+    console.log(`Case study "${slug}" has been cleared from local storage`);
+  } catch (error) {
+    console.error(`Error clearing case study "${slug}":`, error);
+    toast.error(`Failed to clear case study "${slug}"`);
+  }
+};

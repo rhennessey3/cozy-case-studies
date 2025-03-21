@@ -5,16 +5,23 @@ import { SectionFormState, initializeDefaultSections, getInitialOpenSectionsStat
 import { addSection, removeSection, moveSection } from './utils/sectionOperations';
 
 export const useSectionState = (form: SectionFormState, handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void) => {
+  // Reference to track if we've initialized from custom sections
+  const initializedFromCustomSections = useRef(false);
+  
   // Parse custom sections from form if available
   const [sections, setSections] = useState<SectionWithOrder[]>(() => {
     try {
       if (form.customSections) {
         const parsedSections = JSON.parse(form.customSections);
-        // Ensure all sections have order property
-        return parsedSections.map((section: any, index: number) => ({
-          ...section,
-          order: section.order !== undefined ? section.order : index + 1
-        }));
+        if (Array.isArray(parsedSections) && parsedSections.length > 0) {
+          initializedFromCustomSections.current = true;
+          console.log("Initializing sections from customSections:", parsedSections.length);
+          // Ensure all sections have order property
+          return parsedSections.map((section: any, index: number) => ({
+            ...section,
+            order: section.order !== undefined ? section.order : index + 1
+          }));
+        }
       }
     } catch (e) {
       console.error("Failed to parse custom sections", e);
@@ -26,29 +33,37 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   
   // Track if sections have been initialized
-  const [initialized, setInitialized] = useState(false);
+  const [initialized, setInitialized] = useState(initializedFromCustomSections.current);
   
   // Reference to the previous customSections value
   const prevCustomSectionsRef = useRef(form.customSections);
   
   // Use a ref to track if we're currently updating to avoid loops
   const isUpdatingRef = useRef(false);
+  
+  // Store the last valid sections to prevent reverting to default
+  const lastValidSectionsRef = useRef<SectionWithOrder[]>(sections);
 
   // Initialize the default sections if none are saved
   useEffect(() => {
     if (sections.length === 0 && !initialized) {
+      // Only create default sections if we didn't initialize from custom sections
       const defaultSections = initializeDefaultSections(form);
       setSections(defaultSections);
+      lastValidSectionsRef.current = defaultSections;
       
       // Auto-open all sections by default for better UX
       const newOpenSections = getInitialOpenSectionsState(defaultSections);
       setOpenSections(newOpenSections);
       setInitialized(true);
+    } else if (sections.length > 0 && !initialized) {
+      // If we have sections but aren't initialized, update the last valid ref
+      lastValidSectionsRef.current = sections;
+      setInitialized(true);
     }
   }, [sections.length, initialized, form]);
 
-  // Sync sections when form.customSections changes, but only if it's not empty
-  // and different from current sections to prevent infinite loops
+  // Sync sections when form.customSections changes, but only if it's actually different
   useEffect(() => {
     if (form.customSections && 
         form.customSections !== prevCustomSectionsRef.current && 
@@ -57,22 +72,32 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
       try {
         const parsedSections = JSON.parse(form.customSections);
         
-        // Only update if something actually changed and we have sections
-        if (parsedSections.length > 0) {
-          console.log("Updating sections from form data");
+        // Check if we actually have new sections that are different
+        if (Array.isArray(parsedSections)) {
+          // Only update if the JSON is different or we don't have sections yet
+          const currentJson = JSON.stringify(sections);
+          const newJson = JSON.stringify(parsedSections);
           
-          // Mark that we're updating to prevent loops
-          isUpdatingRef.current = true;
-          
-          setSections(parsedSections.map((section: any, index: number) => ({
-            ...section,
-            order: section.order !== undefined ? section.order : index + 1
-          })));
-          
-          // After updating, allow future updates
-          setTimeout(() => {
-            isUpdatingRef.current = false;
-          }, 100);
+          if (currentJson !== newJson || sections.length === 0) {
+            console.log("Updating sections from form data - significant change detected");
+            
+            // Mark that we're updating to prevent loops
+            isUpdatingRef.current = true;
+            
+            // Update sections with proper ordering
+            const newSections = parsedSections.map((section: any, index: number) => ({
+              ...section,
+              order: section.order !== undefined ? section.order : index + 1
+            }));
+            
+            setSections(newSections);
+            lastValidSectionsRef.current = newSections;
+            
+            // After updating, allow future updates
+            setTimeout(() => {
+              isUpdatingRef.current = false;
+            }, 100);
+          }
         }
       } catch (e) {
         console.error("Failed to parse updated custom sections", e);
@@ -81,10 +106,9 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
       // Update the ref to the current value
       prevCustomSectionsRef.current = form.customSections;
     }
-  }, [form.customSections]);
+  }, [form.customSections, sections]);
 
   // Utility function to clean up any orphaned openSection entries
-  // This ensures we don't have stale references to removed sections
   useEffect(() => {
     if (sections.length > 0) {
       // Get all valid section IDs
@@ -117,31 +141,48 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
   };
 
   const handleAddSection = (type: SectionWithOrder['type']) => {
-    addSection(sections, type, setSections, setOpenSections);
+    const newSection = addSection(sections, type, setSections, setOpenSections);
+    lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
   };
 
   const handleRemoveSection = (id: string) => {
     removeSection(id, setSections, setOpenSections);
+    // Update lastValidSections after removal
+    lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
+      section => section.id !== id
+    );
   };
 
   const handleMoveSection = (id: string, direction: 'up' | 'down') => {
     moveSection(id, direction, setSections);
+    // Update lastValidSections after moving - reordering happens in moveSection
+    const updatedSections = [...sections];
+    updatedSections.sort((a, b) => a.order - b.order);
+    lastValidSectionsRef.current = updatedSections;
   };
   
   // Debounced update to form whenever sections change
   useEffect(() => {
-    if (initialized && sections.length > 0 && !isUpdatingRef.current) {
+    if (initialized && sections.length >= 0 && !isUpdatingRef.current) {
       const timer = setTimeout(() => {
         isUpdatingRef.current = true;
         
-        const event = {
-          target: {
-            name: 'customSections',
-            value: JSON.stringify(sections)
-          }
-        } as React.ChangeEvent<HTMLInputElement>;
+        // Store sections in a structured format
+        const sectionsToStore = JSON.stringify(sections);
         
-        handleContentChange(event);
+        // Only update if the value actually changed
+        if (sectionsToStore !== form.customSections) {
+          console.log(`Updating form.customSections with ${sections.length} sections`);
+          
+          const event = {
+            target: {
+              name: 'customSections',
+              value: sectionsToStore
+            }
+          } as React.ChangeEvent<HTMLInputElement>;
+          
+          handleContentChange(event);
+        }
         
         // Reset the updating flag after a delay
         setTimeout(() => {
@@ -151,7 +192,7 @@ export const useSectionState = (form: SectionFormState, handleContentChange: (e:
       
       return () => clearTimeout(timer);
     }
-  }, [sections, handleContentChange, initialized]);
+  }, [sections, handleContentChange, initialized, form.customSections]);
 
   return {
     sections,
