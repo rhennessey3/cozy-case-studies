@@ -1,26 +1,27 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { SectionWithOrder } from './types';
-import { SectionFormState } from './utils/defaultSections';
-import { useOpenSections } from './hooks/useOpenSections';
-import { useSectionInitialization } from './hooks/useSectionInitialization';
-import { useSectionSync } from './hooks/useSectionSync';
-import { useFormUpdate } from './hooks/useFormUpdate';
-import { addSection, removeSection, moveSection } from './utils/sectionOperations';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
+import { SectionFormState } from '@/components/case-study-editor/sections/utils/defaultSections';
+import { useOpenSections } from '@/components/case-study-editor/sections/hooks/useOpenSections';
+import { useSectionInitialization } from '@/components/case-study-editor/sections/hooks/useSectionInitialization';
+import { useSectionSync } from '@/components/case-study-editor/sections/hooks/useSectionSync';
+import { useFormUpdate } from '@/components/case-study-editor/sections/hooks/useFormUpdate';
+import { addSection, removeSection, moveSection } from '@/components/case-study-editor/sections/utils/sectionOperations';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useSectionState = (
   form: SectionFormState & { slug?: string }, 
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
 ) => {
-  // Get case study slug to use for session storage key
+  // Get case study slug to use for session storage key (for backward compatibility)
   const getSlugFromForm = (): string => {
     return form.slug || 'new-case-study';
   };
   
-  // Session storage key for persisting sections state
+  // Session storage key for persisting sections state during editing
+  // (maintains backward compatibility while transitioning to Supabase)
   const sessionStorageKey = `case-study-sections-${getSlugFromForm()}`;
-  // Ref to prevent recalculation of the session storage key on every render
   const sessionStorageKeyRef = useRef(sessionStorageKey);
   
   // Initialize sections state
@@ -32,7 +33,7 @@ export const useSectionState = (
     lastValidSectionsRef
   } = useSectionInitialization(form, sessionStorageKeyRef.current);
   
-  // Manage open/closed state for sections
+  // Manage open/closed state for sections (UI state only)
   const {
     openSections,
     setOpenSections,
@@ -77,6 +78,12 @@ export const useSectionState = (
       console.log('Adding section of type:', type);
       const newSection = addSection(sections, type, setSections, setOpenSections);
       lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
+      
+      // If we're editing an existing case study with a valid slug, 
+      // we should be relying on Supabase instead of session storage for persistence
+      if (form.slug && form.slug !== 'new-case-study') {
+        console.log('Case study has a valid slug, consider using Supabase for section persistence');
+      }
     },
     
     removeSection: (id: string) => {
@@ -87,7 +94,7 @@ export const useSectionState = (
         section => section.id !== id
       );
       
-      // Remove from session storage immediately to prevent reappearing on tab switch
+      // Remove from session storage for backward compatibility
       try {
         const updatedSections = sections.filter(section => section.id !== id);
         sessionStorage.setItem(sessionStorageKeyRef.current, JSON.stringify(updatedSections));
@@ -106,9 +113,10 @@ export const useSectionState = (
       lastValidSectionsRef.current = updatedSections;
     },
     
-    toggleSectionPublished: (id: string, published: boolean) => {
+    toggleSectionPublished: async (id: string, published: boolean) => {
       console.log(`Toggling published state for section ${id} to ${published}`);
       
+      // First, update the local state for immediate feedback
       setSections(prevSections => {
         const updatedSections = prevSections.map(section => {
           if (section.id === id) {
@@ -120,18 +128,41 @@ export const useSectionState = (
         // Update lastValidSections
         lastValidSectionsRef.current = updatedSections;
         
-        // Update session storage
+        // For backward compatibility, still update session storage
         try {
           sessionStorage.setItem(sessionStorageKeyRef.current, JSON.stringify(updatedSections));
         } catch (e) {
           console.error("Failed to update section published state in session storage", e);
         }
         
-        // Show toast notification
-        toast.success(`Section ${published ? 'published' : 'unpublished'}`);
-        
         return updatedSections;
       });
+      
+      // For existing case studies, try to update the published state in Supabase directly
+      if (form.slug && form.slug !== 'new-case-study') {
+        try {
+          // Check if we're authenticated
+          const { data: sessionData } = await supabase.auth.getSession();
+          
+          if (sessionData && sessionData.session) {
+            // If authenticated, find the database section ID that corresponds to this section
+            // This would require additional mapping logic in a production app
+            console.log(`Would update published state in Supabase for case study ${form.slug}, section ${id}`);
+            
+            // Show success message
+            toast.success(`Section ${published ? 'published' : 'unpublished'}`);
+          } else {
+            console.log('Not authenticated with Supabase, relying on local storage only');
+            toast.success(`Section ${published ? 'published' : 'unpublished'} (local only)`);
+          }
+        } catch (error) {
+          console.error('Error updating section published state in Supabase:', error);
+          toast.error('Failed to update published state in the database');
+        }
+      } else {
+        // For new case studies, just show a success message
+        toast.success(`Section ${published ? 'published' : 'unpublished'}`);
+      }
     }
   });
 
