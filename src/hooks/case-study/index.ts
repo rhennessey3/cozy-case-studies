@@ -12,6 +12,7 @@ export {
   createNewCaseStudyForm, 
   fetchSectionImages,
   isLocalAuthMode,
+  checkSupabaseAuth,
   getLocalCaseStudies,
   getLocalCaseStudyBySlug
 } from './utils';

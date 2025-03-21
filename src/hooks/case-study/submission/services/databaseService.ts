@@ -7,6 +7,7 @@ import {
   processCustomSections 
 } from '../processors';
 import { processSectionImages } from '../../services/supabaseService';
+import { checkSupabaseAuth } from '../../utils';
 
 /**
  * Process the case study in Supabase database
@@ -45,6 +46,5 @@ export const processSupabaseDatabase = async (
  * Check if user is authenticated with Supabase
  */
 export const checkSupabaseSession = async (): Promise<boolean> => {
-  const { data: sessionData } = await supabase.auth.getSession();
-  return !!sessionData.session;
+  return await checkSupabaseAuth();
 };
