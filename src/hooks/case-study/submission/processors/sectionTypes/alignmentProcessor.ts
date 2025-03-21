@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 
@@ -31,7 +32,7 @@ export const processAlignmentSection = async (
       throw new Error(`Failed to check for existing alignment sections: ${fetchError.message}`);
     }
     
-    // Prepare the section data
+    // Prepare the section data - ensure all values are included
     const sectionData = {
       case_study_id: caseStudyId,
       component: 'alignment',
@@ -44,6 +45,14 @@ export const processAlignmentSection = async (
         alignment: form.alignment || 'left'
       }
     };
+    
+    // Log for debugging
+    console.log('Saving alignment section with data:', {
+      title: sectionData.title,
+      content_length: sectionData.content?.length || 0,
+      image_url: sectionData.image_url ? 'Present' : 'Missing',
+      alignment: sectionData.metadata.alignment
+    });
     
     let result;
     

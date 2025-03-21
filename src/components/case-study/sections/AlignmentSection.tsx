@@ -17,19 +17,31 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
   return (
     <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
-        <div className={`flex flex-col ${alignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center`}>
+        <div className={`flex flex-col ${alignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 md:gap-12 items-center`}>
           <div className="w-full md:w-1/2">
-            {imageUrl && (
+            {imageUrl ? (
               <img 
                 src={imageUrl} 
-                alt={title} 
+                alt={title || 'Section image'} 
                 className="w-full h-auto object-cover rounded-lg shadow-md"
               />
+            ) : (
+              <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                <p className="text-gray-500 text-sm">No image provided</p>
+              </div>
             )}
           </div>
-          <div className="w-full md:w-1/2">
-            {title && <h2 className="text-3xl md:text-4xl font-bold mb-6">{title}</h2>}
-            {content && <div className="prose max-w-none">{content}</div>}
+          <div className="w-full md:w-1/2 space-y-4">
+            {title && <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">{title}</h2>}
+            {content ? (
+              <div className="prose max-w-none">
+                {content.split('\n').map((paragraph, i) => (
+                  paragraph ? <p key={i} className="text-gray-700">{paragraph}</p> : null
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 italic">No content provided</p>
+            )}
           </div>
         </div>
       </div>
