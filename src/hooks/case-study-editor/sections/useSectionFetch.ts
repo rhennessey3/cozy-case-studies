@@ -23,6 +23,7 @@ export const useSectionFetch = (caseStudyId: string | null) => {
         .from('case_study_sections')
         .select('*')
         .eq('case_study_id', caseStudyId)
+        .neq('component', 'editor_state') // Exclude editor_state components
         .order('sort_order', { ascending: true });
       
       if (error) {

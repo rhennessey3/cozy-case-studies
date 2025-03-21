@@ -44,8 +44,13 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         // Using type assertion with 'as' after verifying the structure
         const metadata = data.metadata as any;
         if (metadata.sections && metadata.lastUpdated) {
+          // Filter out any 'editor_state' sections that might have been saved
+          const filteredSections = metadata.sections.filter(
+            (section: SectionWithOrder) => section.type !== 'editor_state'
+          );
+          
           setSectionsState({
-            sections: metadata.sections,
+            sections: filteredSections,
             lastUpdated: metadata.lastUpdated
           });
         } else {
@@ -79,9 +84,12 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     try {
       setError(null);
       console.log(`Saving ${sections.length} sections for case study ID: ${caseStudyId}`);
+      
+      // Filter out any potential 'editor_state' entries
+      const filteredSections = sections.filter(section => section.type !== 'editor_state');
 
       const sectionState: SectionState = {
-        sections,
+        sections: filteredSections,
         lastUpdated: new Date().toISOString()
       };
 

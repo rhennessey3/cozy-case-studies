@@ -1,7 +1,10 @@
 
 import { SectionResponse } from '../types/sectionTypes';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
-import { mapComponentTypeToSectionType } from './sectionTypeMapping';
+import { 
+  mapComponentTypeToSectionType, 
+  getSectionDisplayName 
+} from './sectionTypeMapping';
 
 /**
  * Maps a section response from the database to a SectionWithOrder object
@@ -10,10 +13,11 @@ import { mapComponentTypeToSectionType } from './sectionTypeMapping';
 export const mapSectionResponseToSectionWithOrder = (
   sectionResponse: SectionResponse
 ): SectionWithOrder => {
+  const sectionType = mapComponentTypeToSectionType(sectionResponse.component);
   return {
     id: sectionResponse.id,
-    type: mapComponentTypeToSectionType(sectionResponse.component),
-    name: sectionResponse.title || 'Untitled Section',
+    type: sectionType,
+    name: sectionResponse.title || getSectionDisplayName(sectionType),
     order: sectionResponse.sort_order,
     published: sectionResponse.published
   };

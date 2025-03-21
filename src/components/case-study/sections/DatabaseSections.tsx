@@ -14,8 +14,11 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
   useEffect(() => {
     console.log("DatabaseSections - All sections received:", sections);
     
+    // Filter out any editor_state sections which are for internal use only
+    const filteredSections = sections.filter(s => s.component !== 'editor_state');
+    
     // Show sections that will be rendered (published or in admin view)
-    const visibleSections = isAdminView ? sections : sections.filter(s => s.published !== false);
+    const visibleSections = isAdminView ? filteredSections : filteredSections.filter(s => s.published !== false);
     console.log(`DatabaseSections - ${isAdminView ? 'Admin view' : 'Public view'} sections:`, visibleSections);
   }, [sections, isAdminView]);
 
@@ -23,8 +26,11 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
     return null;
   }
   
+  // Filter out editor_state sections which are for internal use only
+  const filteredSections = sections.filter(s => s.component !== 'editor_state');
+  
   // Filter sections to only include published ones, unless in admin view
-  const visibleSections = isAdminView ? sections : sections.filter(s => s.published !== false);
+  const visibleSections = isAdminView ? filteredSections : filteredSections.filter(s => s.published !== false);
   
   if (visibleSections.length === 0) {
     return (
@@ -60,7 +66,7 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
             return (
               <AlignmentSection 
                 key={section.id}
-                title={section.title || 'Alignment Section'}
+                title={section.title || 'Left or Right Aligned Section'}
                 content={section.content || ''}
                 imageUrl={section.image_url || ''}
                 alignment={(section.metadata && section.metadata.alignment) || 'left'}
@@ -71,7 +77,7 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
               return (
                 <CarouselSection 
                   key={section.id}
-                  title={section.title || 'Carousel'}
+                  title={section.title || '3 Column Slider'}
                   items={section.metadata.items}
                 />
               );
@@ -82,7 +88,7 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
               return (
                 <FourParagraphsSection 
                   key={section.id}
-                  title={section.title || '4 Small Paragraphs'}
+                  title={section.title || 'Four Small Paragraphs'}
                   subtitle={section.metadata.subtitle || ''}
                   imageUrl={section.image_url || ''}
                   paragraphs={section.metadata.paragraphs}
