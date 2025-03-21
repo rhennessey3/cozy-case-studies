@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
 
 /**
- * Hook to manage the open/closed state of sections
+ * Hook to manage the open/closed state of sections (UI state only)
  */
 export const useOpenSections = (sessionStorageKey: string) => {
   // State to keep track of which sections are open
@@ -18,7 +19,7 @@ export const useOpenSections = (sessionStorageKey: string) => {
     return {};
   });
 
-  // Save open sections state to session storage
+  // Save open sections state to session storage (UI state only)
   useEffect(() => {
     try {
       sessionStorage.setItem(`${sessionStorageKey}-open`, JSON.stringify(openSections));

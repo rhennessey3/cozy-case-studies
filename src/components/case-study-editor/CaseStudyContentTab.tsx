@@ -11,19 +11,19 @@ interface CaseStudyContentTabProps {
   form: Partial<CaseStudyForm>;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
-  caseStudyId?: string | null; // Add this prop to accept caseStudyId
+  caseStudyId?: string | null; // Required prop for Supabase integration
 }
 
 const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({ 
   form, 
   handleContentChange,
   handleImageUploaded = () => {},
-  caseStudyId // Include the new prop
+  caseStudyId // Include the prop
 }) => {
   // Generate form key for stable rendering
   const formKey = useFormKey(form);
   
-  // Initialize section management
+  // Initialize section management with Supabase integration
   const { 
     sections, 
     openSections, 

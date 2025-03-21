@@ -8,6 +8,20 @@ import { toast } from 'sonner';
 export const clearLocalCaseStudyData = (): void => {
   try {
     localStorage.removeItem(LOCAL_CASE_STUDIES_KEY);
+    
+    // Clear any UI state from session storage
+    const sessionKeys = [];
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && key.startsWith('case-study-ui-state-')) {
+        sessionKeys.push(key);
+      }
+    }
+    
+    sessionKeys.forEach(key => {
+      sessionStorage.removeItem(key);
+    });
+    
     toast.success('All local case study data has been cleared');
     console.log('All local case study data has been cleared');
   } catch (error) {
@@ -35,6 +49,10 @@ export const clearSpecificCaseStudy = (slug: string): void => {
     // Save the filtered list back to local storage
     localStorage.setItem(LOCAL_CASE_STUDIES_KEY, JSON.stringify(filteredStudies));
     
+    // Clear UI state from session storage
+    const uiStateKey = `case-study-ui-state-${slug}-open`;
+    sessionStorage.removeItem(uiStateKey);
+    
     toast.success(`Case study "${slug}" has been cleared`);
     console.log(`Case study "${slug}" has been cleared from local storage`);
   } catch (error) {
@@ -44,17 +62,16 @@ export const clearSpecificCaseStudy = (slug: string): void => {
 };
 
 /**
- * Clear sections state from session storage
- * This helps with debugging the sections persistence issue
+ * Clear UI state from session storage
  */
 export const clearSectionsState = (caseStudySlug: string): void => {
   try {
-    const sessionKey = `case-study-sections-${caseStudySlug}`;
+    const sessionKey = `case-study-ui-state-${caseStudySlug}-open`;
     sessionStorage.removeItem(sessionKey);
-    toast.success('Sections state has been cleared');
-    console.log('Sections state has been cleared from session storage');
+    toast.success('UI state has been cleared');
+    console.log('UI state has been cleared from session storage');
   } catch (error) {
-    console.error('Error clearing sections state:', error);
-    toast.error('Failed to clear sections state');
+    console.error('Error clearing UI state:', error);
+    toast.error('Failed to clear UI state');
   }
 };

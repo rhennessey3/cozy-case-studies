@@ -8,20 +8,29 @@ import { useSectionSync } from './hooks/useSectionSync';
 import { useFormUpdate } from './hooks/useFormUpdate';
 import { addSection, removeSection, moveSection } from './utils/sectionOperations';
 import { toast } from 'sonner';
+import { useSectionStorage } from '@/hooks/case-study-editor/sections/useSectionStorage';
 
 export const useSectionState = (
   form: SectionFormState & { slug?: string }, 
-  handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
+  handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void,
+  caseStudyId: string | null = null
 ) => {
-  // Get case study slug to use for session storage key
+  // Get case study slug to use for session storage key (UI state only)
   const getSlugFromForm = (): string => {
     return form.slug || 'new-case-study';
   };
   
-  // Session storage key for persisting sections state
-  const sessionStorageKey = `case-study-sections-${getSlugFromForm()}`;
+  // Session storage key for UI state only (open/closed sections)
+  const sessionStorageKey = `case-study-ui-state-${getSlugFromForm()}`;
   // Ref to prevent recalculation of the session storage key on every render
   const sessionStorageKeyRef = useRef(sessionStorageKey);
+  
+  // Use Supabase for section data persistence
+  const { 
+    sections: supabaseSections, 
+    setSections: saveToSupabase,
+    isLoading: supabaseLoading
+  } = useSectionStorage(caseStudyId);
   
   // Initialize sections state
   const {
@@ -30,9 +39,9 @@ export const useSectionState = (
     initialized,
     setInitialized,
     lastValidSectionsRef
-  } = useSectionInitialization(form, sessionStorageKeyRef.current);
+  } = useSectionInitialization(form, sessionStorageKeyRef.current, supabaseSections, supabaseLoading);
   
-  // Manage open/closed state for sections
+  // Manage open/closed state for sections (UI state only)
   const {
     openSections,
     setOpenSections,
@@ -61,7 +70,12 @@ export const useSectionState = (
   // Add debugging to track section changes
   useEffect(() => {
     console.log('useSectionState: Sections updated', sections);
-  }, [sections]);
+    
+    // Save to Supabase when sections change, but only if we have a caseStudyId
+    if (caseStudyId && sections.length > 0 && initialized && !isUpdatingRef.current) {
+      saveToSupabase(sections);
+    }
+  }, [sections, caseStudyId, initialized, saveToSupabase]);
   
   // Clean up orphaned openSection entries when sections change
   useEffect(() => {
@@ -86,15 +100,6 @@ export const useSectionState = (
       lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
         section => section.id !== id
       );
-      
-      // Remove from session storage immediately to prevent reappearing on tab switch
-      try {
-        const updatedSections = sections.filter(section => section.id !== id);
-        sessionStorage.setItem(sessionStorageKeyRef.current, JSON.stringify(updatedSections));
-        console.log(`Section ${id} removed from session storage`);
-      } catch (e) {
-        console.error("Failed to remove section from session storage", e);
-      }
     },
     
     moveSection: (id: string, direction: 'up' | 'down') => {
@@ -119,13 +124,6 @@ export const useSectionState = (
         
         // Update lastValidSections
         lastValidSectionsRef.current = updatedSections;
-        
-        // Update session storage
-        try {
-          sessionStorage.setItem(sessionStorageKeyRef.current, JSON.stringify(updatedSections));
-        } catch (e) {
-          console.error("Failed to update section published state in session storage", e);
-        }
         
         // Show toast notification
         toast.success(`Section ${published ? 'published' : 'unpublished'}`);

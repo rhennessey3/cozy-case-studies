@@ -45,8 +45,8 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         const metadata = data.metadata as any;
         if (metadata.sections && metadata.lastUpdated) {
           setSectionsState({
-            sections: metadata.sections as SectionWithOrder[],
-            lastUpdated: metadata.lastUpdated as string
+            sections: metadata.sections,
+            lastUpdated: metadata.lastUpdated
           });
         } else {
           throw new Error('Invalid metadata structure');
