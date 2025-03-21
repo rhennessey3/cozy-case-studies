@@ -5,43 +5,10 @@ import { useSectionState } from './sections/useSectionState';
 import { useCarouselItems } from '@/hooks/case-study-editor/sections/useCarouselItems';
 import { useParagraphItems } from './sections/useParagraphItems';
 import { useFormKey } from '@/hooks/case-study-editor/sections/useFormKey';
+import { CaseStudyForm } from '@/types/caseStudy';
 
 interface CaseStudyContentTabProps {
-  form: {
-    intro: string;
-    challenge: string;
-    approach: string;
-    solution: string;
-    results: string;
-    conclusion: string;
-    alignment?: string;
-    subhead?: string;
-    introductionParagraph?: string;
-    alignmentImage?: string;
-    carouselTitle?: string;
-    carouselItem1Title?: string;
-    carouselItem1Content?: string;
-    carouselItem1Image?: string;
-    carouselItem2Title?: string;
-    carouselItem2Content?: string;
-    carouselItem2Image?: string;
-    carouselItem3Title?: string;
-    carouselItem3Content?: string;
-    carouselItem3Image?: string;
-    fourParaTitle?: string;
-    fourParaSubtitle?: string;
-    fourPara1Title?: string;
-    fourPara1Content?: string;
-    fourPara2Title?: string;
-    fourPara2Content?: string;
-    fourPara3Title?: string;
-    fourPara3Content?: string;
-    fourPara4Title?: string;
-    fourPara4Content?: string;
-    fourParaImage?: string;
-    customSections?: string;
-    slug?: string;
-  };
+  form: Partial<CaseStudyForm>;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
 }

@@ -3,6 +3,7 @@ import React from 'react';
 import SectionManager from '@/components/case-study-editor/sections/SectionManager';
 import SectionList from '@/components/case-study-editor/sections/SectionList';
 import { SectionWithOrder } from './types';
+import { CaseStudyForm } from '@/types/caseStudy';
 
 interface Editor {
   sections: SectionWithOrder[];
@@ -12,7 +13,7 @@ interface Editor {
   removeSection: (id: string) => void;
   moveSection: (id: string, direction: 'up' | 'down') => void;
   formKey: string;
-  form: any;
+  form: Partial<CaseStudyForm>;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded: (field: string, url: string) => void;
   handleAlignmentChange: (value: string) => void;

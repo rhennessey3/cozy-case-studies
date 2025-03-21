@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { CaseStudyForm } from '@/types/caseStudy';
 
-export const useFormKey = (form: CaseStudyForm) => {
+export const useFormKey = (form: Partial<CaseStudyForm>) => {
   return useMemo(() => {
     const slugPart = form.slug ? `-${form.slug}` : '-new';
     
