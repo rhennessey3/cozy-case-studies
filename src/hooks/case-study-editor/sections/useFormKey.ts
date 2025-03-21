@@ -1,8 +1,11 @@
 
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { CaseStudyForm } from '@/types/caseStudy';
 
 export const useFormKey = (form: Partial<CaseStudyForm>) => {
+  // Create a stable timestamp reference
+  const timestampRef = useRef(`time-${Date.now()}`);
+  
   return useMemo(() => {
     const slugPart = form.slug ? `-${form.slug}` : '-new';
     
@@ -15,7 +18,7 @@ export const useFormKey = (form: Partial<CaseStudyForm>) => {
     } catch (e) {
       console.error("Error parsing customSections for key", e);
     }
-    // Fallback to timestamp + slug if parsing fails
-    return `form-${Date.now()}${slugPart}`;
+    // Use the stable timestamp reference from the useRef instead of calling Date.now() each time
+    return `${timestampRef.current}${slugPart}`;
   }, [form.customSections, form.slug]);
 };
