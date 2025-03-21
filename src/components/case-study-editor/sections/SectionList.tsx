@@ -1,5 +1,5 @@
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 import SectionRenderer from './SectionRenderer';
 
@@ -35,13 +35,6 @@ const SectionList: React.FC<SectionListProps> = ({
   onPublishedChange,
   onRemoveSection
 }) => {
-  // Debug output to help troubleshoot missing sections
-  useEffect(() => {
-    console.log('Admin Panel - Sections Fetched:', sections);
-    console.log('Open sections:', openSections);
-    console.log('Form:', form);
-  }, [sections, openSections, form]);
-
   // Check if there are actual sections to render
   if (!sections || sections.length === 0) {
     return (

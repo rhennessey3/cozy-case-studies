@@ -2,13 +2,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
-import { mapComponentTypeToSectionType } from '@/hooks/case-study-editor/sections/utils/sectionTypeMapping';
 
 interface SectionManagerProps {
   sections: SectionResponse[];
   onAddSection: (type: string) => void;
   onRemoveSection: (id: string) => void;
-  onMoveSection: (id: string, direction: 'up' | 'down') => void;
   onTogglePublished: (id: string, published: boolean) => void;
 }
 
@@ -19,7 +17,6 @@ const SectionManager: React.FC<SectionManagerProps> = ({
   sections,
   onAddSection,
   onRemoveSection,
-  onMoveSection, 
   onTogglePublished
 }) => {
   const handleAddIntroduction = () => {

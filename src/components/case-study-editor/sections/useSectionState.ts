@@ -2,11 +2,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SectionWithOrder } from './types';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
-import { SectionFormState } from './utils/defaultSections';
 import { useOpenSections } from './hooks/useOpenSections';
-import { useSectionInitialization } from './hooks/useSectionInitialization';
-import { useSectionSync } from './hooks/useSectionSync';
-import { useFormUpdate } from './hooks/useFormUpdate';
 import { addSection, removeSection } from './utils/sectionOperations';
 import { toast } from 'sonner';
 import { useSectionStorage } from '@/hooks/case-study-editor/sections/useSectionStorage';
@@ -40,15 +36,14 @@ export const useSectionState = (
   
   // Load initial sections from Supabase
   useEffect(() => {
-    if (supabaseSections && supabaseSections.length > 0 && !initialized && isInitializingRef.current) {
-      isInitializingRef.current = false;
+    if (!initialized && isInitializingRef.current) {
+      if (supabaseSections && supabaseSections.length > 0) {
+        // Convert SectionResponse[] to SectionWithOrder[]
+        const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(supabaseSections);
+        setSections(sectionsWithOrder);
+        lastValidSectionsRef.current = sectionsWithOrder;
+      }
       
-      // Convert SectionResponse[] to SectionWithOrder[]
-      const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(supabaseSections);
-      setSections(sectionsWithOrder);
-      lastValidSectionsRef.current = sectionsWithOrder;
-      setInitialized(true);
-    } else if (!supabaseLoading && !initialized && isInitializingRef.current) {
       isInitializingRef.current = false;
       setInitialized(true);
     }
@@ -76,15 +71,17 @@ export const useSectionState = (
   // Use refs for handler functions to ensure they don't change between renders
   const isUpdatingRef = useRef(false);
   
-  // Add debugging to track section changes
+  // Save to Supabase when sections change
   useEffect(() => {
-    console.log('useSectionState: Sections updated', sections);
-    
-    // Save to Supabase when sections change, but only if we have a caseStudyId
     if (caseStudyId && sections.length > 0 && initialized && !isUpdatingRef.current) {
+      isUpdatingRef.current = true;
       // Convert sections from SectionWithOrder to SectionResponse before saving
       const sectionResponses = mapSectionWithOrdersToSectionResponses(sections, caseStudyId);
       saveToSupabase(sectionResponses);
+      
+      setTimeout(() => {
+        isUpdatingRef.current = false;
+      }, 100);
     }
   }, [sections, caseStudyId, initialized, saveToSupabase]);
   
@@ -92,8 +89,14 @@ export const useSectionState = (
   const handlersRef = useRef({
     addSection: (type: SectionWithOrder['type']) => {
       console.log('Adding section of type:', type);
+      
+      if (!caseStudyId) {
+        toast.error('Cannot add section without a case study');
+        return null;
+      }
+      
       const newSection = addSection(sections, type, setSections, setOpenSections);
-      lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
+      lastValidSectionsRef.current = [...sections, newSection];
       return newSection;
     },
     
@@ -128,12 +131,26 @@ export const useSectionState = (
     }
   });
 
+  // Memoized handlers that don't change on re-renders
+  const addSectionHandler = useCallback((type: string) => {
+    return handlersRef.current.addSection(type);
+  }, []);
+
+  const removeSectionHandler = useCallback((id: string) => {
+    handlersRef.current.removeSection(id);
+  }, []);
+
+  const toggleSectionPublishedHandler = useCallback((id: string, published: boolean) => {
+    handlersRef.current.toggleSectionPublished(id, published);
+  }, []);
+
+  // Return stable function references to prevent infinite re-renders
   return {
-    sections: sections as SectionResponse[], // Cast to satisfy TypeScript
+    sections: sections as unknown as SectionResponse[], // Cast to satisfy TypeScript
     openSections,
     toggleSection,
-    addSection: handlersRef.current.addSection,
-    removeSection: handlersRef.current.removeSection,
-    toggleSectionPublished: handlersRef.current.toggleSectionPublished
+    addSection: addSectionHandler,
+    removeSection: removeSectionHandler,
+    toggleSectionPublished: toggleSectionPublishedHandler
   };
 };

@@ -40,7 +40,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   // Use a ref to indicate if we're currently updating to prevent infinite loops
   const isUpdatingRef = useRef(false);
   
-  // Create all the section operation hooks
+  // Create all the section operation hooks with memoized callbacks
   const addSection = useAddSectionHook(caseStudyId, sections, setSections, setOpenSections);
   const removeSection = useRemoveSectionHook(setSections, setOpenSections);
   const toggleSectionPublished = useTogglePublishedHook(setSections);
@@ -48,14 +48,27 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   // Create a set of valid section IDs and clean up orphaned openSections
   const validSectionIds = new Set(sections.map(section => section.id));
   cleanupOrphanedSections(validSectionIds);
+
+  // Return memoized callbacks to prevent infinite re-renders
+  const addSectionCallback = useCallback((type: string) => {
+    return addSection(type);
+  }, [addSection]);
+
+  const removeSectionCallback = useCallback((id: string) => {
+    removeSection(id);
+  }, [removeSection]);
+
+  const toggleSectionPublishedCallback = useCallback((id: string, published: boolean) => {
+    toggleSectionPublished(id, published);
+  }, [toggleSectionPublished]);
   
-  // Return the public API for the hook
+  // Return the public API for the hook with stable function references
   return {
     sections,
     openSections,
     toggleSection,
-    addSection,
-    removeSection,
-    toggleSectionPublished
+    addSection: addSectionCallback,
+    removeSection: removeSectionCallback,
+    toggleSectionPublished: toggleSectionPublishedCallback
   };
 };
