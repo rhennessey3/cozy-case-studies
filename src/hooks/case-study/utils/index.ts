@@ -1,4 +1,4 @@
 
 export { isAdminMode, mapCaseStudyToForm, createNewCaseStudyForm, fetchSectionImages } from './fetchUtils';
-export { isLocalAuthMode } from './authUtils';
+export { isLocalAuthMode, checkSupabaseAuth } from './authUtils';
 export { getLocalCaseStudies, getLocalCaseStudyBySlug } from './localStorageUtils';
