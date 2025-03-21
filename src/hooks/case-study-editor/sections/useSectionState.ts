@@ -13,7 +13,8 @@ import { useSyncWithOpenSections } from './hooks/useSyncWithOpenSections';
 import { 
   mapSectionResponseToSectionWithOrder, 
   mapSectionResponsesToSectionWithOrders,
-  mapSectionWithOrdersToSectionResponses 
+  mapSectionWithOrdersToSectionResponses,
+  mapSectionWithOrderToSectionResponse
 } from './utils/sectionResponseMapper';
 
 /**
@@ -46,7 +47,11 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   } = useOpenSections();
   
   // Sync sections with open sections state
-  useSyncWithOpenSections(sections, cleanupOrphanedSections);
+  // Convert SectionResponse[] to SectionWithOrder[] for the hook
+  useSyncWithOpenSections(
+    mapSectionResponsesToSectionWithOrders(sections), 
+    cleanupOrphanedSections
+  );
   
   // Use refs for handler functions to ensure they don't change between renders
   const isUpdatingRef = useRef(false);
@@ -72,7 +77,23 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   // Create all the section operation hooks
   const addSection = useAddSectionHook(caseStudyId, sections, setSections, setOpenSections);
   const removeSection = useRemoveSectionHook(setSections, setOpenSections);
-  const moveSection = useMoveSectionHook(sections, setSections);
+  
+  // For moveSection, we need to handle the type conversion
+  const moveSectionInternal = useMoveSectionHook(
+    mapSectionResponsesToSectionWithOrders(sections), 
+    (updatedSections: SectionWithOrder[]) => {
+      // Convert back to SectionResponse[] when setting sections
+      if (caseStudyId) {
+        setSections(mapSectionWithOrdersToSectionResponses(updatedSections, caseStudyId));
+      }
+    }
+  );
+  
+  // Create a wrapper that handles the conversion
+  const moveSection = (id: string, direction: 'up' | 'down') => {
+    moveSectionInternal(id, direction);
+  };
+  
   const toggleSectionPublished = useTogglePublishedHook(setSections);
   
   // Return the public API for the hook
