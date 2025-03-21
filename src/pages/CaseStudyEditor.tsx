@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -45,7 +44,6 @@ const CaseStudyEditor = () => {
     }
   };
 
-  // Create the dynamic heading text based on the current case study or "new" state
   const getHeadingText = () => {
     if (loading) return 'LOADING...';
     if (slug === 'new') return 'CREATE CASE STUDY';

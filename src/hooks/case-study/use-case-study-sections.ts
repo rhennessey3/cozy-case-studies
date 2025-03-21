@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 /**
  * Hook to fetch case study sections from the database
  */
-export const useCaseStudySections = (caseStudyId: string | undefined) => {
+export const useCaseStudySections = (caseStudyId: string | undefined, onlyPublished: boolean = true) => {
   const [dbSections, setDbSections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -19,14 +19,21 @@ export const useCaseStudySections = (caseStudyId: string | undefined) => {
       }
 
       try {
-        console.log(`Fetching sections for case study ID: ${caseStudyId}`);
+        console.log(`Fetching sections for case study ID: ${caseStudyId}, onlyPublished: ${onlyPublished}`);
         
-        const { data: sections, error } = await supabase
+        let query = supabase
           .from('case_study_sections')
           .select('*')
           .eq('case_study_id', caseStudyId)
-          .eq('published', true)  // Only fetch published sections
           .order('sort_order', { ascending: true });
+        
+        // Only filter by published status if onlyPublished is true
+        if (onlyPublished) {
+          query = query.eq('published', true);
+          console.log('Filtering to only include published sections');
+        }
+        
+        const { data: sections, error } = await query;
         
         if (error) {
           console.error("Error fetching case study sections:", error);
@@ -35,7 +42,7 @@ export const useCaseStudySections = (caseStudyId: string | undefined) => {
           return;
         }
         
-        console.log("Sections fetched from database:", sections);
+        console.log(`Sections fetched from database: ${sections?.length || 0}`, sections);
         setDbSections(sections || []);
         setLoading(false);
       } catch (err: any) {
@@ -47,7 +54,7 @@ export const useCaseStudySections = (caseStudyId: string | undefined) => {
 
     setLoading(true);
     fetchSectionsFromDb();
-  }, [caseStudyId]);
+  }, [caseStudyId, onlyPublished]);
 
   return { dbSections, loading, error };
 };

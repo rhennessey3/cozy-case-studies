@@ -11,26 +11,27 @@ import NoSectionsMessage from './sections/NoSectionsMessage';
 
 interface CaseStudyContentProps {
   caseStudy: CaseStudy;
+  isAdminView?: boolean;
 }
 
-const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
+const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy, isAdminView = false }) => {
   // Dismiss any lingering toasts when viewing a case study
   useEffect(() => {
     toast.dismiss();
   }, []);
 
-  // Fetch sections directly from database
-  const { dbSections, loading, error } = useCaseStudySections(caseStudy?.id);
+  // Fetch sections directly from database - filter by published unless in admin view
+  const { dbSections, loading, error } = useCaseStudySections(caseStudy?.id, !isAdminView);
   
   // Log data for debugging
   useEffect(() => {
     console.log("Case study for rendering:", caseStudy);
-    console.log("Database sections for rendering:", dbSections);
+    console.log(`Database sections for rendering (${isAdminView ? 'admin view' : 'public view'}):`, dbSections);
     
     if (error) {
       console.error("Error loading sections:", error);
     }
-  }, [caseStudy, dbSections, error]);
+  }, [caseStudy, dbSections, error, isAdminView]);
 
   const renderSections = () => {
     // Use DB sections if available

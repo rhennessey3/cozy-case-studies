@@ -13,13 +13,11 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections }) => {
     return null;
   }
   
-  // Filter to only include published sections
-  const publishedSections = sections.filter(section => section.published !== false);
-  console.log(`After filtering, ${publishedSections.length} published sections will be rendered`);
+  console.log(`Rendering ${sections.length} sections`);
   
   return (
     <>
-      {publishedSections.map(section => {
+      {sections.map(section => {
         const componentType = section.component;
         
         switch (componentType) {

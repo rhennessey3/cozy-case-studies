@@ -126,7 +126,7 @@ const CaseStudyDetail: React.FC = () => {
     <div className="min-h-screen bg-white">
       {isSmallScreen ? <TopNavbar /> : <Navbar />}
       <div className={cn(!isSmallScreen && "ml-[4.5rem]")}>
-        <CaseStudyContent caseStudy={caseStudy} />
+        {caseStudy && <CaseStudyContent caseStudy={caseStudy} isAdminView={isAdminRoute} />}
         <Footer />
       </div>
     </div>
