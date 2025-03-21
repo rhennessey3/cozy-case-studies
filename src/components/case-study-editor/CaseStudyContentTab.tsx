@@ -35,10 +35,8 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     toggleSectionPublished
   } = useSectionState(caseStudyId); // Pass caseStudyId here
   
-  // Map section responses to section with orders for UI components
-  const mappedSections = React.useMemo(() => {
-    return mapSectionResponsesToSectionWithOrders(sections);
-  }, [sections]);
+  // Already getting sections as SectionResponse[] from useSectionState
+  // No need to re-map them here as the sectionState manages the proper types
   
   // Initialize carousel and paragraph items
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(
@@ -68,7 +66,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
 
   return (
     <EditorSectionManager 
-      sections={mappedSections}
+      sections={sections}
       openSections={openSections}
       toggleSection={toggleSection}
       addSection={addSection}

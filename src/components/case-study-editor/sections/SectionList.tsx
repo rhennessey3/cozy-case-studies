@@ -1,10 +1,10 @@
 
 import React, { useEffect, useMemo } from 'react';
-import { SectionWithOrder } from './types';
+import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 import SectionRenderer from './SectionRenderer';
 
 interface SectionListProps {
-  sections: SectionWithOrder[];
+  sections: SectionResponse[];
   openSections: Record<string, boolean>;
   toggleSection: (id: string) => void;
   form: any; // Using any since the form structure varies
@@ -47,7 +47,7 @@ const SectionList: React.FC<SectionListProps> = ({
     if (!sections || sections.length === 0) {
       return [];
     }
-    return [...sections].sort((a, b) => a.order - b.order);
+    return [...sections].sort((a, b) => a.sort_order - b.sort_order);
   }, [sections]);
 
   // Check if there are actual sections to render

@@ -1,17 +1,18 @@
 
 import React from 'react';
-import { SectionWithOrder } from './types';
+import { ChevronDown, ChevronUp, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
+import { mapComponentTypeToSectionType } from '@/hooks/case-study-editor/sections/utils/sectionTypeMapping';
+
+// Import section components
 import AlignmentSection from './AlignmentSection';
 import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
 import IntroductionSection from './IntroductionSection';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import SectionContainer from './SectionContainer';
 
 interface SectionRendererProps {
-  section: SectionWithOrder;
+  section: SectionResponse;
   isOpen: boolean;
   onToggle: () => void;
   form: any;
@@ -25,9 +26,6 @@ interface SectionRendererProps {
   onRemoveSection?: (id: string) => void;
 }
 
-/**
- * Component that renders a specific section based on its type
- */
 const SectionRenderer: React.FC<SectionRendererProps> = ({
   section,
   isOpen,
@@ -42,115 +40,115 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   onPublishedChange,
   onRemoveSection
 }) => {
-  // Debug output to help troubleshoot sections (only in development)
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Rendering section ${section.id} of type ${section.type}`);
-    }
-  }, [section]);
-
-  const handlePublishedChange = (checked: boolean) => {
-    console.log(`Toggled Section ID: ${section.id}, New Published State: ${checked}`);
-    if (onPublishedChange) {
-      onPublishedChange(section.id, checked);
-    }
-  };
-
-  const SectionContent = () => {
-    switch (section.type) {
+  // Determine which section component to render based on section type
+  const renderSectionContent = () => {
+    // Map component type from database to section type for the UI
+    const sectionType = mapComponentTypeToSectionType(section.component);
+    
+    switch (sectionType) {
       case 'introduction':
         return (
           <IntroductionSection
-            isOpen={isOpen}
-            onToggle={onToggle}
-            introValue={form.intro || ''}
-            challengeValue={form.challenge || ''}
-            approachValue={form.approach || ''}
-            onChange={handleContentChange}
+            form={form}
+            handleContentChange={handleContentChange}
           />
         );
       case 'alignment':
         return (
           <AlignmentSection
-            isOpen={isOpen}
-            onToggle={onToggle}
-            subhead={form.subhead || ''}
-            alignment={form.alignment || 'left'}
-            introductionParagraph={form.introductionParagraph || ''}
-            alignmentImage={form.alignmentImage || ''}
-            onChange={handleContentChange}
+            form={form}
+            handleContentChange={handleContentChange}
+            handleImageUploaded={handleImageUploaded}
             onAlignmentChange={onAlignmentChange}
-            onImageUpload={(url) => handleImageUploaded('alignmentImage', url)}
           />
         );
       case 'carousel':
         return (
           <CarouselSection
-            isOpen={isOpen}
-            onToggle={onToggle}
-            carouselTitle={form.carouselTitle || ''}
-            onChange={handleContentChange}
-            onImageUpload={handleImageUploaded}
-            items={carouselItems}
-            onReorderItems={handleReorderCarouselItems}
+            form={form}
+            handleContentChange={handleContentChange}
+            handleImageUploaded={handleImageUploaded}
+            handleReorderCarouselItems={handleReorderCarouselItems}
+            carouselItems={carouselItems}
           />
         );
       case 'fourParagraphs':
         return (
           <FourParagraphsSection
-            isOpen={isOpen}
-            onToggle={onToggle}
-            sectionTitle={form.fourParaTitle || ''}
-            sectionSubtitle={form.fourParaSubtitle || ''}
-            paragraphs={paragraphItems}
-            sectionImage={form.fourParaImage || ''}
-            onChange={handleContentChange}
-            onImageUpload={(url) => handleImageUploaded('fourParaImage', url)}
+            form={form}
+            handleContentChange={handleContentChange}
+            handleImageUploaded={handleImageUploaded}
+            paragraphItems={paragraphItems}
           />
         );
       default:
-        return <div>Unknown section type: {section.type}</div>;
+        return <div>Unknown section type: {section.component}</div>;
     }
   };
 
-  // Add a wrapper that includes the publish toggle and delete button
+  // Toggle published status
+  const handleTogglePublished = () => {
+    if (onPublishedChange) {
+      onPublishedChange(section.id, !section.published);
+    }
+  };
+
+  // Handle section removal
+  const handleRemoveSection = () => {
+    if (onRemoveSection) {
+      if (window.confirm(`Are you sure you want to remove this ${section.component} section?`)) {
+        onRemoveSection(section.id);
+      }
+    }
+  };
+
   return (
-    <div className="relative">
-      {/* Publication toggle and delete button */}
-      <div className="absolute right-4 top-4 flex items-center space-x-3 z-10">
-        {/* Delete button */}
-        {onRemoveSection && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onRemoveSection(section.id)}
-            className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        )}
+    <SectionContainer>
+      <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+        <button
+          onClick={onToggle}
+          className="flex items-center text-gray-700 font-medium"
+        >
+          {isOpen ? <ChevronUp className="mr-2 h-5 w-5" /> : <ChevronDown className="mr-2 h-5 w-5" />}
+          <span>{section.title || section.component}</span>
+        </button>
         
-        {/* Publication toggle */}
-        {onPublishedChange && (
-          <div className="flex items-center space-x-2">
-            <Switch 
-              id={`publish-${section.id}`}
-              checked={section.published !== false}
-              onCheckedChange={handlePublishedChange}
-              className="data-[state=checked]:bg-green-500"
-            />
-            <Label htmlFor={`publish-${section.id}`} className="text-sm font-medium">
-              {section.published !== false ? "Published" : "Draft"}
-            </Label>
-          </div>
-        )}
+        <div className="flex items-center space-x-2">
+          {/* Toggle published status */}
+          {onPublishedChange && (
+            <button
+              onClick={handleTogglePublished}
+              className="p-1 rounded hover:bg-gray-200"
+              title={section.published ? 'Unpublish section' : 'Publish section'}
+            >
+              {section.published ? (
+                <Eye className="h-5 w-5 text-green-600" />
+              ) : (
+                <EyeOff className="h-5 w-5 text-gray-400" />
+              )}
+            </button>
+          )}
+          
+          {/* Remove section button */}
+          {onRemoveSection && (
+            <button
+              onClick={handleRemoveSection}
+              className="p-1 rounded hover:bg-gray-200 text-red-500"
+              title="Remove section"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          )}
+        </div>
       </div>
       
-      {/* Render the actual section content */}
-      <SectionContent />
-    </div>
+      {isOpen && (
+        <div className="p-4 bg-white">
+          {renderSectionContent()}
+        </div>
+      )}
+    </SectionContainer>
   );
 };
 
-// Use React.memo to prevent unnecessary re-renders
-export default React.memo(SectionRenderer);
+export default SectionRenderer;
