@@ -7,11 +7,12 @@ import { fetchCaseStudyFromService } from './services/caseStudyService';
 import { fetchLocalCaseStudy } from './services/localCaseStudyService';
 import { toast } from 'sonner';
 
-export const useFetchCaseStudy = (slug?: string) => {
+export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => {
   const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<CaseStudyForm | null>(null);
   const [fetchCount, setFetchCount] = useState(0);
+  const [isDraft, setIsDraft] = useState(draftMode);
 
   const fetchCaseStudy = useCallback(async () => {
     if (!slug) {
@@ -27,7 +28,7 @@ export const useFetchCaseStudy = (slug?: string) => {
     try {
       // Check if we're in local auth mode
       if (isLocalAuthMode()) {
-        const { caseStudy: localCaseStudy, form: localForm } = fetchLocalCaseStudy(slug);
+        const { caseStudy: localCaseStudy, form: localForm } = fetchLocalCaseStudy(slug, isDraft);
         
         setCaseStudy(localCaseStudy);
         setForm(localForm);
@@ -35,8 +36,8 @@ export const useFetchCaseStudy = (slug?: string) => {
         return;
       }
       
-      // Not in local auth mode, fetch from service
-      const { caseStudy: remoteCaseStudy, form: remoteForm } = await fetchCaseStudyFromService(slug);
+      // Not in local auth mode, fetch from service with draft flag
+      const { caseStudy: remoteCaseStudy, form: remoteForm } = await fetchCaseStudyFromService(slug, isDraft);
       
       setCaseStudy(remoteCaseStudy);
       setForm(remoteForm);
@@ -46,7 +47,7 @@ export const useFetchCaseStudy = (slug?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [slug]);
+  }, [slug, isDraft]);
 
   // Initial fetch
   useEffect(() => {
@@ -59,5 +60,10 @@ export const useFetchCaseStudy = (slug?: string) => {
     return fetchCaseStudy();
   }, [fetchCaseStudy]);
 
-  return { caseStudy, loading, form, refetch };
+  // Function to toggle between draft and live mode
+  const toggleDraftMode = useCallback(() => {
+    setIsDraft(prev => !prev);
+  }, []);
+
+  return { caseStudy, loading, form, refetch, isDraft, toggleDraftMode };
 };

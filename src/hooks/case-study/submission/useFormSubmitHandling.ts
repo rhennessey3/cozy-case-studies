@@ -8,7 +8,12 @@ import { processSupabaseDatabase, checkSupabaseSession } from './services/databa
 import { isLocalAuthMode } from '../utils/authUtils';
 import { AUTH_STORAGE_KEY } from '@/constants/authConstants';
 
-export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFunction, slug?: string) => {
+export const useFormSubmitHandling = (
+  form: CaseStudyForm, 
+  navigate: NavigateFunction, 
+  slug?: string, 
+  isDraft: boolean = true
+) => {
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,13 +36,14 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       
       // Log the form data to debug custom sections
       console.log("Submitting form with custom sections:", form.customSections);
+      console.log(`Submitting in ${isDraft ? 'DRAFT' : 'LIVE'} mode`);
       
       const isNew = !slug || slug === 'new' || slug === '';
       console.log('Mode determined:', isNew ? 'Creating new case study' : 'Editing existing case study', 'Slug:', slug);
       
       // Check if we're in local auth mode
       if (isLocalAuthMode()) {
-        console.log('Processing in local auth mode with localStorage persistence');
+        console.log(`Processing in local auth mode with localStorage persistence (${isDraft ? 'DRAFT' : 'LIVE'} mode)`);
         
         // Parse sections to ensure they're valid before saving
         if (form.customSections) {
@@ -52,22 +58,24 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
           }
         }
         
-        const result = saveLocalCaseStudy(form, isNew, slug);
+        const result = saveLocalCaseStudy(form, isNew, slug, isDraft);
         
-        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (Local Mode)`);
+        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (${isDraft ? 'Draft' : 'Live'} Mode)`);
         
         if (isNew) {
           // First navigate to the case study editor for the new case study
           navigate(`/admin/case-studies/${form.slug}`);
           
           // Then show a toast with the option to view the case study on the public site
-          toast('Case study published! View it on the site?', {
-            action: {
-              label: 'View',
-              onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
-            },
-            duration: 5000
-          });
+          if (!isDraft) {
+            toast('Case study published! View it on the site?', {
+              action: {
+                label: 'View',
+                onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
+              },
+              duration: 5000
+            });
+          }
         }
         
         setSaving(false);
@@ -87,22 +95,24 @@ export const useFormSubmitHandling = (form: CaseStudyForm, navigate: NavigateFun
       
       // Process database operations
       try {
-        const result = await processSupabaseDatabase(form, isNew, slug);
+        const result = await processSupabaseDatabase(form, isNew, slug, isDraft);
         
-        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
+        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (${isDraft ? 'Draft' : 'Live'} Mode)`);
         
         if (isNew) {
           // First navigate to the case study editor for the new case study
           navigate(`/admin/case-studies/${form.slug}`);
           
           // Then show a toast with the option to view the case study on the public site
-          toast('Case study published! View it on the site?', {
-            action: {
-              label: 'View',
-              onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
-            },
-            duration: 5000
-          });
+          if (!isDraft) {
+            toast('Case study published! View it on the site?', {
+              action: {
+                label: 'View',
+                onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
+              },
+              duration: 5000
+            });
+          }
         }
         
         return result;

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface FormActionsProps {
@@ -9,13 +9,15 @@ interface FormActionsProps {
   slug?: string;
   cancelHref?: string;
   onCancel?: () => void;
+  isDraft?: boolean;
 }
 
 const FormActions: React.FC<FormActionsProps> = ({ 
   saving, 
   slug,
   cancelHref = '/admin/case-studies',
-  onCancel
+  onCancel,
+  isDraft = true
 }) => {
   const navigate = useNavigate();
   
@@ -29,8 +31,11 @@ const FormActions: React.FC<FormActionsProps> = ({
   
   const getButtonText = () => {
     if (saving) return 'Saving...';
-    if (!slug || slug === 'new') return 'Create Case Study';
-    return 'Update Case Study';
+    
+    const actionText = !slug || slug === 'new' ? 'Create' : 'Update';
+    const modeText = isDraft ? 'Draft' : 'Live';
+    
+    return `${actionText} ${modeText}`;
   };
   
   return (
@@ -45,9 +50,10 @@ const FormActions: React.FC<FormActionsProps> = ({
       <Button 
         type="submit"
         disabled={saving}
-        className="flex items-center gap-2"
+        className={`flex items-center gap-2 ${isDraft ? 'bg-yellow-600 hover:bg-yellow-700' : ''}`}
       >
         {saving && <Loader2 size={16} className="animate-spin" />}
+        {!saving && <Save size={16} />}
         {getButtonText()}
       </Button>
     </div>

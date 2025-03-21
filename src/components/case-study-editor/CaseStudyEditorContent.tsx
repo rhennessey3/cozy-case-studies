@@ -16,12 +16,15 @@ interface CaseStudyEditorContentProps {
   saving: boolean;
   form: CaseStudyForm;
   slug?: string;
+  isDraft?: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded: (field: string, url: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<{ success: boolean, slug?: string } | undefined>;
   onViewLive?: () => void;
   onDelete?: () => void;
+  onToggleMode?: () => void;
+  onPublish?: () => void;
   showViewLive?: boolean;
   showDelete?: boolean;
 }
@@ -31,12 +34,15 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   saving,
   form,
   slug,
+  isDraft = true,
   handleChange,
   handleContentChange,
   handleImageUploaded,
   handleSubmit,
   onViewLive,
   onDelete,
+  onToggleMode,
+  onPublish,
   showViewLive = false,
   showDelete = false
 }) => {
@@ -119,8 +125,12 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         <EditorTabsNav
           showViewLive={showViewLive}
           showDelete={showDelete}
+          isDraft={isDraft}
           onViewLive={onViewLive}
           onDelete={onDelete}
+          onToggleMode={onToggleMode}
+          onPublish={onPublish}
+          saving={saving}
         />
         
         <TabsContent value="basics">
@@ -140,7 +150,11 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
         </TabsContent>
       </Tabs>
       
-      <FormActions saving={saving} slug={slug} />
+      <FormActions 
+        saving={saving} 
+        slug={slug} 
+        isDraft={isDraft}
+      />
     </form>
   );
 };

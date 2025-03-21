@@ -12,20 +12,27 @@ import { toast } from 'sonner';
 
 export const useCaseStudyEditor = (slug?: string) => {
   const navigate = useNavigate();
+  const [draftMode, setDraftMode] = useState(true); // Default to draft mode
   const { caseStudies, loading: caseStudiesLoading, refetchCaseStudies } = useFetchCaseStudies();
   
   // Only fetch case study if we have a valid slug (not undefined, empty, or "new")
   const shouldFetchCaseStudy = slug && slug !== '' && slug !== 'new';
-  const { caseStudy, loading: fetchLoading, form: fetchedForm, refetch } = useFetchCaseStudy(shouldFetchCaseStudy ? slug : undefined);
+  const { 
+    caseStudy, 
+    loading: fetchLoading, 
+    form: fetchedForm, 
+    refetch, 
+    isDraft,
+    toggleDraftMode 
+  } = useFetchCaseStudy(shouldFetchCaseStudy ? slug : undefined, draftMode);
   
   // Initialize with empty form
   const [formInitialized, setFormInitialized] = useState(false);
   
-  // Initialize the form state - this is where the error was happening
-  // We need to declare the initial form state first
+  // Initialize the form state
   const initialForm = shouldFetchCaseStudy && fetchedForm ? fetchedForm : initialFormState;
   
-  // Now we can use useCaseStudyForm with the proper initial state - but we need to avoid the circular reference
+  // Now we can use useCaseStudyForm with the proper initial state
   const formState = useCaseStudyForm(initialForm);
   const { form, handleChange, handleContentChange, handleImageUploaded, setForm } = formState;
   
@@ -41,7 +48,7 @@ export const useCaseStudyEditor = (slug?: string) => {
     }
   }, [fetchedForm, shouldFetchCaseStudy, setForm]);
   
-  const { saving, handleSubmit: submitCaseStudy } = useCaseStudySubmit(form, shouldFetchCaseStudy ? slug : undefined);
+  const { saving, handleSubmit: submitCaseStudy } = useCaseStudySubmit(form, shouldFetchCaseStudy ? slug : undefined, isDraft);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,11 +91,47 @@ export const useCaseStudyEditor = (slug?: string) => {
       if ((!slug || slug === 'new' || slug === '') && result && 'slug' in result && result.slug) {
         navigate(`/admin/case-studies/${result.slug}`);
       } else {
-        toast.success(slug === 'new' ? 'Case study created!' : 'Case study updated!');
+        toast.success(slug === 'new' ? 'Case study created!' : `Case study ${isDraft ? 'draft' : 'live version'} updated!`);
       }
     }
     
     return result;
+  };
+
+  const publishDraft = async () => {
+    if (!shouldFetchCaseStudy) {
+      toast.error('Cannot publish a new case study. Save it first.');
+      return { success: false };
+    }
+    
+    // Toggle to live mode, save, then toggle back to draft mode
+    toggleDraftMode();
+    setDraftMode(false);
+    
+    // This is a bit of a hack to ensure we're submitting in live mode
+    // We'll update the form and then submit it
+    const event = { preventDefault: () => {} } as React.FormEvent;
+    const result = await submitCaseStudy(event);
+    
+    if (result?.success) {
+      toast.success('Case study published successfully!');
+      await refetchCaseStudies();
+      await refetch();
+      
+      // Return to draft mode after publishing
+      toggleDraftMode();
+      setDraftMode(true);
+    } else {
+      toast.error('Failed to publish case study');
+    }
+    
+    return result;
+  };
+
+  const toggleMode = () => {
+    setDraftMode(prev => !prev);
+    toggleDraftMode();
+    refetch();
   };
 
   const createNewCaseStudy = () => {
@@ -108,6 +151,9 @@ export const useCaseStudyEditor = (slug?: string) => {
     handleImageUploaded,
     handleSubmit,
     createNewCaseStudy,
-    refetch
+    refetch,
+    isDraft,
+    toggleMode,
+    publishDraft
   };
 };

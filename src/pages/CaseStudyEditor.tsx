@@ -28,7 +28,10 @@ const CaseStudyEditor = () => {
     handleContentChange,
     handleImageUploaded,
     handleSubmit,
-    createNewCaseStudy
+    createNewCaseStudy,
+    isDraft,
+    toggleMode,
+    publishDraft
   } = useCaseStudyEditor(slug);
   
   const handleLogout = async () => {
@@ -46,7 +49,9 @@ const CaseStudyEditor = () => {
   const getHeadingText = () => {
     if (loading) return 'LOADING...';
     if (slug === 'new') return 'CREATE CASE STUDY';
-    return form?.title ? `EDIT: ${form.title.toUpperCase()}` : 'EDIT CASE STUDY';
+    
+    const modeText = isDraft ? ' (DRAFT)' : ' (LIVE)';
+    return form?.title ? `EDIT: ${form.title.toUpperCase()}${modeText}` : `EDIT CASE STUDY${modeText}`;
   };
 
   return (
@@ -78,12 +83,15 @@ const CaseStudyEditor = () => {
               saving={saving}
               form={form}
               slug={slug}
+              isDraft={isDraft}
               handleChange={handleChange}
               handleContentChange={handleContentChange}
               handleImageUploaded={handleImageUploaded}
               handleSubmit={handleSubmit}
               onViewLive={handleViewLive}
               onDelete={() => setDeleteDialogOpen(true)}
+              onToggleMode={toggleMode}
+              onPublish={publishDraft}
               showViewLive={!!slug && slug !== 'new'}
               showDelete={!!slug && slug !== 'new'}
             />
