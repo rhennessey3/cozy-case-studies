@@ -50,6 +50,12 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     handleContentChange(event);
   };
 
+  // Add debug logging to help diagnose issues
+  React.useEffect(() => {
+    console.log('CaseStudyContentTab rendering with form:', form);
+    console.log('Sections:', sections);
+  }, [form, sections]);
+
   return (
     <EditorSectionManager 
       sections={sections}

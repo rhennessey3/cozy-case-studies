@@ -31,6 +31,7 @@ export const useSectionSync = (
         form.customSections !== prevCustomSectionsRef.current) {
       
       try {
+        console.log("Syncing sections from customSections:", form.customSections);
         const parsedSections = JSON.parse(form.customSections);
         
         // Skip if parsed sections isn't an array

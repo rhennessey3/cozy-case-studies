@@ -31,12 +31,12 @@ const SectionList: React.FC<SectionListProps> = ({
   carouselItems,
   paragraphItems
 }) => {
-  // Debug output to help troubleshoot missing sections (only in development)
+  // Debug output to help troubleshoot missing sections
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Current sections in SectionList:', sections);
-    }
-  }, [sections]);
+    console.log('SectionList rendering with sections:', sections);
+    console.log('Open sections:', openSections);
+    console.log('Form:', form);
+  }, [sections, openSections, form]);
 
   // Sort sections by order for display - memoized to prevent unnecessary re-renders
   const sortedSections = useMemo(() => {

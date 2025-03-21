@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SectionWithOrder } from './types';
 import { SectionFormState } from './utils/defaultSections';
 import { useOpenSections } from './hooks/useOpenSections';
@@ -57,20 +57,29 @@ export const useSectionState = (
     handleContentChange
   );
   
+  // Add debugging to track section changes
+  useEffect(() => {
+    console.log('useSectionState: Sections updated', sections);
+  }, [sections]);
+  
   // Clean up orphaned openSection entries when sections change
-  if (sections.length > 0) {
-    const validSectionIds = new Set(sections.map(section => section.id));
-    cleanupOrphanedSections(validSectionIds);
-  }
+  useEffect(() => {
+    if (sections.length > 0) {
+      const validSectionIds = new Set(sections.map(section => section.id));
+      cleanupOrphanedSections(validSectionIds);
+    }
+  }, [sections, cleanupOrphanedSections]);
   
   // Use refs for handler functions to ensure they don't change between renders
   const handlersRef = useRef({
     addSection: (type: SectionWithOrder['type']) => {
+      console.log('Adding section of type:', type);
       const newSection = addSection(sections, type, setSections, setOpenSections);
       lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
     },
     
     removeSection: (id: string) => {
+      console.log('Removing section:', id);
       removeSection(id, setSections, setOpenSections);
       // Update lastValidSections after removal
       lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
@@ -88,6 +97,7 @@ export const useSectionState = (
     },
     
     moveSection: (id: string, direction: 'up' | 'down') => {
+      console.log('Moving section:', id, direction);
       moveSection(id, direction, setSections);
       // Update lastValidSections after moving - reordering happens in moveSection
       const updatedSections = [...sections];
