@@ -97,6 +97,7 @@ export type Database = {
           id: string
           image_url: string | null
           metadata: Json | null
+          published: boolean | null
           sort_order: number
           title: string | null
         }
@@ -107,6 +108,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           metadata?: Json | null
+          published?: boolean | null
           sort_order?: number
           title?: string | null
         }
@@ -117,6 +119,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           metadata?: Json | null
+          published?: boolean | null
           sort_order?: number
           title?: string | null
         }

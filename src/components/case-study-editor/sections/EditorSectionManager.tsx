@@ -12,6 +12,7 @@ interface Editor {
   addSection: (type: SectionWithOrder['type']) => void;
   removeSection: (id: string) => void;
   moveSection: (id: string, direction: 'up' | 'down') => void;
+  toggleSectionPublished?: (id: string, published: boolean) => void;
   formKey: string;
   form: Partial<CaseStudyForm>;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
@@ -29,6 +30,7 @@ const EditorSectionManager: React.FC<Editor> = ({
   addSection,
   removeSection,
   moveSection,
+  toggleSectionPublished,
   formKey,
   form,
   handleContentChange,
@@ -59,6 +61,7 @@ const EditorSectionManager: React.FC<Editor> = ({
         handleReorderCarouselItems={handleReorderCarouselItems}
         carouselItems={carouselItems}
         paragraphItems={paragraphItems}
+        onPublishedChange={toggleSectionPublished}
       />
     </div>
   );

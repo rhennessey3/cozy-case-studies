@@ -29,6 +29,7 @@ export const createSection = (type: SectionWithOrder['type'], order: number): Se
     id: uuidv4(),
     type,
     name,
-    order
+    order,
+    published: true // Default to published
   };
 };

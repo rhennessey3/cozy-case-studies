@@ -3,69 +3,83 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 
 export const processCarouselSection = async (
-  form: CaseStudyForm, 
-  caseStudyId: string, 
+  form: CaseStudyForm,
+  caseStudyId: string,
   existingSectionIds: Set<string>,
-  sortOrder: number
+  sortOrder: number,
+  published = true
 ) => {
-  // Handle carousel section
-  const carouselData = {
-    case_study_id: caseStudyId,
-    component: 'carousel',
-    title: form.carouselTitle || '3 Column Slider',
-    content: '', // We'll store the carousel items in metadata
-    sort_order: sortOrder,
-    metadata: {
-      items: [
-        {
-          title: form.carouselItem1Title || 'Planning',
-          content: form.carouselItem1Content || '',
-          image: form.carouselItem1Image || null
-        },
-        {
-          title: form.carouselItem2Title || 'Development',
-          content: form.carouselItem2Content || '',
-          image: form.carouselItem2Image || null
-        },
-        {
-          title: form.carouselItem3Title || 'Results',
-          content: form.carouselItem3Content || '',
-          image: form.carouselItem3Image || null
-        }
-      ]
-    }
-  };
-  
-  // Check if carousel section exists
-  const { data: existingCarouselSection, error: carouselSectionQueryError } = await supabase
+  // Check if the carousel section already exists
+  const { data: existingSection, error: sectionQueryError } = await supabase
     .from('case_study_sections')
     .select('id')
     .eq('case_study_id', caseStudyId)
     .eq('component', 'carousel')
-    .single();
+    .maybeSingle();
+  
+  if (sectionQueryError && !sectionQueryError.message.includes('No rows found')) {
+    console.error('Error checking for carousel section:', sectionQueryError);
+    throw new Error(`Failed to check for carousel section: ${sectionQueryError.message}`);
+  }
+  
+  // Prepare carousel items metadata
+  const metadata = {
+    items: [
+      {
+        title: form.carouselItem1Title || '',
+        content: form.carouselItem1Content || '',
+        image: form.carouselItem1Image || ''
+      },
+      {
+        title: form.carouselItem2Title || '',
+        content: form.carouselItem2Content || '',
+        image: form.carouselItem2Image || ''
+      },
+      {
+        title: form.carouselItem3Title || '',
+        content: form.carouselItem3Content || '',
+        image: form.carouselItem3Image || ''
+      }
+    ]
+  };
+  
+  if (existingSection) {
+    // Remove from the set of sections to delete
+    existingSectionIds.delete(existingSection.id);
     
-  if (carouselSectionQueryError && !carouselSectionQueryError.message.includes('No rows found')) {
-    console.error('Error checking for carousel section:', carouselSectionQueryError);
-  } else if (existingCarouselSection) {
-    // Update existing carousel section
-    existingSectionIds.delete(existingCarouselSection.id);
-    
-    const { error: updateCarouselError } = await supabase
+    // Update existing section
+    const { error: updateError } = await supabase
       .from('case_study_sections')
-      .update(carouselData)
-      .eq('id', existingCarouselSection.id);
-      
-    if (updateCarouselError) {
-      console.error('Error updating carousel section:', updateCarouselError);
+      .update({
+        title: form.carouselTitle || '3 Column Slider',
+        content: '', // No main content for carousel
+        metadata,
+        sort_order: sortOrder,
+        published
+      })
+      .eq('id', existingSection.id);
+    
+    if (updateError) {
+      console.error('Error updating carousel section:', updateError);
+      throw new Error(`Failed to update carousel section: ${updateError.message}`);
     }
   } else {
-    // Create new carousel section
-    const { error: createCarouselError } = await supabase
+    // Create new section
+    const { error: insertError } = await supabase
       .from('case_study_sections')
-      .insert(carouselData);
-      
-    if (createCarouselError) {
-      console.error('Error creating carousel section:', createCarouselError);
+      .insert({
+        case_study_id: caseStudyId,
+        component: 'carousel',
+        title: form.carouselTitle || '3 Column Slider',
+        content: '', // No main content for carousel
+        metadata,
+        sort_order: sortOrder,
+        published
+      });
+    
+    if (insertError) {
+      console.error('Error creating carousel section:', insertError);
+      throw new Error(`Failed to create carousel section: ${insertError.message}`);
     }
   }
 };

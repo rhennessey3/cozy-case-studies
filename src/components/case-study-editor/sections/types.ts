@@ -20,4 +20,5 @@ export interface SectionWithOrder {
   type: 'alignment' | 'carousel' | 'fourParagraphs' | 'introduction';
   name: string;
   order: number;
+  published?: boolean;
 }

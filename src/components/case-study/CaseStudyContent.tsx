@@ -52,8 +52,13 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
       // Sort sections by order
       const sortedSections = [...customSectionsData].sort((a, b) => a.order - b.order);
       
+      // Filter out unpublished sections
+      const publishedSections = sortedSections.filter(section => section.published !== false);
+      
+      console.log("Published sections for display:", publishedSections);
+      
       // Map each section to its corresponding component
-      sortedSections.forEach(section => {
+      publishedSections.forEach(section => {
         const componentType = section.type;
         
         switch (componentType) {

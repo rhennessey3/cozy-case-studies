@@ -3,54 +3,70 @@ import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 
 export const processAlignmentSection = async (
-  form: CaseStudyForm, 
-  caseStudyId: string, 
+  form: CaseStudyForm,
+  caseStudyId: string,
   existingSectionIds: Set<string>,
-  sortOrder: number
+  sortOrder: number,
+  published = true
 ) => {
-  if (form.subhead || form.introductionParagraph || form.alignmentImage) {
-    // Handle alignment section
-    const alignmentData = {
-      case_study_id: caseStudyId,
-      component: 'alignment',
-      content: form.introductionParagraph || '',
-      title: form.subhead || '',
-      image_url: form.alignmentImage || null,
-      metadata: { alignment: form.alignment || 'left' },
-      sort_order: sortOrder
-    };
+  // Check if the alignment section already exists
+  const { data: existingSection, error: sectionQueryError } = await supabase
+    .from('case_study_sections')
+    .select('id')
+    .eq('case_study_id', caseStudyId)
+    .eq('component', 'alignment')
+    .maybeSingle();
+  
+  if (sectionQueryError && !sectionQueryError.message.includes('No rows found')) {
+    console.error('Error checking for alignment section:', sectionQueryError);
+    throw new Error(`Failed to check for alignment section: ${sectionQueryError.message}`);
+  }
+  
+  // Prepare metadata
+  const metadata = {
+    alignment: form.alignment || 'left',
+    subhead: form.subhead || '',
+  };
+  
+  if (existingSection) {
+    // Remove from the set of sections to delete
+    existingSectionIds.delete(existingSection.id);
     
-    // Check if alignment section exists
-    const { data: existingAlignmentSection, error: alignmentSectionQueryError } = await supabase
+    // Update existing section
+    const { error: updateError } = await supabase
       .from('case_study_sections')
-      .select('id')
-      .eq('case_study_id', caseStudyId)
-      .eq('component', 'alignment')
-      .single();
-      
-    if (alignmentSectionQueryError && !alignmentSectionQueryError.message.includes('No rows found')) {
-      console.error('Error checking for alignment section:', alignmentSectionQueryError);
-    } else if (existingAlignmentSection) {
-      // Update existing alignment section
-      existingSectionIds.delete(existingAlignmentSection.id);
-      
-      const { error: updateAlignmentError } = await supabase
-        .from('case_study_sections')
-        .update(alignmentData)
-        .eq('id', existingAlignmentSection.id);
-        
-      if (updateAlignmentError) {
-        console.error('Error updating alignment section:', updateAlignmentError);
-      }
-    } else {
-      // Create new alignment section
-      const { error: createAlignmentError } = await supabase
-        .from('case_study_sections')
-        .insert(alignmentData);
-        
-      if (createAlignmentError) {
-        console.error('Error creating alignment section:', createAlignmentError);
-      }
+      .update({
+        title: form.subhead || 'Alignment Section',
+        content: form.introductionParagraph || '',
+        image_url: form.alignmentImage || null,
+        metadata,
+        sort_order: sortOrder,
+        published
+      })
+      .eq('id', existingSection.id);
+    
+    if (updateError) {
+      console.error('Error updating alignment section:', updateError);
+      throw new Error(`Failed to update alignment section: ${updateError.message}`);
+    }
+  } else {
+    // Create new section
+    const { error: insertError } = await supabase
+      .from('case_study_sections')
+      .insert({
+        case_study_id: caseStudyId,
+        component: 'alignment',
+        title: form.subhead || 'Alignment Section',
+        content: form.introductionParagraph || '',
+        image_url: form.alignmentImage || null,
+        metadata,
+        sort_order: sortOrder,
+        published
+      });
+    
+    if (insertError) {
+      console.error('Error creating alignment section:', insertError);
+      throw new Error(`Failed to create alignment section: ${insertError.message}`);
     }
   }
 };

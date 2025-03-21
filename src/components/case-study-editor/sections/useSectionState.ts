@@ -7,6 +7,7 @@ import { useSectionInitialization } from './hooks/useSectionInitialization';
 import { useSectionSync } from './hooks/useSectionSync';
 import { useFormUpdate } from './hooks/useFormUpdate';
 import { addSection, removeSection, moveSection } from './utils/sectionOperations';
+import { toast } from 'sonner';
 
 export const useSectionState = (
   form: SectionFormState & { slug?: string }, 
@@ -103,6 +104,34 @@ export const useSectionState = (
       const updatedSections = [...sections];
       updatedSections.sort((a, b) => a.order - b.order);
       lastValidSectionsRef.current = updatedSections;
+    },
+    
+    toggleSectionPublished: (id: string, published: boolean) => {
+      console.log(`Toggling published state for section ${id} to ${published}`);
+      
+      setSections(prevSections => {
+        const updatedSections = prevSections.map(section => {
+          if (section.id === id) {
+            return { ...section, published };
+          }
+          return section;
+        });
+        
+        // Update lastValidSections
+        lastValidSectionsRef.current = updatedSections;
+        
+        // Update session storage
+        try {
+          sessionStorage.setItem(sessionStorageKeyRef.current, JSON.stringify(updatedSections));
+        } catch (e) {
+          console.error("Failed to update section published state in session storage", e);
+        }
+        
+        // Show toast notification
+        toast.success(`Section ${published ? 'published' : 'unpublished'}`);
+        
+        return updatedSections;
+      });
     }
   });
 
@@ -112,6 +141,7 @@ export const useSectionState = (
     toggleSection,
     addSection: handlersRef.current.addSection,
     removeSection: handlersRef.current.removeSection,
-    moveSection: handlersRef.current.moveSection
+    moveSection: handlersRef.current.moveSection,
+    toggleSectionPublished: handlersRef.current.toggleSectionPublished
   };
 };

@@ -77,12 +77,15 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
         : index + 7; // Start after the 6 standard sections
       
       try {
+        // Extract published state from the section
+        const published = section.published !== false; // Default to true if not specified
+        
         if (section.type === 'alignment') {
-          await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder);
+          await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder, published);
         } else if (section.type === 'carousel') {
-          await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder);
+          await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder, published);
         } else if (section.type === 'fourParagraphs') {
-          await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder);
+          await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder, published);
         }
       } catch (sectionError: any) {
         console.error(`Error processing ${section.type} section:`, sectionError);

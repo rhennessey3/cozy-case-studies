@@ -28,7 +28,8 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     toggleSection, 
     addSection, 
     removeSection,
-    moveSection
+    moveSection,
+    toggleSectionPublished
   } = useSectionState(form, handleContentChange);
   
   // Initialize carousel and paragraph items
@@ -64,6 +65,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
       addSection={addSection}
       removeSection={removeSection}
       moveSection={moveSection}
+      toggleSectionPublished={toggleSectionPublished}
       formKey={formKey}
       form={form}
       handleContentChange={handleContentChange}

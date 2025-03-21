@@ -5,6 +5,8 @@ import AlignmentSection from './AlignmentSection';
 import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
 import IntroductionSection from './IntroductionSection';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 interface SectionRendererProps {
   section: SectionWithOrder;
@@ -17,6 +19,7 @@ interface SectionRendererProps {
   handleReorderCarouselItems: (fromIndex: number, toIndex: number) => void;
   carouselItems: any[];
   paragraphItems: any[];
+  onPublishedChange?: (id: string, value: boolean) => void;
 }
 
 /**
@@ -32,7 +35,8 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   onAlignmentChange,
   handleReorderCarouselItems,
   carouselItems,
-  paragraphItems
+  paragraphItems,
+  onPublishedChange
 }) => {
   // Debug output to help troubleshoot sections (only in development)
   React.useEffect(() => {
@@ -41,60 +45,84 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     }
   }, [section]);
 
-  switch (section.type) {
-    case 'introduction':
-      return (
-        <IntroductionSection
-          isOpen={isOpen}
-          onToggle={onToggle}
-          introValue={form.intro || ''}
-          challengeValue={form.challenge || ''}
-          approachValue={form.approach || ''}
-          onChange={handleContentChange}
-        />
-      );
-    case 'alignment':
-      return (
-        <AlignmentSection
-          isOpen={isOpen}
-          onToggle={onToggle}
-          subhead={form.subhead || ''}
-          alignment={form.alignment || 'left'}
-          introductionParagraph={form.introductionParagraph || ''}
-          alignmentImage={form.alignmentImage || ''}
-          onChange={handleContentChange}
-          onAlignmentChange={onAlignmentChange}
-          onImageUpload={(url) => handleImageUploaded('alignmentImage', url)}
-        />
-      );
-    case 'carousel':
-      return (
-        <CarouselSection
-          isOpen={isOpen}
-          onToggle={onToggle}
-          carouselTitle={form.carouselTitle || ''}
-          onChange={handleContentChange}
-          onImageUpload={handleImageUploaded}
-          items={carouselItems}
-          onReorderItems={handleReorderCarouselItems}
-        />
-      );
-    case 'fourParagraphs':
-      return (
-        <FourParagraphsSection
-          isOpen={isOpen}
-          onToggle={onToggle}
-          sectionTitle={form.fourParaTitle || ''}
-          sectionSubtitle={form.fourParaSubtitle || ''}
-          paragraphs={paragraphItems}
-          sectionImage={form.fourParaImage || ''}
-          onChange={handleContentChange}
-          onImageUpload={(url) => handleImageUploaded('fourParaImage', url)}
-        />
-      );
-    default:
-      return <div>Unknown section type: {section.type}</div>;
-  }
+  const SectionContent = () => {
+    switch (section.type) {
+      case 'introduction':
+        return (
+          <IntroductionSection
+            isOpen={isOpen}
+            onToggle={onToggle}
+            introValue={form.intro || ''}
+            challengeValue={form.challenge || ''}
+            approachValue={form.approach || ''}
+            onChange={handleContentChange}
+          />
+        );
+      case 'alignment':
+        return (
+          <AlignmentSection
+            isOpen={isOpen}
+            onToggle={onToggle}
+            subhead={form.subhead || ''}
+            alignment={form.alignment || 'left'}
+            introductionParagraph={form.introductionParagraph || ''}
+            alignmentImage={form.alignmentImage || ''}
+            onChange={handleContentChange}
+            onAlignmentChange={onAlignmentChange}
+            onImageUpload={(url) => handleImageUploaded('alignmentImage', url)}
+          />
+        );
+      case 'carousel':
+        return (
+          <CarouselSection
+            isOpen={isOpen}
+            onToggle={onToggle}
+            carouselTitle={form.carouselTitle || ''}
+            onChange={handleContentChange}
+            onImageUpload={handleImageUploaded}
+            items={carouselItems}
+            onReorderItems={handleReorderCarouselItems}
+          />
+        );
+      case 'fourParagraphs':
+        return (
+          <FourParagraphsSection
+            isOpen={isOpen}
+            onToggle={onToggle}
+            sectionTitle={form.fourParaTitle || ''}
+            sectionSubtitle={form.fourParaSubtitle || ''}
+            paragraphs={paragraphItems}
+            sectionImage={form.fourParaImage || ''}
+            onChange={handleContentChange}
+            onImageUpload={(url) => handleImageUploaded('fourParaImage', url)}
+          />
+        );
+      default:
+        return <div>Unknown section type: {section.type}</div>;
+    }
+  };
+
+  // Add a wrapper that includes the publish toggle
+  return (
+    <div className="relative">
+      {/* Publication toggle */}
+      {onPublishedChange && (
+        <div className="absolute right-4 top-4 flex items-center space-x-2 z-10">
+          <Switch 
+            id={`publish-${section.id}`}
+            checked={section.published !== false}
+            onCheckedChange={(checked) => onPublishedChange(section.id, checked)}
+          />
+          <Label htmlFor={`publish-${section.id}`} className="text-sm font-medium">
+            {section.published !== false ? "Published" : "Draft"}
+          </Label>
+        </div>
+      )}
+      
+      {/* Render the actual section content */}
+      <SectionContent />
+    </div>
+  );
 };
 
 // Use React.memo to prevent unnecessary re-renders
