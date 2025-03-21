@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Loader2 } from 'lucide-react';
@@ -6,7 +5,6 @@ import { CaseStudyForm } from '@/types/caseStudy';
 import { supabase } from '@/integrations/supabase/client';
 import CaseStudyBasicInfoTab from './CaseStudyBasicInfoTab';
 import CaseStudyContentTab from './CaseStudyContentTab';
-import EditorTabsNav from './components/EditorTabsNav';
 import EditorLoading from './components/EditorLoading';
 import AuthErrorState from './components/AuthErrorState';
 
@@ -124,20 +122,6 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <Tabs defaultValue="basics">
-        <EditorTabsNav
-          showViewLive={showViewLive}
-          showDelete={showDelete}
-          isDraft={isDraft}
-          onViewLive={onViewLive}
-          onDelete={onDelete}
-          onPublish={onPublish}
-          saving={saving}
-          isNew={isNew}
-          slug={slug}
-          cancelHref={cancelHref}
-          onCancel={onCancel}
-        />
-        
         <TabsContent value="basics">
           <CaseStudyBasicInfoTab 
             form={form} 

@@ -56,12 +56,24 @@ const CaseStudyEditor = () => {
     return form?.title ? `EDIT: ${form.title.toUpperCase()}${modeText}` : `EDIT CASE STUDY${modeText}`;
   };
 
+  const isNew = !slug || slug === 'new' || slug === '';
+
   return (
     <CaseStudyEditorAuth>
       <CaseStudyEditorLayout>
         <CaseStudyEditorHeader 
           headingText={getHeadingText()}
           onLogout={handleLogout}
+          onViewLive={handleViewLive}
+          onDelete={() => setDeleteDialogOpen(true)}
+          onPublish={publishDraft}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          showViewLive={!!slug && slug !== 'new'}
+          showDelete={!!slug && slug !== 'new'}
+          isDraft={isDraft}
+          isNew={isNew}
+          saving={saving}
         />
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">

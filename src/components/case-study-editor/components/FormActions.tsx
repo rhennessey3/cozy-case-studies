@@ -21,42 +21,9 @@ const FormActions: React.FC<FormActionsProps> = ({
   isDraft = true,
   className = ""
 }) => {
-  const navigate = useNavigate();
-  const isNew = !slug || slug === 'new' || slug === '';
-  
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    } else {
-      navigate(cancelHref);
-    }
-  };
-  
-  const getButtonText = () => {
-    if (saving) return 'Saving...';
-    return isNew ? 'Save Case Study' : 'Save Changes';
-  };
-  
-  return (
-    <div className={`flex justify-end gap-2 ${className}`}>
-      <Button 
-        type="button" 
-        variant="outline" 
-        onClick={handleCancel}
-      >
-        Cancel
-      </Button>
-      <Button 
-        type="submit"
-        disabled={saving}
-        className="flex items-center gap-2"
-      >
-        {saving && <Loader2 size={16} className="animate-spin" />}
-        {!saving && <Save size={16} />}
-        {getButtonText()}
-      </Button>
-    </div>
-  );
+  // This component is now only used in case we need to show form actions elsewhere
+  // The main functionality has been moved to CaseStudyEditorHeader
+  return null;
 };
 
 export default FormActions;
