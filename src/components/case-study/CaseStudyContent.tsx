@@ -52,9 +52,13 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
       // Sort sections by order
       const sortedSections = [...customSectionsData].sort((a, b) => a.order - b.order);
       
+      // Debug: Log all sections before filtering
+      console.log("All sections before filtering:", sortedSections);
+      
       // Filter out unpublished sections
       const publishedSections = sortedSections.filter(section => section.published !== false);
       
+      // Debug: Log published sections after filtering
       console.log("Published sections for display:", publishedSections);
       
       // Map each section to its corresponding component
