@@ -26,4 +26,6 @@ export interface SectionWithOrder {
   case_study_id?: string; // Match SectionResponse
   image_url?: string; // Match SectionResponse
   metadata?: any; // Match SectionResponse
+  name?: string; // For backward compatibility
+  order?: number; // For backward compatibility
 }

@@ -10,7 +10,7 @@ export const addSection = (
   setOpenSections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 ) => {
   const newOrder = sections.length > 0 
-    ? Math.max(...sections.map(s => s.order)) + 1 
+    ? Math.max(...sections.map(s => s.sort_order)) + 1 
     : 1;
     
   const newSection = createSection(type, newOrder);
@@ -24,7 +24,7 @@ export const addSection = (
   }));
   
   // Show success toast when section is added
-  toast.success(`${newSection.name} section added`);
+  toast.success(`${newSection.title} section added`);
 
   return newSection;
 };
@@ -55,8 +55,8 @@ export const removeSection = (
     }
     
     console.log(`Found section to remove:`, sectionToRemove);
-    const removedOrder = sectionToRemove.order;
-    const sectionName = sectionToRemove.name;
+    const removedOrder = sectionToRemove.sort_order;
+    const sectionName = sectionToRemove.title;
     
     const filteredSections = prev.filter(section => section.id !== id);
     
@@ -64,7 +64,8 @@ export const removeSection = (
     const adjustedSections = filteredSections.map(section => ({
       ...section,
       // Adjust order for sections after the removed one
-      order: section.order > removedOrder ? section.order - 1 : section.order
+      sort_order: section.sort_order > removedOrder ? section.sort_order - 1 : section.sort_order,
+      order: section.order && section.order > removedOrder ? section.order - 1 : section.order
     }));
     
     console.log(`Updated sections after removal:`, adjustedSections);
@@ -105,14 +106,21 @@ export const moveSection = (
     const targetSection = newSections[targetIndex];
     
     // Swap orders
-    const tempOrder = section.order;
-    section.order = targetSection.order;
-    targetSection.order = tempOrder;
+    const tempOrder = section.sort_order;
+    section.sort_order = targetSection.sort_order;
+    targetSection.sort_order = tempOrder;
+    
+    // Also update legacy order field for backward compatibility
+    if (section.order !== undefined && targetSection.order !== undefined) {
+      const tempLegacyOrder = section.order;
+      section.order = targetSection.order;
+      targetSection.order = tempLegacyOrder;
+    }
     
     // Show success toast
     toast.success(`Section moved ${direction}`, { id: `move-section-${id}`, duration: 2000 });
     
     // Sort by order
-    return newSections.sort((a, b) => a.order - b.order);
+    return newSections.sort((a, b) => a.sort_order - b.sort_order);
   });
 };

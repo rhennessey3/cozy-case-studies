@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
+import { SectionResponse } from './types/sectionTypes';
 
 // Define the interface for storing section state
 interface SectionState {
-  sections: SectionWithOrder[];
+  sections: SectionResponse[];
   lastUpdated: string;
 }
 
@@ -49,8 +50,25 @@ export const useSectionStorage = (caseStudyId: string | null) => {
             (section: any) => section.component !== 'editor_state'
           );
           
+          // Normalize the sections to ensure they have all required fields
+          const normalizedSections = filteredSections.map((section: any) => {
+            // Convert legacy format to current format if needed
+            return {
+              id: section.id,
+              case_study_id: section.case_study_id || caseStudyId,
+              component: section.component || section.type || 'alignment',
+              title: section.title || section.name || '',
+              content: section.content || '',
+              sort_order: section.sort_order !== undefined ? section.sort_order : 
+                         (section.order !== undefined ? section.order : 0),
+              published: section.published !== undefined ? section.published : true,
+              image_url: section.image_url,
+              metadata: section.metadata
+            };
+          });
+          
           setSectionsState({
-            sections: filteredSections,
+            sections: normalizedSections,
             lastUpdated: metadata.lastUpdated
           });
         } else {
@@ -75,7 +93,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
   };
 
   // Save sections to Supabase
-  const saveSections = async (sections: SectionWithOrder[]) => {
+  const saveSections = async (sections: SectionResponse[]) => {
     if (!caseStudyId) {
       console.log('No case study ID, skipping save');
       return;
@@ -87,7 +105,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       
       // Filter out any potential 'editor_state' entries
       const filteredSections = sections.filter(section => {
-        return (section as any).component !== 'editor_state';
+        return section.component !== 'editor_state';
       });
 
       const sectionState: SectionState = {
@@ -154,9 +172,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
 
   return {
     sections: sectionsState?.sections || [],
-    setSections: (newSections: SectionWithOrder[]) => {
-      saveSections(newSections);
-    },
+    setSections: saveSections,
     isLoading,
     error,
     refresh: loadSections

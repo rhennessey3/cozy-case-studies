@@ -17,9 +17,16 @@ export const mapSectionResponseToSectionWithOrder = (
   return {
     id: sectionResponse.id,
     type: sectionType,
-    name: sectionResponse.title || getSectionDisplayName(sectionType),
-    order: sectionResponse.sort_order,
-    published: sectionResponse.published
+    component: sectionResponse.component,
+    title: sectionResponse.title || getSectionDisplayName(sectionType),
+    content: sectionResponse.content,
+    sort_order: sectionResponse.sort_order,
+    order: sectionResponse.sort_order, // For backward compatibility
+    published: sectionResponse.published,
+    case_study_id: sectionResponse.case_study_id,
+    image_url: sectionResponse.image_url,
+    metadata: sectionResponse.metadata,
+    name: sectionResponse.title || getSectionDisplayName(sectionType) // For backward compatibility
   };
 };
 

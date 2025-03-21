@@ -10,6 +10,13 @@ import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
 import IntroductionSection from './IntroductionSection';
 
+// Define prop interfaces for section components to make TypeScript happy
+interface SectionComponentBaseProps {
+  form: any;
+  handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
+  handleImageUploaded?: (field: string, url: string) => void;
+}
+
 interface SectionRendererProps {
   section: SectionResponse;
   isOpen: boolean;
@@ -48,14 +55,14 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case 'introduction':
         return (
           <IntroductionSection
-            form={form}
+            form={form as any}
             handleContentChange={handleContentChange}
           />
         );
       case 'alignment':
         return (
           <AlignmentSection
-            form={form}
+            form={form as any}
             handleContentChange={handleContentChange}
             handleImageUploaded={handleImageUploaded}
             onAlignmentChange={onAlignmentChange}
@@ -64,7 +71,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case 'carousel':
         return (
           <CarouselSection
-            form={form}
+            form={form as any}
             handleContentChange={handleContentChange}
             handleImageUploaded={handleImageUploaded}
             handleReorderCarouselItems={handleReorderCarouselItems}
@@ -74,7 +81,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case 'fourParagraphs':
         return (
           <FourParagraphsSection
-            form={form}
+            form={form as any}
             handleContentChange={handleContentChange}
             handleImageUploaded={handleImageUploaded}
             paragraphItems={paragraphItems}

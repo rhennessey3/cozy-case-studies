@@ -8,13 +8,17 @@ import { getSectionDisplayName } from '@/hooks/case-study-editor/sections/utils/
  */
 export const createSection = (type: SectionWithOrder['type'], order: number): SectionWithOrder => {
   // Get the display name for this section type
-  const name = getSectionDisplayName(type);
+  const displayName = getSectionDisplayName(type);
   
   return {
     id: uuidv4(),
     type,
-    name,
-    order,
-    published: true // Default to published
+    component: type, // Using type as component
+    title: displayName,
+    content: '',
+    sort_order: order,
+    published: true, // Default to published
+    name: displayName, // For backward compatibility
+    order: order // For backward compatibility
   };
 };

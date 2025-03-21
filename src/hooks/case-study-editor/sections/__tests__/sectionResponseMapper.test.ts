@@ -23,9 +23,16 @@ describe('sectionResponseMapper', () => {
     expect(result).toEqual({
       id: 'test-id',
       type: 'carousel',
-      name: 'Test Section',
-      order: 1,
-      published: true
+      component: 'carousel',
+      title: 'Test Section',
+      content: 'Test content',
+      sort_order: 1,
+      order: 1, // Added for backward compatibility
+      case_study_id: 'case-study-1',
+      published: true,
+      name: 'Test Section', // Added for backward compatibility
+      image_url: undefined,
+      metadata: undefined
     });
   });
   
@@ -42,7 +49,7 @@ describe('sectionResponseMapper', () => {
     
     const result = mapSectionResponseToSectionWithOrder(sectionResponse);
     
-    expect(result.name).toBe('Untitled Section');
+    expect(result.title).toBe('Left or Right Aligned Section');
   });
   
   test('should map an array of section responses', () => {
@@ -72,7 +79,7 @@ describe('sectionResponseMapper', () => {
     expect(results.length).toBe(2);
     expect(results[0].type).toBe('carousel');
     expect(results[1].type).toBe('alignment');
-    expect(results[0].name).toBe('Carousel Section');
-    expect(results[1].name).toBe('Alignment Section');
+    expect(results[0].title).toBe('Carousel Section');
+    expect(results[1].title).toBe('Alignment Section');
   });
 });

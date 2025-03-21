@@ -4,6 +4,8 @@ import { SectionResponse } from './types/sectionTypes';
 import { useOpenSections } from './useOpenSections';
 import { toast } from 'sonner';
 import { useSectionStorage } from './useSectionStorage';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
+import { mapSectionResponseToSectionWithOrder, mapSectionResponsesToSectionWithOrders } from './utils/sectionResponseMapper';
 
 export const useSectionState = (caseStudyId: string | null = null) => {
   // Use Supabase for section data persistence
@@ -29,13 +31,32 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   // Load initial sections from Supabase
   useEffect(() => {
     if (supabaseSections && supabaseSections.length > 0 && !initialized) {
-      setSections(supabaseSections);
-      lastValidSectionsRef.current = supabaseSections;
+      // Handle potential type differences
+      if ('type' in supabaseSections[0]) {
+        // If we have a SectionWithOrder array, convert it to SectionResponse array
+        const convertedSections = supabaseSections.map((section: any) => ({
+          id: section.id,
+          case_study_id: section.case_study_id || caseStudyId || '',
+          component: section.component || section.type,
+          title: section.title || section.name || '',
+          content: section.content || '',
+          sort_order: section.sort_order || section.order || 0,
+          published: section.published !== undefined ? section.published : true,
+          image_url: section.image_url,
+          metadata: section.metadata
+        }));
+        setSections(convertedSections);
+        lastValidSectionsRef.current = convertedSections;
+      } else {
+        // It's already a SectionResponse array
+        setSections(supabaseSections);
+        lastValidSectionsRef.current = supabaseSections;
+      }
       setInitialized(true);
     } else if (!supabaseLoading && !initialized) {
       setInitialized(true);
     }
-  }, [supabaseSections, supabaseLoading, initialized]);
+  }, [supabaseSections, supabaseLoading, initialized, caseStudyId]);
   
   // Update state when sections change
   const isUpdatingRef = useRef(false);
@@ -46,7 +67,15 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     
     // Save to Supabase when sections change, but only if we have a caseStudyId
     if (caseStudyId && sections.length > 0 && initialized && !isUpdatingRef.current) {
-      saveToSupabase(sections);
+      // Handle potential type conversion before saving
+      const sectionsToSave = sections.map(section => {
+        // Ensure all required fields are present
+        return {
+          ...section,
+          case_study_id: section.case_study_id || caseStudyId
+        };
+      });
+      saveToSupabase(sectionsToSave as any);
     }
   }, [sections, caseStudyId, initialized, saveToSupabase]);
   

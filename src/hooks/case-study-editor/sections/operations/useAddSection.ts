@@ -26,15 +26,15 @@ export const useAddSection = (
     const sectionType = mapComponentTypeToSectionType(componentType);
     
     // Create section with next sort order
-    const newSection = createSection(sectionType, maxSortOrder + 1);
+    const tempSection = createSection(sectionType, maxSortOrder + 1);
     
     // Convert SectionWithOrder to the database format
     const dbSection = {
       case_study_id: caseStudyId,
       component: componentType,
-      title: newSection.name,
-      sort_order: newSection.order,
-      published: newSection.published,
+      title: tempSection.title,
+      sort_order: tempSection.sort_order,
+      published: tempSection.published,
       content: '',
     };
     
