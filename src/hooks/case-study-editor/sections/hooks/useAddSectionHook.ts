@@ -19,7 +19,7 @@ export const useAddSectionHook = (
     
     if (!caseStudyId) {
       toast.error('Cannot add section without a case study');
-      return;
+      return null;
     }
     
     const newOrder = sections.length > 0 

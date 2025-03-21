@@ -7,19 +7,21 @@ import { cn } from '@/lib/utils';
 
 interface ImageUploaderProps {
   onImageUploaded: (imageUrl: string) => void;
-  currentImageUrl?: string;
+  imageUrl?: string; // Changed from currentImageUrl to imageUrl for consistency
   label?: string;
   className?: string;
+  aspectRatio?: string; // Added aspect ratio prop
 }
 
 const ImageUploader = ({ 
   onImageUploaded, 
-  currentImageUrl, 
+  imageUrl, // Updated prop name
   label = 'Image', 
-  className 
+  className,
+  aspectRatio 
 }: ImageUploaderProps) => {
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
+  const [preview, setPreview] = useState<string | null>(imageUrl || null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -68,7 +70,10 @@ const ImageUploader = ({
       <label className="font-medium">{label}</label>
       <div className="flex flex-col gap-2">
         {preview && (
-          <div className="relative w-full h-48 mb-2 border rounded-md overflow-hidden">
+          <div className={cn(
+            "relative w-full h-48 mb-2 border rounded-md overflow-hidden",
+            aspectRatio && `aspect-${aspectRatio}`
+          )}>
             <img 
               src={preview} 
               alt="Preview" 

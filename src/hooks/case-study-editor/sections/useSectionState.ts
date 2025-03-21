@@ -1,6 +1,7 @@
 
 import { useRef } from 'react';
 import { SectionResponse } from './types/sectionTypes';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 import { useOpenSections } from './useOpenSections';
 import { useSectionStorage } from './useSectionStorage';
 import { useAddSectionHook } from './hooks/useAddSectionHook';
@@ -9,6 +10,7 @@ import { useMoveSectionHook } from './hooks/useMoveSectionHook';
 import { useTogglePublishedHook } from './hooks/useTogglePublishedHook';
 import { useSectionInitHook } from './hooks/useSectionInitHook';
 import { useSyncWithOpenSections } from './hooks/useSyncWithOpenSections';
+import { mapSectionResponseToSectionWithOrder, mapSectionResponsesToSectionWithOrders } from './utils/sectionResponseMapper';
 
 /**
  * Main hook for managing sections state
