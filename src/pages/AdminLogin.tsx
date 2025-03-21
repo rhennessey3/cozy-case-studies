@@ -11,7 +11,7 @@ import Navbar from '@/components/Navbar';
 import TopNavbar from '@/components/TopNavbar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, InfoIcon } from "lucide-react";
 
 const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -55,7 +55,7 @@ const AdminLogin: React.FC = () => {
         setLoginError(`Login failed. Please check your password and try again.`);
         toast({
           title: "Login Failed",
-          description: "Incorrect password",
+          description: "Incorrect password or authentication error",
           variant: "destructive"
         });
       }
@@ -107,6 +107,15 @@ const AdminLogin: React.FC = () => {
                   <AlertDescription>{loginError}</AlertDescription>
                 </Alert>
               )}
+              
+              <Alert variant="info" className="bg-blue-50 border-blue-200">
+                <InfoIcon className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-700">
+                  First time logging in? The system will create an admin account.
+                  You may need to check your email for confirmation.
+                </AlertDescription>
+              </Alert>
+              
               <div className="space-y-2">
                 <Input
                   id="password"
