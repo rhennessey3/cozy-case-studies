@@ -1,11 +1,7 @@
 
 import React from 'react';
-import { SectionWithOrder } from './types';
 
 interface SectionContainerProps {
-  section: SectionWithOrder;
-  isOpen: boolean;
-  onToggle: () => void;
   children: React.ReactNode;
 }
 
@@ -13,14 +9,9 @@ interface SectionContainerProps {
  * Container component for individual section types
  * Handles common section rendering logic like expansion/collapse
  */
-const SectionContainer: React.FC<SectionContainerProps> = ({
-  section,
-  isOpen,
-  onToggle,
-  children
-}) => {
+const SectionContainer: React.FC<SectionContainerProps> = ({ children }) => {
   return (
-    <div key={section.id} className="mb-6">
+    <div className="mb-6">
       {children}
     </div>
   );

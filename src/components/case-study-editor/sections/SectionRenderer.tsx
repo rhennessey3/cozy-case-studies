@@ -9,7 +9,6 @@ import AlignmentSection from './AlignmentSection';
 import CarouselSection from './CarouselSection';
 import FourParagraphsSection from './FourParagraphsSection';
 import IntroductionSection from './IntroductionSection';
-import SectionContainer from './SectionContainer';
 
 interface SectionRendererProps {
   section: SectionResponse;
@@ -103,7 +102,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   };
 
   return (
-    <SectionContainer>
+    <div className="mb-6">
       <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
         <button
           onClick={onToggle}
@@ -147,7 +146,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
           {renderSectionContent()}
         </div>
       )}
-    </SectionContainer>
+    </div>
   );
 };
 

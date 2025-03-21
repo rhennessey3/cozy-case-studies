@@ -6,7 +6,7 @@ import { useCarouselItems } from '@/hooks/case-study-editor/sections/useCarousel
 import { useParagraphItems } from './sections/useParagraphItems';
 import { useFormKey } from '@/hooks/case-study-editor/sections/useFormKey';
 import { CaseStudyForm } from '@/types/caseStudy';
-import { mapSectionResponsesToSectionWithOrders } from '@/hooks/case-study-editor/sections/utils/sectionResponseMapper';
+import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 
 interface CaseStudyContentTabProps {
   form: Partial<CaseStudyForm>;
@@ -34,9 +34,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     moveSection,
     toggleSectionPublished
   } = useSectionState(caseStudyId); // Pass caseStudyId here
-  
-  // Already getting sections as SectionResponse[] from useSectionState
-  // No need to re-map them here as the sectionState manages the proper types
   
   // Initialize carousel and paragraph items
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(

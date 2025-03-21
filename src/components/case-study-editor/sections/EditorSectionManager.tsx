@@ -62,6 +62,7 @@ const EditorSectionManager: React.FC<EditorSectionManagerProps> = ({
         carouselItems={carouselItems}
         paragraphItems={paragraphItems}
         onPublishedChange={toggleSectionPublished}
+        onRemoveSection={removeSection}
       />
     </div>
   );

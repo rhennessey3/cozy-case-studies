@@ -2,33 +2,35 @@
 import { useState, useCallback } from 'react';
 
 export const useOpenSections = () => {
+  // State for tracking which sections are open (expanded)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
-  
-  // Toggle section open/closed state (UI only)
+
+  // Toggle a section's open/closed state
   const toggleSection = useCallback((id: string) => {
     setOpenSections(prev => ({
       ...prev,
       [id]: !prev[id]
     }));
   }, []);
-  
-  // Clean up orphaned open sections
+
+  // Remove orphaned sections from the openSections state
   const cleanupOrphanedSections = useCallback((validSectionIds: Set<string>) => {
     setOpenSections(prev => {
-      const updated = { ...prev };
-      let hasChanges = false;
+      const newOpenSections = { ...prev };
+      let changed = false;
       
-      Object.keys(updated).forEach(id => {
+      // Remove any section IDs that aren't in the valid set
+      Object.keys(newOpenSections).forEach(id => {
         if (!validSectionIds.has(id)) {
-          delete updated[id];
-          hasChanges = true;
+          delete newOpenSections[id];
+          changed = true;
         }
       });
       
-      return hasChanges ? updated : prev;
+      return changed ? newOpenSections : prev;
     });
   }, []);
-  
+
   return {
     openSections,
     setOpenSections,

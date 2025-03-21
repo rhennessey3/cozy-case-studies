@@ -18,7 +18,12 @@ export interface ParagraphItem {
 export interface SectionWithOrder {
   id: string;
   type: 'alignment' | 'carousel' | 'fourParagraphs' | 'introduction';
-  name: string;
-  order: number;
+  component: string; // Match SectionResponse
+  title: string; // Match SectionResponse
+  content: string; // Match SectionResponse
+  sort_order: number; // Match SectionResponse
   published?: boolean;
+  case_study_id?: string; // Match SectionResponse
+  image_url?: string; // Match SectionResponse
+  metadata?: any; // Match SectionResponse
 }

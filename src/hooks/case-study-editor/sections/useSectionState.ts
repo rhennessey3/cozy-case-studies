@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
+import { SectionResponse } from './types/sectionTypes';
 import { useOpenSections } from './useOpenSections';
 import { toast } from 'sonner';
 import { useSectionStorage } from './useSectionStorage';
@@ -14,9 +14,9 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   } = useSectionStorage(caseStudyId);
   
   // Initialize sections state
-  const [sections, setSections] = useState<SectionWithOrder[]>([]);
+  const [sections, setSections] = useState<SectionResponse[]>([]);
   const [initialized, setInitialized] = useState(false);
-  const lastValidSectionsRef = useRef<SectionWithOrder[]>([]);
+  const lastValidSectionsRef = useRef<SectionResponse[]>([]);
   
   // Manage open/closed state for sections (UI state only)
   const {
@@ -59,17 +59,24 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   }, [sections, cleanupOrphanedSections]);
 
   // Add a new section
-  const addSection = (type: SectionWithOrder['type']) => {
+  const addSection = (type: string) => {
     console.log('Adding section of type:', type);
     const newOrder = sections.length > 0 
-      ? Math.max(...sections.map(s => s.order)) + 1 
+      ? Math.max(...sections.map(s => s.sort_order)) + 1 
       : 1;
       
-    const newSection: SectionWithOrder = {
+    if (!caseStudyId) {
+      toast.error('Cannot add section without a case study');
+      return;
+    }
+      
+    const newSection: SectionResponse = {
       id: crypto.randomUUID(),
-      type,
-      name: type.charAt(0).toUpperCase() + type.slice(1),
-      order: newOrder,
+      case_study_id: caseStudyId,
+      component: type,
+      title: type.charAt(0).toUpperCase() + type.slice(1),
+      content: '',
+      sort_order: newOrder,
       published: true
     };
     
@@ -82,7 +89,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     }));
     
     // Show success toast when section is added
-    toast.success(`${newSection.name} section added`);
+    toast.success(`${newSection.title} section added`);
     
     lastValidSectionsRef.current = [...lastValidSectionsRef.current, newSection];
     return newSection;
@@ -111,15 +118,15 @@ export const useSectionState = (caseStudyId: string | null = null) => {
       }
       
       console.log(`Found section to remove:`, sectionToRemove);
-      const removedOrder = sectionToRemove.order;
-      const sectionName = sectionToRemove.name;
+      const removedOrder = sectionToRemove.sort_order;
+      const sectionName = sectionToRemove.title;
       
       const filteredSections = prev.filter(section => section.id !== id);
       
       // Adjust order for sections after the removed one
       const adjustedSections = filteredSections.map(section => ({
         ...section,
-        order: section.order > removedOrder ? section.order - 1 : section.order
+        sort_order: section.sort_order > removedOrder ? section.sort_order - 1 : section.sort_order
       }));
       
       console.log(`Updated sections after removal:`, adjustedSections);
@@ -160,15 +167,15 @@ export const useSectionState = (caseStudyId: string | null = null) => {
       const targetSection = newSections[targetIndex];
       
       // Swap orders
-      const tempOrder = section.order;
-      section.order = targetSection.order;
-      targetSection.order = tempOrder;
+      const tempOrder = section.sort_order;
+      section.sort_order = targetSection.sort_order;
+      targetSection.sort_order = tempOrder;
       
       // Show success toast
       toast.success(`Section moved ${direction}`, { id: `move-section-${id}`, duration: 2000 });
       
       // Update lastValidSections
-      const sortedSections = [...newSections].sort((a, b) => a.order - b.order);
+      const sortedSections = [...newSections].sort((a, b) => a.sort_order - b.sort_order);
       lastValidSectionsRef.current = sortedSections;
       
       // Sort by order
