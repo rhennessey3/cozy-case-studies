@@ -1,17 +1,16 @@
 
-import { CaseStudy } from '@/data/caseStudies';
 import { CaseStudyForm } from '@/types/caseStudy';
-import { getLocalCaseStudyBySlug } from '../utils/localStorageUtils';
 import { createNewCaseStudyForm } from '../utils/fetchUtils';
 
 /**
- * Fetch a case study from local storage
+ * @deprecated This service has been deprecated in favor of database storage
+ * It is kept only for backward compatibility and will be removed in a future release
  */
 export const fetchLocalCaseStudy = (slug: string): {
-  caseStudy: CaseStudy | null;
+  caseStudy: null;
   form: CaseStudyForm | null;
 } => {
-  console.log('Checking local storage for case study with slug:', slug);
+  console.warn('Local storage service is deprecated: Use database service instead');
   
   // For new case studies, return empty form
   if (slug === 'new') {
@@ -21,43 +20,6 @@ export const fetchLocalCaseStudy = (slug: string): {
     };
   }
   
-  // Try to get existing case study from local storage
-  // Since getLocalCaseStudyBySlug no longer accepts parameters, we call it with no arguments
-  const localCaseStudy = getLocalCaseStudyBySlug();
-  
-  if (!localCaseStudy) {
-    return { caseStudy: null, form: null };
-  }
-  
-  console.log('Found case study in local storage:', localCaseStudy);
-  
-  // Map the local case study data to form fields
-  const form: CaseStudyForm = {
-    title: localCaseStudy.title,
-    slug: localCaseStudy.slug,
-    summary: localCaseStudy.summary,
-    description: localCaseStudy.description || '',
-    coverImage: localCaseStudy.coverImage,
-    category: localCaseStudy.category,
-    height: localCaseStudy.height || '',
-    intro: localCaseStudy.content.intro,
-    challenge: localCaseStudy.content.challenge,
-    approach: localCaseStudy.content.approach,
-    solution: localCaseStudy.content.solution,
-    results: localCaseStudy.content.results,
-    conclusion: localCaseStudy.content.conclusion,
-    alignment: 'left',
-    subhead: '',
-    introductionParagraph: '',
-    alignmentImage: '',
-    introImage: '',
-    challengeImage: '',
-    approachImage: '',
-    solutionImage: '',
-    resultsImage: '',
-    conclusionImage: '',
-    customSections: ''
-  };
-  
-  return { caseStudy: localCaseStudy, form };
+  // Return null for all other cases
+  return { caseStudy: null, form: null };
 };

@@ -18,17 +18,15 @@ export const clearSectionsState = (caseStudySlug: string): void => {
 };
 
 /**
- * @deprecated Local storage is no longer used for case studies. Use database operations instead.
+ * @deprecated These functions have been removed as local storage is no longer used
  */
 export const clearLocalCaseStudyData = (): void => {
-  toast.info('Local storage is no longer used for case studies');
-  console.log('This function is deprecated. Data is now stored in the database.');
+  console.warn('Local storage functionality has been removed');
 };
 
 /**
- * @deprecated Local storage is no longer used for case studies. Use database operations instead.
+ * @deprecated These functions have been removed as local storage is no longer used
  */
-export const clearSpecificCaseStudy = (slug: string): void => {
-  toast.info('Local storage is no longer used for case studies');
-  console.log('This function is deprecated. Data is now stored in the database.');
+export const clearSpecificCaseStudy = (): void => {
+  console.warn('Local storage functionality has been removed');
 };
