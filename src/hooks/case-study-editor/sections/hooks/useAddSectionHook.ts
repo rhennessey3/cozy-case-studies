@@ -4,6 +4,7 @@ import { SectionResponse } from '../types/sectionTypes';
 import { toast } from 'sonner';
 import { createSection } from '@/components/case-study-editor/sections/utils/createSection';
 import { mapComponentTypeToSectionType } from '../utils/sectionTypeMapping';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
 /**
  * Hook to handle adding a new section
@@ -14,7 +15,7 @@ export const useAddSectionHook = (
   setSections: React.Dispatch<React.SetStateAction<SectionResponse[]>>,
   setOpenSections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 ) => {
-  return useCallback((type: string) => {
+  return useCallback((type: SectionWithOrder['type']) => {
     console.log('Adding section of type:', type);
     
     if (!caseStudyId) {
@@ -26,8 +27,8 @@ export const useAddSectionHook = (
       ? Math.max(...sections.map(s => s.sort_order)) + 1 
       : 1;
     
-    // Map the component type to a valid section type
-    const sectionType = mapComponentTypeToSectionType(type);
+    // Since we're now passing in the exact type, we don't need to map it
+    const sectionType = type;
     
     // Create a temporary section with the proper structure
     const tempSection = createSection(sectionType, newOrder);

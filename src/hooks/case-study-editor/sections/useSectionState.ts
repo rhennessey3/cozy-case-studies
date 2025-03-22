@@ -1,5 +1,5 @@
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 import { useOpenSections } from './useOpenSections';
 import { useSectionInitHook } from './hooks/useSectionInitHook';
@@ -7,6 +7,7 @@ import { useAddSectionHook } from './hooks/useAddSectionHook';
 import { useRemoveSectionHook } from './hooks/useRemoveSectionHook';
 import { useTogglePublishedHook } from './hooks/useTogglePublishedHook';
 import { useSectionStorage } from './useSectionStorage';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
 /**
  * Main hook for managing sections state
@@ -50,7 +51,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   cleanupOrphanedSections(validSectionIds);
 
   // Return memoized callbacks to prevent infinite re-renders
-  const addSectionCallback = useCallback((type: string) => {
+  const addSectionCallback = useCallback((type: SectionWithOrder['type']) => {
     return addSection(type);
   }, [addSection]);
 

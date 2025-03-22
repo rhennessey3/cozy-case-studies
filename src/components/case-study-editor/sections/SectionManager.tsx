@@ -2,10 +2,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
+import { SectionWithOrder } from './types';
 
 interface SectionManagerProps {
   sections: SectionResponse[];
-  onAddSection: (type: string) => void;
+  onAddSection: (type: SectionWithOrder['type']) => void;
   onRemoveSection: (id: string) => void;
   onTogglePublished: (id: string, published: boolean) => void;
 }

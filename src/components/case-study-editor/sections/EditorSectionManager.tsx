@@ -3,12 +3,13 @@ import React from 'react';
 import SectionManager from './SectionManager';
 import SectionList from './SectionList';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
+import { SectionWithOrder } from './types';
 
 interface EditorSectionManagerProps {
   sections: SectionResponse[];
   openSections: Record<string, boolean>;
   toggleSection: (id: string) => void;
-  addSection: (type: string) => void;
+  addSection: (type: SectionWithOrder['type']) => void;
   removeSection: (id: string) => void;
   toggleSectionPublished: (id: string, published: boolean) => void;
   formKey: string;
