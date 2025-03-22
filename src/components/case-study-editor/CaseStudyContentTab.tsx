@@ -1,25 +1,24 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import EditorSectionManager from '@/components/case-study-editor/sections/EditorSectionManager';
 import { useSectionState } from '@/hooks/case-study-editor/sections/useSectionState';
 import { useCarouselItems } from '@/hooks/case-study-editor/sections/useCarouselItems';
 import { useParagraphItems } from './sections/useParagraphItems';
 import { useFormKey } from '@/hooks/case-study-editor/sections/useFormKey';
 import { CaseStudyForm } from '@/types/caseStudy';
-import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 
 interface CaseStudyContentTabProps {
   form: Partial<CaseStudyForm>;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded?: (field: string, url: string) => void;
-  caseStudyId?: string | null; // Required prop for Supabase integration
+  caseStudyId?: string | null;
 }
 
 const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({ 
   form, 
   handleContentChange,
   handleImageUploaded = () => {},
-  caseStudyId // Include the prop
+  caseStudyId
 }) => {
   // Generate form key for stable rendering
   const formKey = useFormKey(form);
@@ -31,8 +30,9 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     toggleSection, 
     addSection, 
     removeSection,
-    toggleSectionPublished
-  } = useSectionState(caseStudyId); // Pass caseStudyId here
+    toggleSectionPublished,
+    refresh: refreshSections
+  } = useSectionState(caseStudyId);
   
   // Initialize carousel and paragraph items
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(
@@ -54,11 +54,16 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   };
 
   // Add debug logging to help diagnose issues
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('CaseStudyContentTab rendering with form:', form);
     console.log('Sections:', sections);
     console.log('Case Study ID:', caseStudyId);
-  }, [form, sections, caseStudyId]);
+    
+    if (caseStudyId && sections.length === 0) {
+      console.log('No sections loaded, refreshing from database');
+      refreshSections();
+    }
+  }, [form, sections, caseStudyId, refreshSections]);
 
   return (
     <EditorSectionManager 

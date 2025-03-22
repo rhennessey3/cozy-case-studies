@@ -17,7 +17,8 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   const { 
     sections: supabaseSections, 
     setSections: saveToSupabase,
-    isLoading: supabaseLoading
+    isLoading: supabaseLoading,
+    refresh: refreshFromSupabase
   } = useSectionStorage(caseStudyId);
   
   // Initialize sections state with sections from Supabase
@@ -38,28 +39,38 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     cleanupOrphanedSections
   } = useOpenSections();
   
-  // Use a ref to indicate if we're currently updating to prevent infinite loops
-  const isUpdatingRef = useRef(false);
-  
   // Create all the section operation hooks with memoized callbacks
   const addSection = useAddSectionHook(caseStudyId, sections, setSections, setOpenSections);
   const removeSection = useRemoveSectionHook(setSections, setOpenSections);
   const toggleSectionPublished = useTogglePublishedHook(setSections);
   
   // Create a set of valid section IDs and clean up orphaned openSections
-  const validSectionIds = new Set(sections.map(section => section.id));
-  cleanupOrphanedSections(validSectionIds);
+  useEffect(() => {
+    const validSectionIds = new Set(sections.map(section => section.id));
+    cleanupOrphanedSections(validSectionIds);
+  }, [sections, cleanupOrphanedSections]);
+
+  // Save to Supabase when sections change
+  useEffect(() => {
+    if (caseStudyId && initialized && sections.length > 0) {
+      console.log("Saving updated sections to Supabase:", sections);
+      saveToSupabase(sections);
+    }
+  }, [sections, caseStudyId, initialized, saveToSupabase]);
 
   // Return memoized callbacks to prevent infinite re-renders
   const addSectionCallback = useCallback((type: SectionWithOrder['type']) => {
+    console.log(`Adding section of type: ${type}`);
     return addSection(type);
   }, [addSection]);
 
   const removeSectionCallback = useCallback((id: string) => {
+    console.log(`Removing section with ID: ${id}`);
     removeSection(id);
   }, [removeSection]);
 
   const toggleSectionPublishedCallback = useCallback((id: string, published: boolean) => {
+    console.log(`Toggling published state for section ${id} to ${published}`);
     toggleSectionPublished(id, published);
   }, [toggleSectionPublished]);
   
@@ -70,6 +81,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     toggleSection,
     addSection: addSectionCallback,
     removeSection: removeSectionCallback,
-    toggleSectionPublished: toggleSectionPublishedCallback
+    toggleSectionPublished: toggleSectionPublishedCallback,
+    refresh: refreshFromSupabase
   };
 };

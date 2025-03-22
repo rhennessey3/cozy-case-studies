@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SectionResponse } from '../types/sectionTypes';
 
 /**
@@ -14,21 +14,30 @@ export const useSectionInitHook = (
   const [sections, setSections] = useState<SectionResponse[]>([]);
   const [initialized, setInitialized] = useState(false);
   
-  // Load initial sections from Supabase
+  // Use a ref to prevent multiple initializations
+  const hasInitializedRef = useRef(false);
+  
+  // Log for debugging
   useEffect(() => {
-    if (supabaseSections && supabaseSections.length > 0 && !initialized) {
-      console.log('Loading initial sections from Supabase:', supabaseSections.length);
-      setSections(supabaseSections);
-      setInitialized(true);
-    } else if (!supabaseLoading && !initialized) {
-      setInitialized(true);
-    }
+    console.log("useSectionInitHook - supabaseSections:", supabaseSections);
+    console.log("useSectionInitHook - loading:", supabaseLoading);
+    console.log("useSectionInitHook - initialized:", initialized);
   }, [supabaseSections, supabaseLoading, initialized]);
   
-  // Save to Supabase when sections change
+  // Load initial sections from Supabase
   useEffect(() => {
-    console.log('Sections updated:', sections);
-  }, [sections]);
+    if (!supabaseLoading && !hasInitializedRef.current) {
+      console.log('Loading initial sections from Supabase:', supabaseSections);
+      
+      if (supabaseSections && supabaseSections.length > 0) {
+        console.log('Setting sections from Supabase:', supabaseSections.length);
+        setSections(supabaseSections);
+      }
+      
+      hasInitializedRef.current = true;
+      setInitialized(true);
+    }
+  }, [supabaseSections, supabaseLoading]);
   
   return {
     sections,
