@@ -5,6 +5,13 @@ import { toast } from 'sonner';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { processSupabaseDatabase, checkSupabaseSession } from './services/databaseService';
 
+// Define a consistent return type for the submission result
+export type SubmissionResult = { 
+  success: boolean; 
+  slug?: string; 
+  caseStudyId?: string;
+};
+
 export const useFormSubmitHandling = (
   form: CaseStudyForm, 
   navigate: NavigateFunction, 
@@ -12,7 +19,7 @@ export const useFormSubmitHandling = (
 ) => {
   const [saving, setSaving] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<SubmissionResult> => {
     e.preventDefault();
     
     setSaving(true);
@@ -67,7 +74,12 @@ export const useFormSubmitHandling = (
           });
         }
         
-        return result;
+        // Make sure we always return an object with a success property and optionally a slug
+        return {
+          success: true,
+          slug: result.slug || form.slug,
+          caseStudyId: result.caseStudyId
+        };
       } catch (dbError: any) {
         console.error('Database operation error:', dbError);
         

@@ -1,3 +1,3 @@
 
-export { useFormSubmitHandling } from './useFormSubmitHandling';
+export { useFormSubmitHandling, type SubmissionResult } from './useFormSubmitHandling';
 export { processSupabaseDatabase, checkSupabaseSession } from './services/databaseService';
