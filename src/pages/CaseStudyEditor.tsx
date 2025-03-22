@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -65,9 +66,7 @@ const CaseStudyEditor = () => {
     handleContentChange,
     handleImageUploaded,
     handleSubmit,
-    createNewCaseStudy,
-    isDraft,
-    publishDraft
+    createNewCaseStudy
   } = useCaseStudyEditor(slug);
   
   const handleLogout = async () => {
@@ -89,8 +88,7 @@ const CaseStudyEditor = () => {
     if (loading) return 'LOADING...';
     if (slug === 'new') return 'CREATE CASE STUDY';
     
-    const modeText = isDraft ? ' (DRAFT)' : ' (LIVE)';
-    return form?.title ? `EDIT: ${form.title.toUpperCase()}${modeText}` : `EDIT CASE STUDY${modeText}`;
+    return form?.title ? `EDIT: ${form.title.toUpperCase()}` : 'EDIT CASE STUDY';
   };
 
   const isNew = !slug || slug === 'new' || slug === '';
@@ -103,12 +101,10 @@ const CaseStudyEditor = () => {
           onLogout={handleLogout}
           onViewLive={handleViewLive}
           onDelete={() => setDeleteDialogOpen(true)}
-          onPublish={publishDraft}
           onCancel={handleCancel}
           onSubmit={handleSubmit}
           showViewLive={!!slug && slug !== 'new'}
           showDelete={!!slug && slug !== 'new'}
-          isDraft={isDraft}
           isNew={isNew}
           saving={saving}
           activeTab={activeTab}
@@ -136,14 +132,12 @@ const CaseStudyEditor = () => {
               saving={saving}
               form={form}
               slug={slug}
-              isDraft={isDraft}
               handleChange={handleChange}
               handleContentChange={handleContentChange}
               handleImageUploaded={handleImageUploaded}
               handleSubmit={handleSubmit}
               onViewLive={handleViewLive}
               onDelete={() => setDeleteDialogOpen(true)}
-              onPublish={publishDraft}
               showViewLive={!!slug && slug !== 'new'}
               showDelete={!!slug && slug !== 'new'}
               cancelHref="/admin/case-studies"

@@ -9,7 +9,6 @@ interface FormActionsProps {
   slug?: string;
   cancelHref?: string;
   onCancel?: () => void;
-  isDraft?: boolean;
   className?: string;
 }
 
@@ -18,7 +17,6 @@ const FormActions: React.FC<FormActionsProps> = ({
   slug,
   cancelHref = '/admin/case-studies',
   onCancel,
-  isDraft = true,
   className = ""
 }) => {
   // This component is now only used in case we need to show form actions elsewhere

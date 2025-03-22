@@ -132,7 +132,7 @@ export const useSectionState = (
   });
 
   // Memoized handlers that don't change on re-renders
-  const addSectionHandler = useCallback((type: string) => {
+  const addSectionHandler = useCallback((type: SectionWithOrder['type']) => {
     return handlersRef.current.addSection(type);
   }, []);
 

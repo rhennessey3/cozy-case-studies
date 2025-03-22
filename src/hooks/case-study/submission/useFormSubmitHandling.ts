@@ -8,8 +8,7 @@ import { processSupabaseDatabase, checkSupabaseSession } from './services/databa
 export const useFormSubmitHandling = (
   form: CaseStudyForm, 
   navigate: NavigateFunction, 
-  slug?: string, 
-  isDraft: boolean = true
+  slug?: string
 ) => {
   const [saving, setSaving] = useState(false);
 
@@ -33,7 +32,6 @@ export const useFormSubmitHandling = (
       
       // Log the form data to debug custom sections
       console.log("Submitting form with custom sections:", form.customSections);
-      console.log(`Submitting in ${isDraft ? 'DRAFT' : 'LIVE'} mode`);
       
       const isNew = !slug || slug === 'new' || slug === '';
       console.log('Mode determined:', isNew ? 'Creating new case study' : 'Editing existing case study', 'Slug:', slug);
@@ -53,22 +51,20 @@ export const useFormSubmitHandling = (
         // Process Supabase database
         const result = await processSupabaseDatabase(form, isNew, slug);
         
-        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully (${isDraft ? 'Draft' : 'Live'} Mode)`);
+        toast.success(`Case study ${isNew ? 'created' : 'updated'} successfully`);
         
         if (isNew) {
           // First navigate to the case study editor for the new case study
           navigate(`/admin/case-studies/${form.slug}`);
           
           // Then show a toast with the option to view the case study on the public site
-          if (!isDraft) {
-            toast('Case study published! View it on the site?', {
-              action: {
-                label: 'View',
-                onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
-              },
-              duration: 5000
-            });
-          }
+          toast('Case study published! View it on the site?', {
+            action: {
+              label: 'View',
+              onClick: () => window.open(`/case-studies/${form.slug}`, '_blank')
+            },
+            duration: 5000
+          });
         }
         
         return result;

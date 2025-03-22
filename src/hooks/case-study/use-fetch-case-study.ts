@@ -5,12 +5,11 @@ import { CaseStudyForm } from '@/types/caseStudy';
 import { fetchCaseStudyFromService } from './services/caseStudyService';
 import { toast } from 'sonner';
 
-export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => {
+export const useFetchCaseStudy = (slug?: string) => {
   const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<CaseStudyForm | null>(null);
   const [fetchCount, setFetchCount] = useState(0);
-  const [isDraft, setIsDraft] = useState(draftMode);
 
   const fetchCaseStudy = useCallback(async () => {
     if (!slug) {
@@ -35,7 +34,7 @@ export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => 
     } finally {
       setLoading(false);
     }
-  }, [slug, isDraft]);
+  }, [slug]);
 
   // Initial fetch
   useEffect(() => {
@@ -48,10 +47,5 @@ export const useFetchCaseStudy = (slug?: string, draftMode: boolean = false) => 
     return fetchCaseStudy();
   }, [fetchCaseStudy]);
 
-  // Function to toggle between draft and live mode
-  const toggleDraftMode = useCallback(() => {
-    setIsDraft(prev => !prev);
-  }, []);
-
-  return { caseStudy, loading, form, refetch, isDraft, toggleDraftMode };
+  return { caseStudy, loading, form, refetch };
 };

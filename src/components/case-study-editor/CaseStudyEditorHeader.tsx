@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Eye, Trash2, Upload, Save, Loader2 } from 'lucide-react';
+import { LogOut, Eye, Trash2, Save, Loader2 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CaseStudyEditorHeaderProps {
@@ -9,12 +9,10 @@ interface CaseStudyEditorHeaderProps {
   onLogout?: () => void;
   onViewLive?: () => void;
   onDelete?: () => void;
-  onPublish?: () => void;
   onCancel?: () => void;
   onSubmit?: (e: React.FormEvent) => void;
   showViewLive?: boolean;
   showDelete?: boolean;
-  isDraft?: boolean;
   isNew?: boolean;
   saving?: boolean;
   children?: React.ReactNode;
@@ -27,12 +25,10 @@ const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
   onLogout,
   onViewLive,
   onDelete,
-  onPublish,
   onCancel,
   onSubmit,
   showViewLive = false,
   showDelete = false,
-  isDraft = true,
   isNew = false,
   saving = false,
   children,
@@ -87,19 +83,6 @@ const CaseStudyEditorHeader: React.FC<CaseStudyEditorHeaderProps> = ({
           </Tabs>
           
           <div className="flex items-center gap-2 mt-3 md:mt-0">
-            {!isNew && isDraft && onPublish && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onPublish}
-                disabled={saving}
-                className="flex items-center gap-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700 border-blue-200"
-              >
-                <Upload className="h-4 w-4" />
-                Publish Draft
-              </Button>
-            )}
-            
             {showViewLive && onViewLive && (
               <Button 
                 variant="outline" 

@@ -2,16 +2,14 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Eye, Trash2, Upload } from 'lucide-react';
+import { Eye, Trash2 } from 'lucide-react';
 import FormActions from './FormActions';
 
 interface EditorTabsNavProps {
   showViewLive: boolean;
   showDelete: boolean;
-  isDraft?: boolean;
   onViewLive?: () => void;
   onDelete?: () => void;
-  onPublish?: () => void;
   saving?: boolean;
   isNew?: boolean;
   slug?: string;
@@ -24,10 +22,8 @@ interface EditorTabsNavProps {
 const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
   showViewLive,
   showDelete,
-  isDraft = true,
   onViewLive,
   onDelete,
-  onPublish,
   saving = false,
   isNew = false,
   slug,
@@ -48,19 +44,6 @@ const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
       </div>
       
       <div className="flex items-center gap-2 ml-auto">
-        {!isNew && isDraft && onPublish && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onPublish}
-            disabled={saving}
-            className="flex items-center gap-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700 border-blue-200"
-          >
-            <Upload className="h-4 w-4" />
-            Publish Draft
-          </Button>
-        )}
-        
         {showViewLive && onViewLive && (
           <Button
             type="button"
@@ -90,7 +73,6 @@ const EditorTabsNav: React.FC<EditorTabsNavProps> = ({
           slug={slug}
           cancelHref={cancelHref}
           onCancel={onCancel}
-          isDraft={isDraft}
           className="ml-4"
         />
       </div>

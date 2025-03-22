@@ -14,20 +14,18 @@ interface CaseStudyEditorContentProps {
   saving: boolean;
   form: CaseStudyForm;
   slug?: string;
-  isDraft?: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleContentChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   handleImageUploaded: (field: string, url: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<{ success: boolean, slug?: string } | undefined>;
   onViewLive?: () => void;
   onDelete?: () => void;
-  onPublish?: () => void;
   showViewLive?: boolean;
   showDelete?: boolean;
   cancelHref?: string;
   onCancel?: () => void;
   activeTab: string;
-  caseStudyId?: string | null; // Add this prop to accept caseStudyId
+  caseStudyId?: string | null;
 }
 
 const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
@@ -35,20 +33,18 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
   saving,
   form,
   slug,
-  isDraft = true,
   handleChange,
   handleContentChange,
   handleImageUploaded,
   handleSubmit,
   onViewLive,
   onDelete,
-  onPublish,
   showViewLive = false,
   showDelete = false,
   cancelHref,
   onCancel,
   activeTab,
-  caseStudyId // Include the prop here
+  caseStudyId
 }) => {
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
   const [authError, setAuthError] = useState<string | null>(null);
@@ -140,7 +136,7 @@ const CaseStudyEditorContent: React.FC<CaseStudyEditorContentProps> = ({
             form={form} 
             handleContentChange={handleContentChange} 
             handleImageUploaded={handleImageUploaded}
-            caseStudyId={caseStudyId} // Pass the caseStudyId to CaseStudyContentTab
+            caseStudyId={caseStudyId}
           />
         </TabsContent>
       </Tabs>
