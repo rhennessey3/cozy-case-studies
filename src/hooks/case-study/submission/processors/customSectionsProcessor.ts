@@ -68,34 +68,20 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   
   // Process custom sections from the form
   if (customSections.length > 0) {
-    // Sort sections by sort_order property
-    customSections.sort((a: any, b: any) => {
-      const aOrder = a.sort_order !== undefined ? a.sort_order : 
-                    (a.order !== undefined ? a.order : 0);
-      const bOrder = b.sort_order !== undefined ? b.sort_order : 
-                    (b.order !== undefined ? b.order : 0);
-      return aOrder - bOrder;
-    });
-    
     console.log('Processing custom sections with valid authentication');
     
     for (const [index, section] of customSections.entries()) {
-      // Use the section's sort_order if available, fall back to order, or use index
-      const sortOrder = section.sort_order !== undefined 
-        ? section.sort_order 
-        : (section.order !== undefined ? section.order : index + 1);
-      
       try {
         // Extract published state from the section
         const published = section.published !== false;
         console.log(`Section ${section.id} (${section.type}) published state:`, published);
         
         if (section.type === 'alignment') {
-          await processAlignmentSection(form, caseStudyId, existingSectionIds, sortOrder, published);
+          await processAlignmentSection(form, caseStudyId, existingSectionIds, index, published);
         } else if (section.type === 'carousel') {
-          await processCarouselSection(form, caseStudyId, existingSectionIds, sortOrder, published);
+          await processCarouselSection(form, caseStudyId, existingSectionIds, index, published);
         } else if (section.type === 'fourParagraphs') {
-          await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder, published);
+          await processFourParagraphsSection(form, caseStudyId, existingSectionIds, index, published);
         } else if (section.type === 'introduction') {
           console.log('Introduction section will be handled separately');
         } else {

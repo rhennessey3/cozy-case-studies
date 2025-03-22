@@ -22,13 +22,8 @@ export const useAddSectionHook = (
       return null;
     }
     
-    // Calculate the highest sort_order to place the new section at the end
-    const newOrder = sections.length > 0 
-      ? Math.max(...sections.map(s => s.sort_order)) + 1 
-      : 1;
-    
-    // Create a temporary section with the proper structure
-    const tempSection = createSection(type, newOrder);
+    // Create a temporary section - no longer using sort_order
+    const tempSection = createSection(type);
     
     // Convert to a SectionResponse compatible object
     const newSection: SectionResponse = {
@@ -37,7 +32,7 @@ export const useAddSectionHook = (
       component: type,
       title: tempSection.title,
       content: tempSection.content || '',
-      sort_order: tempSection.sort_order,
+      sort_order: 0, // Fixed default value - no longer meaningful for ordering
       published: tempSection.published !== undefined ? tempSection.published : true,
       image_url: tempSection.image_url,
       metadata: tempSection.metadata

@@ -33,8 +33,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         .from('case_study_sections')
         .select('*')
         .eq('case_study_id', caseStudyId)
-        .neq('component', 'editor_state')
-        .order('sort_order', { ascending: true });
+        .neq('component', 'editor_state');
 
       if (error) {
         throw new Error(`Failed to load sections: ${error.message}`);
@@ -51,8 +50,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           component: section.component || section.type || 'alignment',
           title: section.title || section.name || '',
           content: section.content || '',
-          sort_order: section.sort_order !== undefined ? section.sort_order : 
-                    (section.order !== undefined ? section.order : 0),
+          sort_order: 0, // Default fixed value
           published: section.published !== undefined ? section.published : true,
           image_url: section.image_url,
           metadata: section.metadata
@@ -101,13 +99,13 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           continue;
         }
 
-        // Prepare the section data - removed updated_at field that was causing errors
+        // Prepare the section data
         const sectionData = {
           case_study_id: caseStudyId,
           component: section.component,
           title: section.title,
           content: section.content || '',
-          sort_order: section.sort_order,
+          sort_order: 0, // Fixed value - no longer used for ordering
           published: section.published,
           image_url: section.image_url,
           metadata: section.metadata

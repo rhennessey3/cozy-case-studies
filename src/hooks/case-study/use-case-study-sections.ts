@@ -25,8 +25,7 @@ export const useCaseStudySections = (caseStudyId: string | undefined, onlyPublis
           .from('case_study_sections')
           .select('*')
           .eq('case_study_id', caseStudyId)
-          .neq('component', 'editor_state') // Explicitly exclude editor_state components
-          .order('sort_order', { ascending: true });
+          .neq('component', 'editor_state'); // Explicitly exclude editor_state components
         
         // Only filter by published status if onlyPublished is true
         if (onlyPublished) {
