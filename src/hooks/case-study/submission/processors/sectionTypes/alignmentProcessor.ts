@@ -19,6 +19,11 @@ export const processAlignmentSection = async (
   
   try {
     console.log(`Processing alignment section with published=${published}, alignment=${form.alignment || 'left'}`);
+    console.log('Alignment section content:', {
+      title: form.subhead || 'Alignment Section',
+      content: form.introductionParagraph || '',
+      image_url: form.alignmentImage || null
+    });
     
     // Check if this section already exists - but get ALL matching sections
     const { data: existingSections, error: fetchError } = await supabase
