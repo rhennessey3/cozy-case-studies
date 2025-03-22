@@ -4,7 +4,6 @@ import { CaseStudyForm } from '@/types/caseStudy';
 import { processAlignmentSection } from './sectionTypes/alignmentProcessor';
 import { processCarouselSection } from './sectionTypes/carouselProcessor';
 import { processFourParagraphsSection } from './sectionTypes/fourParagraphsProcessor';
-import { ADMIN_EMAIL, ADMIN_PASSWORD } from '@/constants/authConstants';
 import { toast } from 'sonner';
 
 export const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
@@ -67,20 +66,23 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   // Process custom sections from the form
   if (customSections.length > 0) {
     // Sort sections by order property
-    customSections.sort((a: any, b: any) => a.order - b.order);
+    customSections.sort((a: any, b: any) => {
+      // Use sort_order if available, fallback to order, or default to index-based ordering
+      const aOrder = a.sort_order !== undefined ? a.sort_order : (a.order !== undefined ? a.order : 0);
+      const bOrder = b.sort_order !== undefined ? b.sort_order : (b.order !== undefined ? b.order : 0);
+      return aOrder - bOrder;
+    });
     
-    // Log authentication state for debugging
     console.log('Processing custom sections with valid authentication');
     
     for (const [index, section] of customSections.entries()) {
-      // Use the section's order if available, otherwise use the index + base offset
-      const sortOrder = section.order !== undefined 
-        ? section.order 
-        : index + 7; // Start after the 6 standard sections
+      // Use the section's sort_order if available, fallback to order, or use index + base offset
+      const sortOrder = section.sort_order !== undefined 
+        ? section.sort_order 
+        : (section.order !== undefined ? section.order : index + 1);
       
       try {
         // Extract published state from the section
-        // Explicitly check if published is false (default is true if not specified)
         const published = section.published !== false;
         console.log(`Section ${section.id} (${section.type}) published state:`, published);
         
@@ -91,7 +93,6 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
         } else if (section.type === 'fourParagraphs') {
           await processFourParagraphsSection(form, caseStudyId, existingSectionIds, sortOrder, published);
         } else if (section.type === 'introduction') {
-          // Just log that we're skipping the introduction section, as it's handled differently
           console.log('Introduction section will be handled separately');
         } else {
           console.log(`Unknown section type: ${section.type}, skipping`);
@@ -99,7 +100,6 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
       } catch (sectionError: any) {
         console.error(`Error processing ${section.type} section:`, sectionError);
         toast.error(`Failed to process ${section.type} section`);
-        // Continue with other sections rather than throwing
         console.log(`Continuing with other sections despite error in ${section.type}`);
       }
     }
@@ -109,7 +109,6 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   if (existingSectionIds.size > 0) {
     const sectionsToDelete = Array.from(existingSectionIds);
     
-    // Log the deletion attempt for debugging
     console.log('Attempting to delete sections:', sectionsToDelete);
     
     const { error: deleteError } = await supabase

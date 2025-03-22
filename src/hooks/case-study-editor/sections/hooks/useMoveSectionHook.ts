@@ -2,12 +2,13 @@
 import { useCallback } from 'react';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useMoveSectionHook = (
   sections: SectionWithOrder[],
   setSections: (sections: SectionWithOrder[]) => void
 ) => {
-  return useCallback((id: string, direction: 'up' | 'down') => {
+  return useCallback(async (id: string, direction: 'up' | 'down') => {
     if (sections.length <= 1) {
       toast.info('Cannot move section when there is only one section');
       return;
@@ -45,35 +46,76 @@ export const useMoveSectionHook = (
       targetIndex = currentIndex + 1;
     }
 
-    // Swap the sort_order values
-    const targetSection = sortedSections[targetIndex];
-    const tempOrder = currentSection.sort_order;
-    currentSection.sort_order = targetSection.sort_order;
-    targetSection.sort_order = tempOrder;
+    // Show loading toast
+    const toastId = `move-section-${id}-${direction}`;
+    toast.loading(`Moving section ${direction}...`, { id: toastId });
 
-    // Update the original sections array with new sort orders
-    const updatedSections = sections.map(section => {
-      if (section.id === currentSection.id) {
-        return {
-          ...section,
-          sort_order: currentSection.sort_order,
-          order: currentSection.sort_order // Update legacy order field too
-        };
+    try {
+      // Swap the sort_order values
+      const targetSection = sortedSections[targetIndex];
+      const tempOrder = currentSection.sort_order;
+      
+      // Update in Supabase if a case study ID is available
+      if (currentSection.case_study_id) {
+        // Update the current section
+        const { error: error1 } = await supabase
+          .from('case_study_sections')
+          .update({ sort_order: targetSection.sort_order })
+          .eq('id', currentSection.id);
+        
+        if (error1) {
+          console.error('Failed to update section order:', error1);
+          toast.error('Failed to update section order', { id: toastId });
+          return;
+        }
+        
+        // Update the target section
+        const { error: error2 } = await supabase
+          .from('case_study_sections')
+          .update({ sort_order: tempOrder })
+          .eq('id', targetSection.id);
+        
+        if (error2) {
+          console.error('Failed to update target section order:', error2);
+          toast.error('Failed to update target section order', { id: toastId });
+          return;
+        }
       }
-      if (section.id === targetSection.id) {
-        return {
-          ...section,
-          sort_order: targetSection.sort_order,
-          order: targetSection.sort_order // Update legacy order field too
-        };
-      }
-      return section;
-    });
+      
+      // Update locally
+      currentSection.sort_order = targetSection.sort_order;
+      targetSection.sort_order = tempOrder;
+      
+      // Update the original sections array with new sort orders
+      const updatedSections = sections.map(section => {
+        if (section.id === currentSection.id) {
+          return {
+            ...section,
+            sort_order: currentSection.sort_order,
+            order: currentSection.sort_order // Update legacy order field too
+          };
+        }
+        if (section.id === targetSection.id) {
+          return {
+            ...section,
+            sort_order: targetSection.sort_order,
+            order: targetSection.sort_order // Update legacy order field too
+          };
+        }
+        return section;
+      });
 
-    // Set the updated sections
-    setSections(updatedSections);
-    
-    // Show success message
-    toast.success(`Section moved ${direction}`);
+      // Sort the updated sections by sort_order
+      updatedSections.sort((a, b) => a.sort_order - b.sort_order);
+      
+      // Set the updated sections
+      setSections(updatedSections);
+      
+      // Show success message
+      toast.success(`Section moved ${direction}`, { id: toastId });
+    } catch (err) {
+      console.error('Failed to move section:', err);
+      toast.error(`Failed to move section: ${err instanceof Error ? err.message : 'Unknown error'}`, { id: toastId });
+    }
   }, [sections, setSections]);
 };
