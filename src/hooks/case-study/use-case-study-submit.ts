@@ -14,7 +14,7 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
     if (result && result.success) {
       // Dispatch a custom event to notify that the case study was saved
       const savedEvent = new CustomEvent('case-study-saved', { 
-        detail: { slug: result.slug } 
+        detail: { slug: result.slug || form.slug } 
       });
       window.dispatchEvent(savedEvent);
     }
