@@ -22,7 +22,8 @@ export const fetchLocalCaseStudy = (slug: string): {
   }
   
   // Try to get existing case study from local storage
-  const localCaseStudy = getLocalCaseStudyBySlug(slug);
+  // Since getLocalCaseStudyBySlug no longer accepts parameters, we call it with no arguments
+  const localCaseStudy = getLocalCaseStudyBySlug();
   
   if (!localCaseStudy) {
     return { caseStudy: null, form: null };
