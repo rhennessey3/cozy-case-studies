@@ -4,6 +4,9 @@ import { SectionWithOrder } from '@/components/case-study-editor/sections/types'
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
+/**
+ * Hook to handle moving a section up or down in the order
+ */
 export const useMoveSectionHook = (
   sections: SectionWithOrder[],
   setSections: (sections: SectionWithOrder[]) => void
@@ -21,38 +24,36 @@ export const useMoveSectionHook = (
       return;
     }
 
-    // Find the current index based on sort_order
+    // Sort sections by sort_order to ensure correct positioning
     const sortedSections = [...sections].sort((a, b) => a.sort_order - b.sort_order);
     const currentIndex = sortedSections.findIndex(s => s.id === id);
     
     if (currentIndex === -1) {
-      console.error(`Section with id ${id} not found in sortedSections`);
+      console.error(`Section with id ${id} not found in sorted sections`);
+      return;
+    }
+
+    // Check boundary conditions
+    if (direction === 'up' && currentIndex === 0) {
+      toast.info('Section is already at the top');
+      return;
+    }
+    
+    if (direction === 'down' && currentIndex === sortedSections.length - 1) {
+      toast.info('Section is already at the bottom');
       return;
     }
 
     // Determine target index
-    let targetIndex;
-    if (direction === 'up') {
-      if (currentIndex === 0) {
-        toast.info('Section is already at the top');
-        return;
-      }
-      targetIndex = currentIndex - 1;
-    } else {
-      if (currentIndex === sortedSections.length - 1) {
-        toast.info('Section is already at the bottom');
-        return;
-      }
-      targetIndex = currentIndex + 1;
-    }
-
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    const targetSection = sortedSections[targetIndex];
+    
     // Show loading toast
     const toastId = `move-section-${id}-${direction}`;
     toast.loading(`Moving section ${direction}...`, { id: toastId });
 
     try {
       // Swap the sort_order values
-      const targetSection = sortedSections[targetIndex];
       const tempOrder = currentSection.sort_order;
       
       // Update in Supabase if a case study ID is available
@@ -91,15 +92,13 @@ export const useMoveSectionHook = (
         if (section.id === currentSection.id) {
           return {
             ...section,
-            sort_order: currentSection.sort_order,
-            order: currentSection.sort_order // Update legacy order field too
+            sort_order: currentSection.sort_order
           };
         }
         if (section.id === targetSection.id) {
           return {
             ...section,
-            sort_order: targetSection.sort_order,
-            order: targetSection.sort_order // Update legacy order field too
+            sort_order: targetSection.sort_order
           };
         }
         return section;

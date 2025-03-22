@@ -12,10 +12,12 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
     const result = await submitHandler(e);
     
     if (result && result.success) {
+      // Use result.slug if available, otherwise fall back to form.slug
+      const eventSlug = result.slug || form.slug;
+      
       // Dispatch a custom event to notify that the case study was saved
-      // We now use the slug from the result or fall back to the form slug if it doesn't exist
       const savedEvent = new CustomEvent('case-study-saved', { 
-        detail: { slug: result.slug || form.slug } 
+        detail: { slug: eventSlug } 
       });
       window.dispatchEvent(savedEvent);
     }

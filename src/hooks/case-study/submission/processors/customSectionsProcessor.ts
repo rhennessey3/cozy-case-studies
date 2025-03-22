@@ -6,6 +6,9 @@ import { processCarouselSection } from './sectionTypes/carouselProcessor';
 import { processFourParagraphsSection } from './sectionTypes/fourParagraphsProcessor';
 import { toast } from 'sonner';
 
+/**
+ * Process custom sections from the case study form
+ */
 export const processCustomSections = async (form: CaseStudyForm, caseStudyId: string) => {
   // Check if we're using local auth only mode
   const isLocalAuthOnly = import.meta.env.VITE_LOCAL_AUTH_ONLY === 'true';
@@ -65,18 +68,19 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   
   // Process custom sections from the form
   if (customSections.length > 0) {
-    // Sort sections by order property
+    // Sort sections by sort_order property
     customSections.sort((a: any, b: any) => {
-      // Use sort_order if available, fallback to order, or default to index-based ordering
-      const aOrder = a.sort_order !== undefined ? a.sort_order : (a.order !== undefined ? a.order : 0);
-      const bOrder = b.sort_order !== undefined ? b.sort_order : (b.order !== undefined ? b.order : 0);
+      const aOrder = a.sort_order !== undefined ? a.sort_order : 
+                    (a.order !== undefined ? a.order : 0);
+      const bOrder = b.sort_order !== undefined ? b.sort_order : 
+                    (b.order !== undefined ? b.order : 0);
       return aOrder - bOrder;
     });
     
     console.log('Processing custom sections with valid authentication');
     
     for (const [index, section] of customSections.entries()) {
-      // Use the section's sort_order if available, fallback to order, or use index + base offset
+      // Use the section's sort_order if available, fall back to order, or use index
       const sortOrder = section.sort_order !== undefined 
         ? section.sort_order 
         : (section.order !== undefined ? section.order : index + 1);

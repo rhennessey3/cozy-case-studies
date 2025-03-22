@@ -37,7 +37,6 @@ export const useFormSubmitHandling = (
         return { success: false };
       }
       
-      // Log the form data to debug custom sections
       console.log("Submitting form with custom sections:", form.customSections);
       
       const isNew = !slug || slug === 'new' || slug === '';
@@ -53,7 +52,6 @@ export const useFormSubmitHandling = (
         return { success: false };
       }
       
-      // Process database operations
       try {
         // Process Supabase database
         const result = await processSupabaseDatabase(form, isNew, slug);
@@ -74,7 +72,7 @@ export const useFormSubmitHandling = (
           });
         }
         
-        // Make sure we always return an object with a success property and optionally a slug
+        // Make sure we always return an object with success property and slug
         return {
           success: true,
           slug: result.slug || form.slug,

@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { SectionResponse } from '../types/sectionTypes';
 import { toast } from 'sonner';
 import { createSection } from '@/components/case-study-editor/sections/utils/createSection';
-import { mapComponentTypeToSectionType } from '../utils/sectionTypeMapping';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
 /**
@@ -23,15 +22,13 @@ export const useAddSectionHook = (
       return null;
     }
     
+    // Calculate the highest sort_order to place the new section at the end
     const newOrder = sections.length > 0 
       ? Math.max(...sections.map(s => s.sort_order)) + 1 
       : 1;
     
-    // Since we're now passing in the exact type, we don't need to map it
-    const sectionType = type;
-    
     // Create a temporary section with the proper structure
-    const tempSection = createSection(sectionType, newOrder);
+    const tempSection = createSection(type, newOrder);
     
     // Convert to a SectionResponse compatible object
     const newSection: SectionResponse = {
