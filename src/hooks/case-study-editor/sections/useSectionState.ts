@@ -1,5 +1,5 @@
 
-import { useRef, useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 import { useOpenSections } from './useOpenSections';
 import { useSectionInitHook } from './hooks/useSectionInitHook';
@@ -38,15 +38,17 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     cleanupOrphanedSections
   } = useOpenSections();
   
-  // Create all the section operation hooks with memoized callbacks
+  // Create all the section operation hooks
   const addSection = useAddSectionHook(caseStudyId, sections, setSections, setOpenSections);
   const removeSection = useRemoveSectionHook(setSections, setOpenSections);
   const toggleSectionPublished = useTogglePublishedHook(setSections);
   
   // Clean up orphaned openSections
   useEffect(() => {
-    const validSectionIds = new Set(sections.map(section => section.id));
-    cleanupOrphanedSections(validSectionIds);
+    if (sections.length > 0) {
+      const validSectionIds = new Set(sections.map(section => section.id));
+      cleanupOrphanedSections(validSectionIds);
+    }
   }, [sections, cleanupOrphanedSections]);
 
   // Save to Supabase when sections change
@@ -56,7 +58,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     }
   }, [sections, caseStudyId, initialized, saveToSupabase]);
 
-  // Return memoized callbacks to prevent re-renders
+  // Memoized callbacks to prevent re-renders
   const addSectionCallback = useCallback((type: SectionWithOrder['type']) => {
     return addSection(type);
   }, [addSection]);

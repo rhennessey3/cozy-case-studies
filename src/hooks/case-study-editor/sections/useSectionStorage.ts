@@ -18,41 +18,28 @@ export const useSectionStorage = (caseStudyId: string | null) => {
   const loadSections = useCallback(async () => {
     if (!caseStudyId) {
       setIsLoading(false);
+      setSections([]);
       return;
     }
 
     try {
       setIsLoading(true);
       setError(null);
-      console.log(`Loading sections for case study ID: ${caseStudyId}`);
-
+      
       const { data, error } = await supabase
         .from('case_study_sections')
         .select('*')
         .eq('case_study_id', caseStudyId)
-        .neq('component', 'editor_state');
-
-      if (error) {
-        throw new Error(`Failed to load sections: ${error.message}`);
-      }
-
-      // Normalize the sections
-      const normalizedSections = data.map((section: any) => ({
-        id: section.id,
-        case_study_id: section.case_study_id || caseStudyId,
-        component: section.component || section.type || 'alignment',
-        title: section.title || section.name || '',
-        content: section.content || '',
-        sort_order: 0, // Default fixed value
-        published: section.published !== undefined ? section.published : true,
-        image_url: section.image_url,
-        metadata: section.metadata
-      }));
+        .neq('component', 'editor_state')
+        .order('sort_order', { ascending: true });
       
-      setSections(normalizedSections);
+      if (error) throw new Error(error.message);
+      
+      setSections(data || []);
     } catch (err: any) {
       console.error('Error loading sections:', err);
       setError(err.message);
+      toast.error(`Failed to load sections: ${err.message}`);
       setSections([]);
     } finally {
       setIsLoading(false);
@@ -61,51 +48,35 @@ export const useSectionStorage = (caseStudyId: string | null) => {
 
   // Save sections to Supabase
   const saveSections = useCallback(async (updatedSections: SectionResponse[]) => {
-    if (!caseStudyId) {
-      console.log('No case study ID, skipping save');
-      return;
-    }
+    if (!caseStudyId || updatedSections.length === 0) return;
 
     try {
-      console.log(`Saving ${updatedSections.length} sections for case study ID: ${caseStudyId}`);
-      
       for (const section of updatedSections) {
-        // Check if section already exists
-        const { data: existingData, error: checkError } = await supabase
+        const { data: existingData } = await supabase
           .from('case_study_sections')
           .select('id')
           .eq('id', section.id)
           .maybeSingle();
 
-        if (checkError) {
-          console.error(`Error checking if section exists: ${checkError.message}`);
-          continue;
-        }
-
-        // Prepare the section data
         const sectionData = {
           case_study_id: caseStudyId,
           component: section.component,
           title: section.title,
           content: section.content || '',
-          sort_order: 0, // Fixed value
+          sort_order: 0, // Fixed value since ordering was removed
           published: section.published,
           image_url: section.image_url,
           metadata: section.metadata
         };
 
-        // Update or insert section
-        const result = existingData 
-          ? await supabase.from('case_study_sections').update(sectionData).eq('id', section.id)
-          : await supabase.from('case_study_sections').insert({ ...sectionData, id: section.id });
-
-        if (result.error) {
-          console.error(`Error saving section ${section.id}: ${result.error.message}`);
-        }
+        const operation = existingData 
+          ? supabase.from('case_study_sections').update(sectionData).eq('id', section.id)
+          : supabase.from('case_study_sections').insert({ ...sectionData, id: section.id });
+          
+        const { error } = await operation;
+        
+        if (error) throw new Error(`Error saving section ${section.id}: ${error.message}`);
       }
-
-      console.log('Sections saved successfully');
-      setSections(updatedSections);
     } catch (err: any) {
       console.error('Error saving sections:', err);
       setError(err.message);
@@ -115,12 +86,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
 
   // Load sections on initial render
   useEffect(() => {
-    if (caseStudyId) {
-      loadSections();
-    } else {
-      setIsLoading(false);
-      setSections([]);
-    }
+    loadSections();
   }, [caseStudyId, loadSections]);
 
   return {

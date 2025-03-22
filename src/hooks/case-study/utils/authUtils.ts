@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Check if the user is authenticated via Supabase
+ * @returns Promise that resolves to whether the user is authenticated
  */
 export const checkSupabaseAuth = async (): Promise<boolean> => {
   try {
@@ -15,10 +16,9 @@ export const checkSupabaseAuth = async (): Promise<boolean> => {
 };
 
 /**
- * This function always returns false now that we're only using Supabase
- * and no longer supporting local authentication mode
+ * @deprecated Local auth mode is no longer supported
+ * @returns Always returns false since we only use Supabase auth now
  */
 export const isLocalAuthMode = (): boolean => {
-  // We're fully migrated to Supabase auth, so always return false
   return false;
 };

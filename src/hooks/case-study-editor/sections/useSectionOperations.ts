@@ -6,7 +6,7 @@ import { useMoveSection } from './operations/useMoveSection';
 import { SectionResponse } from './types/sectionTypes';
 
 /**
- * Hook that provides all CRUD operations for sections
+ * Hook that provides CRUD operations for sections
  * @param caseStudyId The ID of the case study
  * @param sections The current sections
  * @param setSections Function to update sections
@@ -22,6 +22,8 @@ export const useSectionOperations = (
   const addSection = useAddSection(caseStudyId, sections, setSections, setOpenSections);
   const togglePublished = useTogglePublished(setSections);
   const removeSection = useRemoveSection(setSections, setOpenSections);
+  
+  // This function is maintained for backwards compatibility but is now a no-op
   const moveSection = useMoveSection();
   
   return {
