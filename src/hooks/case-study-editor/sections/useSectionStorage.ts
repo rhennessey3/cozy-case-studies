@@ -2,17 +2,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 import { SectionResponse } from './types/sectionTypes';
 
-// Define the interface for storing section state
-interface SectionState {
-  sections: SectionResponse[];
-  lastUpdated: string;
-}
-
+/**
+ * Hook for handling section storage in Supabase
+ * @param caseStudyId The ID of the case study
+ * @returns Object containing sections and functions for manipulating them
+ */
 export const useSectionStorage = (caseStudyId: string | null) => {
-  const [sectionsState, setSectionsState] = useState<SectionState | null>(null);
+  const [sections, setSections] = useState<SectionResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +26,6 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       setError(null);
       console.log(`Loading sections for case study ID: ${caseStudyId}`);
 
-      // Query all sections for this case study
       const { data, error } = await supabase
         .from('case_study_sections')
         .select('*')
@@ -39,54 +36,40 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         throw new Error(`Failed to load sections: ${error.message}`);
       }
 
-      console.log('Loaded raw sections from Supabase:', data);
+      // Normalize the sections
+      const normalizedSections = data.map((section: any) => ({
+        id: section.id,
+        case_study_id: section.case_study_id || caseStudyId,
+        component: section.component || section.type || 'alignment',
+        title: section.title || section.name || '',
+        content: section.content || '',
+        sort_order: 0, // Default fixed value
+        published: section.published !== undefined ? section.published : true,
+        image_url: section.image_url,
+        metadata: section.metadata
+      }));
       
-      // Normalize the sections to ensure they have all required fields
-      const normalizedSections = data.map((section: any) => {
-        // Convert legacy format to current format if needed
-        return {
-          id: section.id,
-          case_study_id: section.case_study_id || caseStudyId,
-          component: section.component || section.type || 'alignment',
-          title: section.title || section.name || '',
-          content: section.content || '',
-          sort_order: 0, // Default fixed value
-          published: section.published !== undefined ? section.published : true,
-          image_url: section.image_url,
-          metadata: section.metadata
-        };
-      });
-      
-      setSectionsState({
-        sections: normalizedSections,
-        lastUpdated: new Date().toISOString()
-      });
-      
-      console.log('Normalized sections:', normalizedSections);
+      setSections(normalizedSections);
     } catch (err: any) {
       console.error('Error loading sections:', err);
       setError(err.message);
-      setSectionsState({
-        sections: [],
-        lastUpdated: new Date().toISOString()
-      });
+      setSections([]);
     } finally {
       setIsLoading(false);
     }
   }, [caseStudyId]);
 
   // Save sections to Supabase
-  const saveSections = useCallback(async (sections: SectionResponse[]) => {
+  const saveSections = useCallback(async (updatedSections: SectionResponse[]) => {
     if (!caseStudyId) {
       console.log('No case study ID, skipping save');
       return;
     }
 
     try {
-      console.log(`Saving ${sections.length} sections for case study ID: ${caseStudyId}`);
+      console.log(`Saving ${updatedSections.length} sections for case study ID: ${caseStudyId}`);
       
-      // Direct insert/update of individual sections
-      for (const section of sections) {
+      for (const section of updatedSections) {
         // Check if section already exists
         const { data: existingData, error: checkError } = await supabase
           .from('case_study_sections')
@@ -105,41 +88,24 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           component: section.component,
           title: section.title,
           content: section.content || '',
-          sort_order: 0, // Fixed value - no longer used for ordering
+          sort_order: 0, // Fixed value
           published: section.published,
           image_url: section.image_url,
           metadata: section.metadata
         };
 
-        let result;
-        if (existingData) {
-          // Update existing section
-          result = await supabase
-            .from('case_study_sections')
-            .update(sectionData)
-            .eq('id', section.id);
-        } else {
-          // Insert new section
-          result = await supabase
-            .from('case_study_sections')
-            .insert({
-              ...sectionData,
-              id: section.id // Make sure to include the ID for new sections
-            });
-        }
+        // Update or insert section
+        const result = existingData 
+          ? await supabase.from('case_study_sections').update(sectionData).eq('id', section.id)
+          : await supabase.from('case_study_sections').insert({ ...sectionData, id: section.id });
 
         if (result.error) {
           console.error(`Error saving section ${section.id}: ${result.error.message}`);
         }
       }
 
-      console.log('Sections saved successfully to Supabase');
-      
-      // Update local state
-      setSectionsState({
-        sections,
-        lastUpdated: new Date().toISOString()
-      });
+      console.log('Sections saved successfully');
+      setSections(updatedSections);
     } catch (err: any) {
       console.error('Error saving sections:', err);
       setError(err.message);
@@ -147,21 +113,18 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     }
   }, [caseStudyId]);
 
-  // Load sections on initial render and when caseStudyId changes
+  // Load sections on initial render
   useEffect(() => {
     if (caseStudyId) {
       loadSections();
     } else {
       setIsLoading(false);
-      setSectionsState({
-        sections: [],
-        lastUpdated: new Date().toISOString()
-      });
+      setSections([]);
     }
   }, [caseStudyId, loadSections]);
 
   return {
-    sections: sectionsState?.sections || [],
+    sections,
     setSections: saveSections,
     isLoading,
     error,

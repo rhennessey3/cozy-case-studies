@@ -1,4 +1,6 @@
 
-// This file is kept for backward compatibility
-// All functionality has been moved to the caseStudies directory
+/**
+ * This file re-exports functionality from the caseStudies directory.
+ * All case study service functionality has been moved there for better organization.
+ */
 export { getCaseStudies, getCaseStudyBySlug, fetchCaseStudyBySlug } from './caseStudies';

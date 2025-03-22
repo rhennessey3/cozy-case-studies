@@ -7,6 +7,11 @@ import { SectionResponse } from './types/sectionTypes';
 
 /**
  * Hook that provides all CRUD operations for sections
+ * @param caseStudyId The ID of the case study
+ * @param sections The current sections
+ * @param setSections Function to update sections
+ * @param setOpenSections Function to update open sections state
+ * @returns Object containing section operation functions
  */
 export const useSectionOperations = (
   caseStudyId: string | null, 

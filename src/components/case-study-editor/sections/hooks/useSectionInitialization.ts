@@ -14,45 +14,35 @@ export const useSectionInitialization = (
 ) => {
   // Reference to track initialization state
   const initializedFromSupabase = useRef(false);
-  
-  // Store the last valid sections to prevent reverting to default
   const lastValidSectionsRef = useRef<SectionWithOrder[]>([]);
-  
-  // Track if sections have been initialized
   const [initialized, setInitialized] = useState(false);
 
-  // Parse custom sections from form if available
+  // Initialize sections state
   const [sections, setSections] = useState<SectionWithOrder[]>(() => {
-    // First try to use the Supabase sections if they're available
+    // First try to use Supabase sections if available
     if (supabaseSections && supabaseSections.length > 0) {
-      console.log("Initializing sections from Supabase:", supabaseSections.length);
       initializedFromSupabase.current = true;
       return supabaseSections;
     }
     
-    // If not in Supabase, try from form.customSections
+    // Then try to parse from form.customSections
     try {
       if (form.customSections) {
         const parsedSections = JSON.parse(form.customSections);
         if (Array.isArray(parsedSections) && parsedSections.length > 0) {
-          console.log("Initializing sections from customSections:", parsedSections.length);
-          // Ensure all sections have order property
-          return parsedSections.map((section: any, index: number) => ({
-            ...section,
-            order: section.order !== undefined ? section.order : index + 1
-          }));
+          return parsedSections;
         }
       }
     } catch (e) {
       console.error("Failed to parse custom sections", e);
     }
+    
     return [];
   });
 
   // Update sections when Supabase data changes
   useEffect(() => {
     if (!supabaseLoading && supabaseSections.length > 0 && !initializedFromSupabase.current) {
-      console.log("Updating sections from Supabase:", supabaseSections.length);
       setSections(supabaseSections);
       lastValidSectionsRef.current = supabaseSections;
       initializedFromSupabase.current = true;
@@ -60,16 +50,14 @@ export const useSectionInitialization = (
     }
   }, [supabaseSections, supabaseLoading]);
 
-  // Initialize the default sections if none are saved
+  // Initialize default sections if none are saved
   useEffect(() => {
     if (sections.length === 0 && !initialized && !supabaseLoading) {
-      console.log("No sections found, creating default sections");
       const defaultSections = initializeDefaultSections(form);
       setSections(defaultSections);
       lastValidSectionsRef.current = defaultSections;
       setInitialized(true);
     } else if (sections.length > 0 && !initialized) {
-      // If we have sections but aren't initialized, update the last valid ref
       lastValidSectionsRef.current = sections;
       setInitialized(true);
     }

@@ -11,6 +11,8 @@ import { SectionWithOrder } from '@/components/case-study-editor/sections/types'
 
 /**
  * Main hook for managing sections state
+ * @param caseStudyId The ID of the case study
+ * @returns Object containing section state and operations
  */
 export const useSectionState = (caseStudyId: string | null = null) => {
   // Use Supabase for section data persistence
@@ -28,9 +30,6 @@ export const useSectionState = (caseStudyId: string | null = null) => {
     initialized
   } = useSectionInitHook(caseStudyId, supabaseSections, supabaseLoading);
   
-  // Reference to track last valid sections
-  const lastValidSectionsRef = useRef<SectionResponse[]>([]);
-  
   // Manage open/closed state for sections (UI state only)
   const {
     openSections,
@@ -44,7 +43,7 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   const removeSection = useRemoveSectionHook(setSections, setOpenSections);
   const toggleSectionPublished = useTogglePublishedHook(setSections);
   
-  // Create a set of valid section IDs and clean up orphaned openSections
+  // Clean up orphaned openSections
   useEffect(() => {
     const validSectionIds = new Set(sections.map(section => section.id));
     cleanupOrphanedSections(validSectionIds);
@@ -53,28 +52,23 @@ export const useSectionState = (caseStudyId: string | null = null) => {
   // Save to Supabase when sections change
   useEffect(() => {
     if (caseStudyId && initialized && sections.length > 0) {
-      console.log("Saving updated sections to Supabase:", sections);
       saveToSupabase(sections);
     }
   }, [sections, caseStudyId, initialized, saveToSupabase]);
 
-  // Return memoized callbacks to prevent infinite re-renders
+  // Return memoized callbacks to prevent re-renders
   const addSectionCallback = useCallback((type: SectionWithOrder['type']) => {
-    console.log(`Adding section of type: ${type}`);
     return addSection(type);
   }, [addSection]);
 
   const removeSectionCallback = useCallback((id: string) => {
-    console.log(`Removing section with ID: ${id}`);
     removeSection(id);
   }, [removeSection]);
 
   const toggleSectionPublishedCallback = useCallback((id: string, published: boolean) => {
-    console.log(`Toggling published state for section ${id} to ${published}`);
     toggleSectionPublished(id, published);
   }, [toggleSectionPublished]);
   
-  // Return the public API for the hook with stable function references
   return {
     sections,
     openSections,

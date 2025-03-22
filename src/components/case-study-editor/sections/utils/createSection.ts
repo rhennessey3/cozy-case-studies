@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from '@/lib/utils';
 import { getSectionDisplayName } from '@/hooks/case-study-editor/sections/utils/sectionTypeMapping';
 
 /**
- * Helper function to create a new section without ordering
+ * Creates a new section with default values
+ * @param type The type of section to create
+ * @returns A new section with generated ID and default values
  */
 export const createSection = (type: SectionWithOrder['type']): SectionWithOrder => {
   // Get the display name for this section type

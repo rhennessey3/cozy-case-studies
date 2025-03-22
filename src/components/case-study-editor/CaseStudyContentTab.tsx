@@ -23,7 +23,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   // Generate form key for stable rendering
   const formKey = useFormKey(form);
   
-  // Initialize section management with Supabase integration
+  // Initialize section management
   const { 
     sections, 
     openSections, 
@@ -34,7 +34,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     refresh: refreshSections
   } = useSectionState(caseStudyId);
   
-  // Initialize carousel and paragraph items
+  // Initialize items for specific section types
   const { carouselItems, handleReorderCarouselItems } = useCarouselItems(
     form, 
     handleContentChange, 
@@ -53,34 +53,24 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     handleContentChange(event);
   };
 
-  // Add debug logging to help diagnose issues
+  // Refresh sections when needed
   useEffect(() => {
-    console.log('CaseStudyContentTab rendering with form:', form);
-    console.log('Sections:', sections);
-    console.log('Case Study ID:', caseStudyId);
-    
     if (caseStudyId && sections.length === 0) {
       console.log('No sections loaded, refreshing from database');
       refreshSections();
     }
-  }, [form, sections, caseStudyId, refreshSections]);
+  }, [caseStudyId, sections.length, refreshSections]);
 
-  // Refresh sections after Save is clicked
+  // Listen for save events
   useEffect(() => {
     const handleSave = () => {
       if (caseStudyId) {
-        console.log('Save button clicked, refreshing sections');
-        setTimeout(() => {
-          refreshSections();
-        }, 500); // Small delay to allow database to update
+        setTimeout(() => refreshSections(), 500);
       }
     };
     
     window.addEventListener('case-study-saved', handleSave);
-    
-    return () => {
-      window.removeEventListener('case-study-saved', handleSave);
-    };
+    return () => window.removeEventListener('case-study-saved', handleSave);
   }, [caseStudyId, refreshSections]);
 
   return (
@@ -103,7 +93,6 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   );
 });
 
-// Add display name for debugging
 CaseStudyContentTab.displayName = 'CaseStudyContentTab';
 
 export default CaseStudyContentTab;

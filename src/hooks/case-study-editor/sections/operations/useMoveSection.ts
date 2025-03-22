@@ -1,11 +1,14 @@
 
 import { useCallback } from 'react';
 
-// Simplified hook that returns a no-op function since section ordering is removed
+/**
+ * This hook previously handled section reordering functionality
+ * Now it's a no-op placeholder for backward compatibility
+ * @returns A no-op function 
+ */
 export const useMoveSection = () => {
-  return useCallback(async () => {
-    // This is now a no-op function since section ordering functionality is removed
+  return useCallback(() => {
     console.log('Section ordering functionality has been removed');
-    return;
+    return Promise.resolve();
   }, []);
 };

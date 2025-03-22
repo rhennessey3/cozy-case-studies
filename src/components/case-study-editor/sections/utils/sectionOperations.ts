@@ -3,13 +3,15 @@ import { SectionWithOrder } from '../types';
 import { createSection } from './createSection';
 import { toast } from 'sonner';
 
+/**
+ * Adds a new section to the list of sections
+ */
 export const addSection = (
   sections: SectionWithOrder[],
   type: SectionWithOrder['type'],
   setSections: React.Dispatch<React.SetStateAction<SectionWithOrder[]>>,
   setOpenSections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 ) => {
-  // Create a new section - no longer using sort_order
   const newSection = createSection(type);
   
   setSections(prev => [...prev, newSection]);
@@ -20,12 +22,13 @@ export const addSection = (
     [newSection.id]: true
   }));
   
-  // Show success toast when section is added
   toast.success(`${newSection.title} section added`);
-
   return newSection;
 };
 
+/**
+ * Removes a section from the list of sections by ID
+ */
 export const removeSection = (
   id: string,
   setSections: React.Dispatch<React.SetStateAction<SectionWithOrder[]>>,
@@ -33,13 +36,12 @@ export const removeSection = (
 ) => {
   console.log(`Removing section with ID: ${id}`);
   
-  // Clear any existing toast notifications to prevent stuck "deleting" messages
+  // Clear any existing toast notifications
   toast.dismiss();
   
   // Create a unique toast ID for this specific section removal
   const toastId = `remove-section-${id}`;
   
-  // Show a temporary removing message with a unique message to distinguish from full case study deletion
   toast.loading("Removing section...", { id: toastId, duration: 2000 });
   
   setSections(prev => {
@@ -51,14 +53,11 @@ export const removeSection = (
       return prev;
     }
     
-    console.log(`Found section to remove:`, sectionToRemove);
     const sectionName = sectionToRemove.title;
-    
     const filteredSections = prev.filter(section => section.id !== id);
     
-    // Clear the loading toast and show success message
     toast.dismiss(toastId);
-    toast.success(`${sectionName} section removed`, { id: `success-remove-${id}`, duration: 2000 });
+    toast.success(`${sectionName} section removed`);
     
     return filteredSections;
   });

@@ -4,10 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SectionResponse } from '../types/sectionTypes';
 import { createSection } from '@/components/case-study-editor/sections/utils/createSection';
-import { mapComponentTypeToSectionType } from '../utils/sectionTypeMapping';
-import { getMaxSortOrder, normalizeSectionName } from '../utils/sectionOperationHelpers';
+import { normalizeSectionName } from '../utils/sectionOperationHelpers';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
+/**
+ * Hook for adding a new section to a case study
+ */
 export const useAddSection = (
   caseStudyId: string | null, 
   sections: SectionResponse[], 
@@ -22,7 +24,7 @@ export const useAddSection = (
     
     console.log(`Adding section of type: ${componentType} to case study ${caseStudyId}`);
     
-    // Create a temporary section - no longer using sort_order for ordering
+    // Create a temporary section
     const tempSection = createSection(componentType);
     
     // Convert to a SectionResponse compatible object
@@ -31,7 +33,7 @@ export const useAddSection = (
       case_study_id: caseStudyId,
       component: componentType,
       title: tempSection.title,
-      sort_order: tempSection.sort_order, // Now always 0
+      sort_order: 0, // Fixed value
       published: tempSection.published !== undefined ? tempSection.published : true,
       content: '',
       image_url: tempSection.image_url,
@@ -56,7 +58,7 @@ export const useAddSection = (
           case_study_id: caseStudyId,
           component: componentType,
           title: newSection.title,
-          sort_order: newSection.sort_order,
+          sort_order: 0,
           published: newSection.published,
           content: newSection.content || '',
           metadata: newSection.metadata
@@ -73,9 +75,6 @@ export const useAddSection = (
       const displayName = normalizeSectionName(componentType);
       toast.success(`${displayName} section added`);
       
-      console.log('Section added successfully:', newSection);
-      
-      // Return the new section
       return newSection;
     } catch (err) {
       console.error('Failed to add section:', err);
@@ -84,5 +83,5 @@ export const useAddSection = (
       setSections(prev => prev.filter(s => s.id !== newSection.id));
       return null;
     }
-  }, [caseStudyId, sections, setSections, setOpenSections]);
+  }, [caseStudyId, setSections, setOpenSections]);
 };
