@@ -22,11 +22,8 @@ export const useAddSection = (
     
     console.log(`Adding section of type: ${componentType} to case study ${caseStudyId}`);
     
-    // Get max sort order
-    const maxSortOrder = getMaxSortOrder(sections);
-    
-    // Create section with next sort order
-    const tempSection = createSection(componentType, maxSortOrder + 1);
+    // Create a temporary section - no longer using sort_order for ordering
+    const tempSection = createSection(componentType);
     
     // Convert to a SectionResponse compatible object
     const newSection: SectionResponse = {
@@ -34,7 +31,7 @@ export const useAddSection = (
       case_study_id: caseStudyId,
       component: componentType,
       title: tempSection.title,
-      sort_order: tempSection.sort_order,
+      sort_order: tempSection.sort_order, // Now always 0
       published: tempSection.published !== undefined ? tempSection.published : true,
       content: '',
       image_url: tempSection.image_url,

@@ -153,13 +153,10 @@ describe('useSectionOperations', () => {
       useSectionOperations('case-1', mockSections, mockSetSections, mockSetOpenSections)
     );
     
-    // Move section down
-    await result.current.moveSection('section-1', 'down');
+    // Test the move section operation - now should be a no-op
+    await result.current.moveSection();
     
-    // Check that sections were updated
-    expect(mockSetSections).toHaveBeenCalled();
-    
-    // Verify toast was called
-    expect(toast.success).toHaveBeenCalledWith('Section moved down');
+    // Since we removed the functionality, we don't expect any state updates
+    expect(mockSetSections).not.toHaveBeenCalled();
   });
 });

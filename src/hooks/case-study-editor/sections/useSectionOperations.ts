@@ -17,7 +17,7 @@ export const useSectionOperations = (
   const addSection = useAddSection(caseStudyId, sections, setSections, setOpenSections);
   const togglePublished = useTogglePublished(setSections);
   const removeSection = useRemoveSection(setSections, setOpenSections);
-  const moveSection = useMoveSection(sections, setSections);
+  const moveSection = useMoveSection();
   
   return {
     addSection,

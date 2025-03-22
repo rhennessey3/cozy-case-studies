@@ -9,11 +9,8 @@ export const addSection = (
   setSections: React.Dispatch<React.SetStateAction<SectionWithOrder[]>>,
   setOpenSections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 ) => {
-  const newOrder = sections.length > 0 
-    ? Math.max(...sections.map(s => s.sort_order)) + 1 
-    : 1;
-    
-  const newSection = createSection(type, newOrder);
+  // Create a new section - no longer using sort_order
+  const newSection = createSection(type);
   
   setSections(prev => [...prev, newSection]);
   

@@ -39,28 +39,28 @@ export const initializeDefaultSections = (form: SectionFormState): SectionWithOr
   const defaultSections: SectionWithOrder[] = [];
 
   // Always add the introduction section first
-  defaultSections.push(createSection('introduction', 1));
+  defaultSections.push(createSection('introduction'));
   
   // If there's subhead or introductionParagraph, add alignment section
   if (form.subhead || form.introductionParagraph || form.alignmentImage) {
-    defaultSections.push(createSection('alignment', defaultSections.length + 1));
+    defaultSections.push(createSection('alignment'));
   }
   
   // If there's carousel content, add carousel section
   if (form.carouselTitle || form.carouselItem1Title || form.carouselItem1Content) {
-    defaultSections.push(createSection('carousel', defaultSections.length + 1));
+    defaultSections.push(createSection('carousel'));
   }
   
   // If there's four paragraphs content, add that section
   if (form.fourParaTitle || form.fourPara1Title || form.fourPara1Content) {
-    defaultSections.push(createSection('fourParagraphs', defaultSections.length + 1));
+    defaultSections.push(createSection('fourParagraphs'));
   }
 
   // If we have no sections other than introduction, add default ones
   if (defaultSections.length === 1) {
-    defaultSections.push(createSection('alignment', 2));
-    defaultSections.push(createSection('carousel', 3));
-    defaultSections.push(createSection('fourParagraphs', 4));
+    defaultSections.push(createSection('alignment'));
+    defaultSections.push(createSection('carousel'));
+    defaultSections.push(createSection('fourParagraphs'));
   }
 
   return defaultSections;
