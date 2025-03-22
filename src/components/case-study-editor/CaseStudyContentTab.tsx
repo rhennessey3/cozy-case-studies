@@ -65,6 +65,24 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     }
   }, [form, sections, caseStudyId, refreshSections]);
 
+  // Refresh sections after Save is clicked
+  useEffect(() => {
+    const handleSave = () => {
+      if (caseStudyId) {
+        console.log('Save button clicked, refreshing sections');
+        setTimeout(() => {
+          refreshSections();
+        }, 500); // Small delay to allow database to update
+      }
+    };
+    
+    window.addEventListener('case-study-saved', handleSave);
+    
+    return () => {
+      window.removeEventListener('case-study-saved', handleSave);
+    };
+  }, [caseStudyId, refreshSections]);
+
   return (
     <EditorSectionManager 
       sections={sections}

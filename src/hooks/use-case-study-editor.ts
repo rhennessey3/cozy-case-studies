@@ -83,6 +83,9 @@ export const useCaseStudyEditor = (slug?: string) => {
         await refetch();
       }
       
+      // Dispatch a custom event to notify components that save is complete
+      window.dispatchEvent(new CustomEvent('case-study-saved'));
+      
       // Fix: Only access result.slug when it exists
       // Navigate to the newly created/updated case study
       if ((!slug || slug === 'new' || slug === '') && result && 'slug' in result && result.slug) {

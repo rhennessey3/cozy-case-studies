@@ -101,7 +101,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           continue;
         }
 
-        // Prepare the section data
+        // Prepare the section data - removed updated_at field that was causing errors
         const sectionData = {
           case_study_id: caseStudyId,
           component: section.component,
@@ -110,8 +110,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           sort_order: section.sort_order,
           published: section.published,
           image_url: section.image_url,
-          metadata: section.metadata,
-          updated_at: new Date().toISOString()
+          metadata: section.metadata
         };
 
         let result;

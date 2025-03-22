@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 interface SectionContainerProps {
   children: React.ReactNode;
@@ -30,17 +32,21 @@ const SectionContainer: React.FC<SectionContainerProps> = ({
         onClick={onToggle}
       >
         <h3 className="font-medium">{section.title}</h3>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           {onPublishedChange && (
-            <label className="flex items-center space-x-2 cursor-pointer mr-4" onClick={(e) => e.stopPropagation()}>
-              <input 
-                type="checkbox" 
+            <div 
+              className="flex items-center space-x-2 cursor-pointer" 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Switch 
+                id={`publish-${section.id}`}
                 checked={section.published} 
-                onChange={(e) => onPublishedChange(section.id, e.target.checked)}
-                className="rounded border-gray-300"
+                onCheckedChange={(checked) => onPublishedChange(section.id, checked)}
               />
-              <span className="text-sm">Published</span>
-            </label>
+              <Label htmlFor={`publish-${section.id}`} className="text-sm cursor-pointer">
+                {section.published ? 'Published' : 'Unpublished'}
+              </Label>
+            </div>
           )}
           {onRemoveSection && (
             <button 
@@ -55,7 +61,7 @@ const SectionContainer: React.FC<SectionContainerProps> = ({
               Remove
             </button>
           )}
-          <span className="text-gray-500">{isOpen ? '▲' : '▼'}</span>
+          <span className="text-gray-500 ml-2">{isOpen ? '▲' : '▼'}</span>
         </div>
       </div>
       
