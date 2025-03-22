@@ -5,9 +5,9 @@ import { CaseStudyForm } from '@/types/caseStudy';
 
 export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
   const navigate = useNavigate();
-  const submitHandler = useFormSubmitHandling(form, navigate, slug);
+  const { saving, handleSubmit: submitHandler } = useFormSubmitHandling(form, navigate, slug);
   
-  return async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await submitHandler(e);
     
@@ -21,4 +21,6 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
     
     return result;
   };
+  
+  return { saving, handleSubmit };
 };
