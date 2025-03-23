@@ -74,7 +74,6 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
         <ImageUploader
           currentImageUrl={alignmentImage}
           onImageUploaded={(url) => handleImageUploaded('alignmentImage', url)}
-          id="alignmentImage"
         />
       </div>
 
