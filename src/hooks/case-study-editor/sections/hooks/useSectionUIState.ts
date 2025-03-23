@@ -1,7 +1,7 @@
 
 import { useCallback } from 'react';
 import { SectionResponse } from '../types/sectionTypes';
-import { useOpenSections } from './useOpenSections';
+import { useOpenSections } from '@/components/case-study-editor/sections/hooks/useOpenSections';
 
 /**
  * Hook to manage section UI state (open/closed sections)
