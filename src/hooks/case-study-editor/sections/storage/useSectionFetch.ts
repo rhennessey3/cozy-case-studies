@@ -68,8 +68,9 @@ export const useSectionFetch = (caseStudyId: string | null) => {
         published: item.published !== false, // default to true if null
         image_url: item.image_url || '',
         metadata: item.metadata || {},
-        created_at: item.created_at,
-        updated_at: item.updated_at
+        // Add default empty values for created_at and updated_at as they might not be present in the view
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       })) : [];
       
       setSections(sectionsData);
