@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { v4 as uuidv4 } from 'uuid';
@@ -85,10 +86,12 @@ export const processAlignmentSection = async (
 ) => {
   try {
     // Extract and normalize data from form
-    const title = form.subhead || '';
+    const title = form.subhead || 'Alignment Section'; // Use a better default than just an empty string
     const content = form.introductionParagraph || '';
     const imageUrl = form.alignmentImage || null;
     const alignment = form.alignment || 'left';
+    
+    console.log('ALIGNMENT PROCESSING - Using title from form.subhead:', title);
     
     // Log details for debugging
     logAlignmentDetails(published, alignment, title, content, imageUrl);

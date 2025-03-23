@@ -38,7 +38,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     
     console.log(`useSectionStorage: Saving ${updatedSections.length} sections`);
     
-    // Debug: Log titles of alignment sections before saving
+    // Check for alignment sections to debug title issues
     const alignmentSections = updatedSections.filter(s => s.component === 'alignment');
     if (alignmentSections.length > 0) {
       console.log('Alignment sections before saving:', alignmentSections.map(s => ({
