@@ -21,7 +21,7 @@ const IntroductionSection: React.FC<IntroductionSectionProps> = ({
         
         {content && (
           <div className="prose max-w-none mb-8">
-            <p className="text-lg text-gray-700">{content}</p>
+            <p className="text-lg text-gray-700">Honeybaked Ham was looking for a new revenue stream and wanted to test digital gift cards as a way to make that happen.</p>
           </div>
         )}
         
