@@ -6,6 +6,7 @@ import { mapSectionWithOrdersToSectionResponses } from '../utils/sectionResponse
 
 /**
  * Hook to handle persistence of sections to Supabase
+ * This is a simplified version that uses the refactored useSectionStorage hooks
  */
 export const useSectionPersistence = (
   caseStudyId: string | null,
