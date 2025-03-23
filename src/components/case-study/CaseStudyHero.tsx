@@ -11,7 +11,6 @@ export interface CaseStudyHeroProps {
   objective?: string;
   approach?: string;
   results?: string;
-  // New fields from Strapi hero component
   objectiveHeading?: string;
   approachHeading?: string;
   resultsHeading?: string;
@@ -21,8 +20,8 @@ const CaseStudyHero = ({
   title,
   coverImage,
   category,
-  objective = "To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.",
-  approach = "Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.",
+  objective = "Honeybaked Ham was looking for a new revenue stream and wanted to test digital gift cards as a way to make that happen.",
+  approach = "Alongside my team we created a digital platform that transforms the way people are capable of fundraising. Utilizing the latest in payment gateway infrastructure and digital fulfillment we were able to increase the opportunity to revenue by over 200%.",
   results = "30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.",
   objectiveHeading = "Challenge",
   approachHeading = "Approach",
