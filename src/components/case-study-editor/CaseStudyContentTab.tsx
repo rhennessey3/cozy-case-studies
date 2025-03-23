@@ -57,24 +57,22 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   useEffect(() => {
     if (caseStudyId) {
       console.log('CaseStudyContentTab: caseStudyId changed or component mounted, refreshing sections');
-      refreshSections();
+      // Add a small delay to ensure the component is fully mounted
+      const timer = setTimeout(() => {
+        refreshSections();
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [caseStudyId, refreshSections]);
-
-  // Also refresh when no sections are available
-  useEffect(() => {
-    if (caseStudyId && (!sections || sections.length === 0)) {
-      console.log('CaseStudyContentTab: No sections loaded, refreshing from database');
-      refreshSections();
-    }
-  }, [caseStudyId, sections, refreshSections]);
 
   // Listen for save events
   useEffect(() => {
     const handleSave = () => {
       if (caseStudyId) {
         console.log('CaseStudyContentTab: Case study saved event detected, refreshing sections');
-        setTimeout(() => refreshSections(), 500);
+        // Add a small delay to ensure database operations are complete
+        setTimeout(() => refreshSections(), 300);
       }
     };
     

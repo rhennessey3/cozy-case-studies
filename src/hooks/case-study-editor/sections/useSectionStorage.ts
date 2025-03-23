@@ -67,53 +67,81 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     console.log(`useSectionStorage: Saving ${updatedSections.length} sections to database`);
     
     try {
-      // Delete any existing sections first to avoid duplicates
-      const currentSections = await supabase
+      // Get all existing sections for this case study
+      const { data: existingSections, error: fetchError } = await supabase
         .from('case_study_sections')
         .select('id')
         .eq('case_study_id', caseStudyId);
       
+      if (fetchError) {
+        throw new Error(`Failed to fetch existing sections: ${fetchError.message}`);
+      }
+      
       // Get IDs from the new sections
-      const newSectionIds = new Set(updatedSections.map(section => section.id));
+      const updatedSectionIds = new Set(updatedSections.map(section => section.id));
       
       // Find sections to delete (they exist in DB but not in our new list)
-      const sectionsToDelete = currentSections.data?.filter(
-        section => !newSectionIds.has(section.id)
+      const sectionsToDelete = existingSections?.filter(
+        section => !updatedSectionIds.has(section.id)
       );
       
       // Delete sections that are no longer needed
       if (sectionsToDelete && sectionsToDelete.length > 0) {
-        console.log(`useSectionStorage: Deleting ${sectionsToDelete.length} stale sections`);
+        console.log(`useSectionStorage: Deleting ${sectionsToDelete.length} removed sections`);
+        
         for (const section of sectionsToDelete) {
-          await supabase
+          const { error: deleteError } = await supabase
             .from('case_study_sections')
             .delete()
             .eq('id', section.id);
+            
+          if (deleteError) {
+            console.error(`Error deleting section ${section.id}:`, deleteError);
+          }
         }
       }
       
-      // We'll use upsert to handle both inserts and updates
-      const { error } = await supabase
-        .from('case_study_sections')
-        .upsert(
-          updatedSections.map((section, index) => ({
-            ...section,
-            case_study_id: caseStudyId,
-            sort_order: index // Set sort order based on array position
-          })),
-          { onConflict: 'id' }
-        );
-      
-      if (error) {
-        console.error('useSectionStorage: Error saving sections to database:', error);
-        toast.error('Error saving sections: ' + error.message);
-        setError(error.message);
-        return;
+      // Process each section individually to avoid race conditions
+      for (const [index, section] of updatedSections.entries()) {
+        // Check if section exists
+        const { data: existingSection } = await supabase
+          .from('case_study_sections')
+          .select('id')
+          .eq('id', section.id)
+          .maybeSingle();
+        
+        const sectionData = {
+          ...section,
+          case_study_id: caseStudyId,
+          sort_order: index // Update sort order based on array position
+        };
+        
+        if (existingSection) {
+          // Update existing section
+          const { error: updateError } = await supabase
+            .from('case_study_sections')
+            .update(sectionData)
+            .eq('id', section.id);
+            
+          if (updateError) {
+            console.error(`Error updating section ${section.id}:`, updateError);
+          }
+        } else {
+          // Insert new section
+          const { error: insertError } = await supabase
+            .from('case_study_sections')
+            .insert(sectionData);
+            
+          if (insertError) {
+            console.error(`Error inserting section ${section.id}:`, insertError);
+          }
+        }
       }
       
-      console.log('useSectionStorage: Sections saved successfully to database');
-      // After successful save, immediately refresh the sections to ensure UI consistency
-      fetchSections();
+      console.log('useSectionStorage: All sections saved successfully');
+      
+      // Refresh sections after successful save
+      await fetchSections();
     } catch (err) {
       console.error('useSectionStorage: Exception saving sections:', err);
       toast.error('Error saving sections to database');
