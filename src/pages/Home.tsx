@@ -4,6 +4,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import TopNavbar from '@/components/TopNavbar';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
+import ProfileHeroSection from '@/components/sections/ProfileHeroSection';
 import AboutSection from '@/components/AboutSection';
 import ContactSection from '@/components/sections/ContactSection';
 
@@ -17,6 +18,7 @@ const Home: React.FC = () => {
           <Navbar />
           <div className="flex-1">
             <HeroSection />
+            <ProfileHeroSection />
             <AboutSection />
             <ContactSection />
           </div>
@@ -25,6 +27,7 @@ const Home: React.FC = () => {
         <>
           <TopNavbar />
           <HeroSection />
+          <ProfileHeroSection />
           <AboutSection />
           <ContactSection />
         </>
