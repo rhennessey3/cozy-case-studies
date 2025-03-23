@@ -25,8 +25,9 @@ export const useSectionFetch = (caseStudyId: string | null) => {
     setIsLoading(true);
     
     try {
+      // We'll now fetch from the view that combines all section types
       const { data, error } = await supabase
-        .from('case_study_sections')
+        .from('case_study_sections_view')
         .select('*')
         .eq('case_study_id', caseStudyId)
         .order('sort_order', { ascending: true });
@@ -55,7 +56,23 @@ export const useSectionFetch = (caseStudyId: string | null) => {
           })));
         }
       }
-      setSections(data || []);
+      
+      // Convert the data to SectionResponse objects
+      const sectionsData: SectionResponse[] = data ? data.map(item => ({
+        id: item.id,
+        case_study_id: item.case_study_id,
+        component: item.component,
+        title: item.title || '',
+        content: item.content || '',
+        sort_order: item.sort_order,
+        published: item.published !== false, // default to true if null
+        image_url: item.image_url || '',
+        metadata: item.metadata || {},
+        created_at: item.created_at,
+        updated_at: item.updated_at
+      })) : [];
+      
+      setSections(sectionsData);
     } catch (err) {
       console.error('useSectionFetch: Exception fetching sections:', err);
       setError('Failed to fetch sections');

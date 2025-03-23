@@ -48,6 +48,126 @@ export type Database = {
         }
         Relationships: []
       }
+      case_study_alignment_sections: {
+        Row: {
+          alignment: string
+          case_study_id: string
+          content: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          published: boolean
+          sort_order: number
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          alignment?: string
+          case_study_id: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alignment?: string
+          case_study_id?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_alignment_sections_case_study_id_fkey"
+            columns: ["case_study_id"]
+            isOneToOne: false
+            referencedRelation: "case_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_study_carousel_items: {
+        Row: {
+          carousel_section_id: string
+          content: string | null
+          id: string
+          image_url: string | null
+          sort_order: number
+          title: string | null
+        }
+        Insert: {
+          carousel_section_id: string
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          sort_order?: number
+          title?: string | null
+        }
+        Update: {
+          carousel_section_id?: string
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          sort_order?: number
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_carousel_items_carousel_section_id_fkey"
+            columns: ["carousel_section_id"]
+            isOneToOne: false
+            referencedRelation: "case_study_carousel_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_study_carousel_sections: {
+        Row: {
+          case_study_id: string
+          created_at: string
+          id: string
+          published: boolean
+          sort_order: number
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          case_study_id: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          case_study_id?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_carousel_sections_case_study_id_fkey"
+            columns: ["case_study_id"]
+            isOneToOne: false
+            referencedRelation: "case_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       case_study_content: {
         Row: {
           approach: string
@@ -85,6 +205,126 @@ export type Database = {
             columns: ["case_study_id"]
             isOneToOne: false
             referencedRelation: "case_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_study_four_paragraph_sections: {
+        Row: {
+          case_study_id: string
+          created_at: string
+          id: string
+          image_url: string | null
+          published: boolean
+          sort_order: number
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          case_study_id: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          case_study_id?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_four_paragraph_sections_case_study_id_fkey"
+            columns: ["case_study_id"]
+            isOneToOne: false
+            referencedRelation: "case_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_study_introduction_sections: {
+        Row: {
+          case_study_id: string
+          content: string | null
+          created_at: string
+          id: string
+          published: boolean
+          sort_order: number
+          subhead_two: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          case_study_id: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          subhead_two?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          case_study_id?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          subhead_two?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_introduction_sections_case_study_id_fkey"
+            columns: ["case_study_id"]
+            isOneToOne: false
+            referencedRelation: "case_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_study_paragraph_items: {
+        Row: {
+          content: string | null
+          id: string
+          paragraph_section_id: string
+          sort_order: number
+          title: string | null
+        }
+        Insert: {
+          content?: string | null
+          id?: string
+          paragraph_section_id: string
+          sort_order?: number
+          title?: string | null
+        }
+        Update: {
+          content?: string | null
+          id?: string
+          paragraph_section_id?: string
+          sort_order?: number
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_study_paragraph_items_paragraph_section_id_fkey"
+            columns: ["paragraph_section_id"]
+            isOneToOne: false
+            referencedRelation: "case_study_four_paragraph_sections"
             referencedColumns: ["id"]
           },
         ]
@@ -135,7 +375,20 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      case_study_sections_view: {
+        Row: {
+          case_study_id: string | null
+          component: string | null
+          content: string | null
+          id: string | null
+          image_url: string | null
+          metadata: Json | null
+          published: boolean | null
+          sort_order: number | null
+          title: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
