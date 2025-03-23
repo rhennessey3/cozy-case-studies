@@ -24,9 +24,9 @@ export const useSectionPersistence = () => {
     if (alignmentSections.length > 0) {
       console.log('ALIGNMENT SECTIONS BEFORE SAVE:', alignmentSections.map(section => ({
         id: section.id,
-        title: section.title,
+        title: section.title || '[Empty title]',
         content_length: section.content?.length || 0,
-        content_preview: section.content?.substring(0, 50) + (section.content?.length > 50 ? '...' : ''),
+        content_preview: section.content ? (section.content.substring(0, 50) + (section.content?.length > 50 ? '...' : '')) : '[Empty content]',
         image: section.image_url ? 'Present' : 'Missing',
         metadata: section.metadata
       })));
@@ -91,7 +91,7 @@ export const useSectionPersistence = () => {
       // Check if section exists
       const { data: existingSection } = await supabase
         .from('case_study_sections')
-        .select('id, content, title')
+        .select('id, content, title, image_url, metadata')
         .eq('id', section.id)
         .maybeSingle();
       
@@ -105,18 +105,26 @@ export const useSectionPersistence = () => {
         // Compare content before update to debug issues
         if (section.component === 'alignment') {
           console.log(`CONTENT COMPARISON for alignment section ${section.id}:`, {
+            existing_title: existingSection.title || '[Empty title]',
+            new_title: section.title || '[Empty title]',
             existing_length: existingSection.content?.length || 0,
-            existing_preview: existingSection.content?.substring(0, 50) + (existingSection.content?.length > 50 ? '...' : '') || '',
+            existing_preview: existingSection.content ? (existingSection.content.substring(0, 50) + (existingSection.content?.length > 50 ? '...' : '')) : '[Empty content]',
             new_length: section.content?.length || 0,
-            new_preview: section.content?.substring(0, 50) + (section.content?.length > 50 ? '...' : '') || '',
-            title_changed: existingSection.title !== section.title
+            new_preview: section.content ? (section.content.substring(0, 50) + (section.content?.length > 50 ? '...' : '')) : '[Empty content]',
+            title_changed: existingSection.title !== section.title,
+            content_changed: existingSection.content !== section.content,
+            image_changed: existingSection.image_url !== section.image_url,
+            metadata_changed: JSON.stringify(existingSection.metadata) !== JSON.stringify(section.metadata)
           });
         }
         
         // Update existing section - use upsert to ensure all fields are updated
         const { error: updateError } = await supabase
           .from('case_study_sections')
-          .upsert(sectionData);
+          .upsert(sectionData, {
+            onConflict: 'id',
+            returning: 'minimal'
+          });
           
         if (updateError) {
           console.error(`Error updating section ${section.id}:`, updateError);
@@ -154,9 +162,9 @@ export const useSectionPersistence = () => {
     if (verifiedSections) {
       console.log(`VERIFICATION: ${component} sections in database after save:`, verifiedSections.map(section => ({
         id: section.id,
-        title: section.title,
+        title: section.title || '[Empty title]',
         content_length: section.content?.length || 0,
-        content_preview: section.content?.substring(0, 50) + (section.content?.length > 50 ? '...' : ''),
+        content_preview: section.content ? (section.content.substring(0, 50) + (section.content?.length > 50 ? '...' : '')) : '[Empty content]',
         image: section.image_url ? 'Present' : 'Missing',
         metadata: section.metadata
       })));

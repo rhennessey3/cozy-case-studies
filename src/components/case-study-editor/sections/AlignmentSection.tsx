@@ -36,17 +36,8 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
     
     console.log(`AlignmentSection input changed: ${fieldName} = ${fieldValue.substring(0, 30)}${fieldValue.length > 30 ? '...' : ''}`);
     
-    // Create a direct copy of the event to ensure it doesn't get nullified by React's event pooling
-    const syntheticEvent = {
-      target: {
-        name: fieldName,
-        value: fieldValue
-      }
-    } as React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
-    
-    // Explicitly log that we're forwarding the change to the parent component
-    console.log(`Forwarding ${fieldName} change to parent component`);
-    onContentChange(syntheticEvent);
+    // Pass the change event directly to the parent component
+    onContentChange(e);
   };
 
   const handleImageUpload = (url: string) => {
@@ -70,6 +61,9 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
           onChange={handleInputChange} 
           placeholder="Section title" 
         />
+        <div className="text-xs text-muted-foreground mt-1">
+          {formData.subhead ? `Title: "${formData.subhead}"` : 'No title yet'}
+        </div>
       </div>
 
       <div>

@@ -16,7 +16,7 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
       subhead: form.subhead || '[empty]',
       introductionParagraph: form.introductionParagraph || '[empty]',
       introductionParagraphLength: form.introductionParagraph?.length || 0,
-      introductionParagraphPreview: form.introductionParagraph?.substring(0, 50) + (form.introductionParagraph?.length > 50 ? '...' : '') || '',
+      introductionParagraphPreview: form.introductionParagraph ? (form.introductionParagraph.substring(0, 50) + (form.introductionParagraph?.length > 50 ? '...' : '')) : '[empty]',
       alignmentImage: form.alignmentImage ? '[image present]' : '[no image]',
       alignment: form.alignment || 'left'
     });
@@ -46,7 +46,7 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
             subhead: form.subhead || '[empty]',
             introductionParagraph: form.introductionParagraph ? 'Content present' : 'No content',
             introductionParagraphLength: form.introductionParagraph?.length || 0,
-            introductionParagraphPreview: form.introductionParagraph?.substring(0, 50) + (form.introductionParagraph?.length > 50 ? '...' : '') || '',
+            introductionParagraphPreview: form.introductionParagraph ? (form.introductionParagraph.substring(0, 50) + (form.introductionParagraph?.length > 50 ? '...' : '')) : '[empty]',
             alignmentImage: form.alignmentImage ? 'Image present' : 'No image',
             alignment: form.alignment || 'left'
           }
