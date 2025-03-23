@@ -72,7 +72,7 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
       <div className="space-y-2">
         <Label htmlFor="alignmentImage">Image</Label>
         <ImageUploader
-          currentImage={alignmentImage}
+          currentImageUrl={alignmentImage}
           onImageUploaded={(url) => handleImageUploaded('alignmentImage', url)}
           id="alignmentImage"
         />
