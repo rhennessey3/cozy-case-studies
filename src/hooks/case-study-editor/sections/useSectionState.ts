@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 import { SectionResponse } from './types/sectionTypes';
-import { useOpenSections } from './useOpenSections';
+import { useOpenSections } from '@/components/case-study-editor/sections/hooks/useOpenSections';
 import { useSectionStorage } from './useSectionStorage';
 import { isAdminRoute } from '@/hooks/isAdminRoute';
 import { useSectionInitialization } from './hooks/useSectionInitialization';
 import { useSectionPersistence } from './hooks/useSectionPersistence';
 import { useSectionHandlers } from './hooks/useSectionHandlers';
+import { useSyncWithOpenSections } from './hooks/useSyncWithOpenSections';
 
 export const useSectionState = (
   caseStudyId: string | null = null
@@ -36,13 +37,16 @@ export const useSectionState = (
   const isAdmin = isAdminRoute();
   console.log('Route context:', isAdmin ? 'ADMIN' : 'PUBLIC');
   
+  // Session storage key for UI state
+  const sessionStorageKey = `case-study-sections-${caseStudyId || 'new'}`;
+  
   // Manage open/closed state for sections (UI state only)
   const {
     openSections,
     setOpenSections,
     toggleSection,
     cleanupOrphanedSections
-  } = useOpenSections();
+  } = useOpenSections(sessionStorageKey);
   
   // Sync with Supabase and provide refresh mechanism
   const { refresh } = useSectionPersistence(
@@ -67,16 +71,7 @@ export const useSectionState = (
   );
   
   // Sync sections with open sections state
-  useState(() => {
-    if (sections.length > 0) {
-      // Create a set of valid section IDs
-      const validSectionIds = new Set(sections.map(section => section.id));
-      console.log('Valid section IDs:', Array.from(validSectionIds));
-      
-      // Clean up orphaned entries in openSections
-      cleanupOrphanedSections(validSectionIds);
-    }
-  });
+  useSyncWithOpenSections(sections, cleanupOrphanedSections);
 
   // Return stable function references to prevent infinite re-renders
   return {
