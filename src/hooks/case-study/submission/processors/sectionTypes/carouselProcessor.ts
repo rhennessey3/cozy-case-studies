@@ -1,36 +1,43 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
+import { v4 as uuidv4 } from 'uuid';
 
 export const processCarouselSection = async (
   form: CaseStudyForm,
   caseStudyId: string,
   existingSectionIds: Set<string>,
   sortOrder: number = 2,
-  published: boolean = true // Default to published if not specified
+  published: boolean = true, // Default to published if not specified
+  sectionIdOverride?: string // Allow passing a specific section ID for updates
 ) => {
   // Make validation less strict - only log a warning but still proceed
   if (!form.carouselItem1Title && !form.carouselItem1Content && !form.carouselItem1Image) {
     console.log('Carousel section has minimal data, but proceeding anyway');
   }
   
-  // Generate a stable ID based on section type and case study
-  const sectionId = `carousel-${caseStudyId}`;
+  // Generate a unique ID for this section
+  const sectionId = sectionIdOverride || `carousel-${caseStudyId}-${uuidv4().substring(0, 8)}`;
   
   try {
-    console.log(`Processing carousel section with published=${published}`);
+    console.log(`Processing carousel section with published=${published}, id=${sectionId}`);
     
-    // Check if this section already exists
-    const { data: existingSection, error: fetchError } = await supabase
-      .from('case_study_sections')
-      .select('id')
-      .eq('case_study_id', caseStudyId)
-      .eq('component', 'carousel')
-      .maybeSingle();
+    // Check if this section already exists (if we have a specific ID to look for)
+    let existingSection = null;
+    
+    if (sectionIdOverride) {
+      const { data, error: fetchError } = await supabase
+        .from('case_study_sections')
+        .select('id')
+        .eq('id', sectionIdOverride)
+        .maybeSingle();
+        
+      if (fetchError) {
+        console.error('Error checking for existing carousel section:', fetchError);
+        throw new Error(`Failed to check for existing carousel section: ${fetchError.message}`);
+      }
       
-    if (fetchError) {
-      console.error('Error checking for existing carousel section:', fetchError);
-      throw new Error(`Failed to check for existing carousel section: ${fetchError.message}`);
+      existingSection = data;
     }
     
     // Prepare the metadata for carousel items
@@ -57,6 +64,7 @@ export const processCarouselSection = async (
     
     // Prepare the section data
     const sectionData = {
+      id: sectionId, // Use the generated or provided section ID
       case_study_id: caseStudyId,
       component: 'carousel',
       title: form.carouselTitle || 'Carousel',
@@ -82,7 +90,7 @@ export const processCarouselSection = async (
       existingSectionIds.delete(existingSection.id);
     } else {
       // Insert new section
-      console.log(`Creating new carousel section with published=${published}`);
+      console.log(`Creating new carousel section with published=${published}, id=${sectionId}`);
       
       result = await supabase
         .from('case_study_sections')
@@ -95,6 +103,7 @@ export const processCarouselSection = async (
     }
     
     console.log('Carousel section processed successfully');
+    return sectionId; // Return the section ID for reference
   } catch (error: any) {
     console.error('Error in processCarouselSection:', error);
     throw new Error(`Failed to process carousel section: ${error.message}`);

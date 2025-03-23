@@ -4,6 +4,7 @@ import { SectionWithOrder } from '@/components/case-study-editor/sections/types'
 import { SectionResponse } from '../types/sectionTypes';
 import { mapSectionWithOrdersToSectionResponses } from '../utils/sectionResponseMapper';
 import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Hook to handle saving sections to Supabase
@@ -49,8 +50,20 @@ export const useSectionPersistence = (
     console.log('Conditions met for saving sections to Supabase');
     isUpdatingRef.current = true;
     
+    // Ensure each section has a unique ID
+    const sectionsWithUniqueIds = sections.map(section => {
+      // If a section doesn't have an ID or has a temporary ID, generate a new UUID
+      if (!section.id || section.id.startsWith('temp-')) {
+        return { 
+          ...section, 
+          id: uuidv4(),
+        };
+      }
+      return section;
+    });
+    
     // Convert sections from SectionWithOrder to SectionResponse before saving
-    const sectionResponses = mapSectionWithOrdersToSectionResponses(sections, caseStudyId);
+    const sectionResponses = mapSectionWithOrdersToSectionResponses(sectionsWithUniqueIds, caseStudyId);
     console.log('Mapped sections to SectionResponses for saving:', sectionResponses);
     
     try {
