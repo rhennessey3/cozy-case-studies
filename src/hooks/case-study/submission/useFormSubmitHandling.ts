@@ -10,6 +10,7 @@ export type SubmissionResult = {
   success: boolean; 
   slug?: string; 
   caseStudyId?: string;
+  message?: string;
 };
 
 export const useFormSubmitHandling = (
@@ -28,13 +29,13 @@ export const useFormSubmitHandling = (
       if (!form.title) {
         toast.error('Title is required');
         setSaving(false);
-        return { success: false };
+        return { success: false, message: 'Title is required' };
       }
       
       if (!form.slug) {
         toast.error('Slug is required');
         setSaving(false);
-        return { success: false };
+        return { success: false, message: 'Slug is required' };
       }
       
       console.log("Submitting form with custom sections:", form.customSections);
@@ -49,7 +50,7 @@ export const useFormSubmitHandling = (
         toast.error('You must be logged in to save a case study');
         navigate('/admin/login');
         setSaving(false);
-        return { success: false };
+        return { success: false, message: 'Authentication required' };
       }
       
       try {
@@ -83,26 +84,29 @@ export const useFormSubmitHandling = (
         
         if (dbError.message.includes('duplicate key')) {
           toast.error(`A case study with slug "${form.slug}" already exists. Please choose a different slug.`);
+          return { success: false, message: `A case study with slug "${form.slug}" already exists` };
         } else if (dbError.message.includes('permission denied') || dbError.message.includes('row-level security')) {
           toast.error('Permission denied by database security. Please try logging out and back in.');
           navigate('/admin/login');
+          return { success: false, message: 'Permission denied by database security' };
         } else {
           toast.error(`Database error: ${dbError.message}`);
+          return { success: false, message: dbError.message };
         }
-        
-        return { success: false };
       }
     } catch (error) {
       console.error('Error saving case study:', error);
       
-      if ((error as Error).message.includes('Row Level Security')) {
+      const errorMessage = (error as Error).message;
+      
+      if (errorMessage.includes('Row Level Security')) {
         toast.error('Permission denied by database security policies. Please try logging out and back in.');
         navigate('/admin/login');
       } else {
-        toast.error(`Failed to ${slug ? 'update' : 'create'} case study: ${(error as Error).message}`);
+        toast.error(`Failed to ${slug ? 'update' : 'create'} case study: ${errorMessage}`);
       }
       
-      return { success: false };
+      return { success: false, message: errorMessage };
     } finally {
       setSaving(false);
     }

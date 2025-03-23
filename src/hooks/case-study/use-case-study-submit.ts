@@ -34,7 +34,7 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
       
       console.log('Case study saved event dispatched with ID:', result.caseStudyId);
     } else {
-      console.error('Form submission failed:', result?.error || 'Unknown error');
+      console.error('Form submission failed:', result?.message || 'Unknown error');
     }
     
     return result;
