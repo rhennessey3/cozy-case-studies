@@ -7,5 +7,7 @@
  */
 export const isAdminRoute = (): boolean => {
   // Check if the current URL path includes '/admin/'
-  return window.location.pathname.startsWith('/admin');
+  const path = window.location.pathname;
+  console.log('Checking admin route for path:', path);
+  return path.startsWith('/admin');
 };

@@ -53,18 +53,27 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     handleContentChange(event);
   };
 
-  // Refresh sections when needed
+  // Refresh sections when needed - every time caseStudyId changes and on initial load
   useEffect(() => {
-    if (caseStudyId && sections.length === 0) {
+    if (caseStudyId) {
+      console.log('CaseStudyId changed or component mounted, refreshing sections');
+      refreshSections();
+    }
+  }, [caseStudyId, refreshSections]);
+
+  // Also refresh when no sections are available
+  useEffect(() => {
+    if (caseStudyId && (!sections || sections.length === 0)) {
       console.log('No sections loaded, refreshing from database');
       refreshSections();
     }
-  }, [caseStudyId, sections.length, refreshSections]);
+  }, [caseStudyId, sections, refreshSections]);
 
   // Listen for save events
   useEffect(() => {
     const handleSave = () => {
       if (caseStudyId) {
+        console.log('Case study saved event detected, refreshing sections');
         setTimeout(() => refreshSections(), 500);
       }
     };
