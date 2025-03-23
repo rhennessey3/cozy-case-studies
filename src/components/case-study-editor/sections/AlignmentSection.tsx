@@ -31,16 +31,21 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
   }, [formData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    console.log(`AlignmentSection input changed: ${e.target.name} = ${e.target.value.substring(0, 30)}${e.target.value.length > 30 ? '...' : ''}`);
+    const fieldName = e.target.name;
+    const fieldValue = e.target.value;
+    
+    console.log(`AlignmentSection input changed: ${fieldName} = ${fieldValue.substring(0, 30)}${fieldValue.length > 30 ? '...' : ''}`);
     
     // Create a direct copy of the event to ensure it doesn't get nullified by React's event pooling
     const syntheticEvent = {
       target: {
-        name: e.target.name,
-        value: e.target.value
+        name: fieldName,
+        value: fieldValue
       }
     } as React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
     
+    // Explicitly log that we're forwarding the change to the parent component
+    console.log(`Forwarding ${fieldName} change to parent component`);
     onContentChange(syntheticEvent);
   };
 
