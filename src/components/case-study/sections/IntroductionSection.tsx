@@ -19,11 +19,9 @@ const IntroductionSection: React.FC<IntroductionSectionProps> = ({
       <div className="container mx-auto px-4 max-w-5xl">
         <h2 className="text-3xl font-bold mb-8 text-gray-900">{title}</h2>
         
-        {content && (
-          <div className="prose max-w-none mb-8">
-            <p className="text-lg text-gray-700">Honeybaked Ham was looking for a new revenue stream and wanted to test digital gift cards as a way to make that happen.</p>
-          </div>
-        )}
+        <div className="prose max-w-none mb-8">
+          <p className="text-lg text-gray-700">Honeybaked Ham was looking for a new revenue stream and wanted to test digital gift cards as a way to make that happen.</p>
+        </div>
         
         <div className="grid md:grid-cols-2 gap-8 mt-8">
           {challengeContent && (
