@@ -45,7 +45,14 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         // Look for alignment sections specifically
         const alignmentSections = data.filter(section => section.component === 'alignment');
         if (alignmentSections.length > 0) {
-          console.log('ALIGNMENT SECTIONS FOUND:', alignmentSections);
+          console.log('ALIGNMENT SECTIONS FOUND:', alignmentSections.map(section => ({
+            id: section.id,
+            title: section.title,
+            content_length: section.content?.length || 0,
+            content_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : ''),
+            image: section.image_url ? 'Present' : 'Missing',
+            metadata: section.metadata
+          })));
         }
       }
       setSections(data || []);
@@ -71,6 +78,19 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     }
     
     console.log(`useSectionStorage: Saving ${updatedSections.length} sections to database`);
+    
+    // Log alignment sections specifically before saving
+    const alignmentSections = updatedSections.filter(section => section.component === 'alignment');
+    if (alignmentSections.length > 0) {
+      console.log('ALIGNMENT SECTIONS BEFORE SAVE:', alignmentSections.map(section => ({
+        id: section.id,
+        title: section.title,
+        content_length: section.content?.length || 0,
+        content_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : ''),
+        image: section.image_url ? 'Present' : 'Missing',
+        metadata: section.metadata
+      })));
+    }
     
     try {
       // Get all existing sections for this case study
@@ -112,7 +132,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         // Check if section exists
         const { data: existingSection } = await supabase
           .from('case_study_sections')
-          .select('id')
+          .select('id, content, title')
           .eq('id', section.id)
           .maybeSingle();
         
@@ -123,6 +143,17 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         };
         
         if (existingSection) {
+          // Compare content before update to debug issues
+          if (section.component === 'alignment') {
+            console.log(`CONTENT COMPARISON for alignment section ${section.id}:`, {
+              existing_length: existingSection.content?.length || 0,
+              existing_preview: existingSection.content?.substring(0, 30) + (existingSection.content?.length > 30 ? '...' : '') || '',
+              new_length: section.content?.length || 0,
+              new_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : '') || '',
+              title_changed: existingSection.title !== section.title
+            });
+          }
+          
           // Update existing section
           const { error: updateError } = await supabase
             .from('case_study_sections')
@@ -160,7 +191,14 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       if (verifyError) {
         console.error('Verification error:', verifyError);
       } else if (verifiedSections) {
-        console.log('VERIFICATION: Alignment sections in database after save:', verifiedSections);
+        console.log('VERIFICATION: Alignment sections in database after save:', verifiedSections.map(section => ({
+          id: section.id,
+          title: section.title,
+          content_length: section.content?.length || 0,
+          content_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : ''),
+          image: section.image_url ? 'Present' : 'Missing',
+          metadata: section.metadata
+        })));
       }
       
       // Refresh sections after successful save

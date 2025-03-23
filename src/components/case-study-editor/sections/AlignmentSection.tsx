@@ -22,10 +22,10 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
   // Log the form data when it changes
   useEffect(() => {
     console.log('AlignmentSection rendering with data:', {
-      subhead: formData.subhead,
-      introductionParagraph: formData.introductionParagraph,
+      subhead: formData.subhead || '[empty]',
+      introductionParagraph: formData.introductionParagraph || '[empty]',
       alignmentImage: formData.alignmentImage ? '[image present]' : '[no image]',
-      alignment: formData.alignment
+      alignment: formData.alignment || 'left'
     });
   }, [formData]);
 

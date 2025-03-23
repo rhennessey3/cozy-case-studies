@@ -15,6 +15,7 @@ export const processAlignmentSection = async (
     console.log('Alignment section content:', {
       title: form.subhead || 'Alignment Section',
       content: form.introductionParagraph || '',
+      content_length: form.introductionParagraph?.length || 0,
       image_url: form.alignmentImage || null,
       metadata: { alignment: form.alignment || 'left' }
     });
@@ -56,6 +57,7 @@ export const processAlignmentSection = async (
       id: sectionData.id,
       title: sectionData.title,
       content_length: sectionData.content?.length || 0,
+      content_preview: sectionData.content?.substring(0, 30) + (sectionData.content?.length > 30 ? '...' : ''),
       image_url: sectionData.image_url ? 'Present' : 'Missing',
       alignment: sectionData.metadata.alignment
     });
@@ -71,8 +73,10 @@ export const processAlignmentSection = async (
         console.log('Updating content from:', {
           oldTitle: existingSections[0].title,
           oldContent: existingSections[0].content,
+          oldContentLength: existingSections[0].content?.length || 0,
           newTitle: sectionData.title,
-          newContent: sectionData.content
+          newContent: sectionData.content,
+          newContentLength: sectionData.content?.length || 0
         });
       }
       
@@ -115,7 +119,13 @@ export const processAlignmentSection = async (
     if (verifyError) {
       console.error('Error verifying saved alignment section:', verifyError);
     } else {
-      console.log('Verification - Alignment section saved successfully:', savedSection);
+      console.log('Verification - Alignment section saved successfully:', {
+        id: savedSection.id,
+        title: savedSection.title,
+        content_length: savedSection.content?.length || 0,
+        content_preview: savedSection.content?.substring(0, 30) + (savedSection.content?.length > 30 ? '...' : ''),
+        metadata: savedSection.metadata
+      });
     }
     
     console.log('Alignment section processed successfully');

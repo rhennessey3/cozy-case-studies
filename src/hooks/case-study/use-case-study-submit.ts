@@ -11,11 +11,13 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
   const handleSubmit = async (e: React.FormEvent): Promise<SubmissionResult> => {
     e.preventDefault();
     
+    // Log alignment data before form submission
     console.log('Submitting form with alignment data:', {
-      subhead: form.subhead,
-      introductionParagraph: form.introductionParagraph,
-      alignmentImage: form.alignmentImage,
-      alignment: form.alignment
+      subhead: form.subhead || '[empty]',
+      introductionParagraph: form.introductionParagraph || '[empty]',
+      introductionParagraphLength: form.introductionParagraph?.length || 0,
+      alignmentImage: form.alignmentImage ? '[image present]' : '[no image]',
+      alignment: form.alignment || 'left'
     });
     
     const result = await submitHandler(e);
@@ -31,10 +33,11 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
           caseStudyId: result.caseStudyId,
           // Add alignment data to the event for debugging
           alignmentData: {
-            subhead: form.subhead,
-            introductionParagraph: form.introductionParagraph,
-            alignmentImage: form.alignmentImage,
-            alignment: form.alignment
+            subhead: form.subhead || '[empty]',
+            introductionParagraph: form.introductionParagraph ? 'Content present' : 'No content',
+            introductionParagraphLength: form.introductionParagraph?.length || 0,
+            alignmentImage: form.alignmentImage ? 'Image present' : 'No image',
+            alignment: form.alignment || 'left'
           }
         } 
       });
@@ -44,7 +47,10 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
       
       // Show success toast with alignment data summary
       toast.success(`Case study saved successfully!`);
-      toast.info(`Alignment data saved: ${form.subhead ? 'Title ✓' : 'No title'}, ${form.introductionParagraph ? 'Content ✓' : 'No content'}, ${form.alignmentImage ? 'Image ✓' : 'No image'}`);
+      
+      if (form.subhead || form.introductionParagraph || form.alignmentImage) {
+        toast.info(`Alignment data saved: ${form.subhead ? 'Title ✓' : 'No title'}, ${form.introductionParagraph ? `Content (${form.introductionParagraph.length} chars) ✓` : 'No content'}, ${form.alignmentImage ? 'Image ✓' : 'No image'}`);
+      }
     } else {
       console.error('Form submission failed:', result?.message || 'Unknown error');
     }
