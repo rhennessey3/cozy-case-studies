@@ -24,13 +24,14 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
     console.log('AlignmentSection rendering with data:', {
       subhead: formData.subhead || '[empty]',
       introductionParagraph: formData.introductionParagraph || '[empty]',
+      introductionParagraphLength: formData.introductionParagraph?.length || 0,
       alignmentImage: formData.alignmentImage ? '[image present]' : '[no image]',
       alignment: formData.alignment || 'left'
     });
   }, [formData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    console.log(`AlignmentSection input changed: ${e.target.name} = ${e.target.value}`);
+    console.log(`AlignmentSection input changed: ${e.target.name} = ${e.target.value.substring(0, 30)}${e.target.value.length > 30 ? '...' : ''}`);
     onContentChange(e);
   };
 

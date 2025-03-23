@@ -19,7 +19,7 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
     console.log(`Rendering AlignmentSection with alignment: ${alignment}`, {
       title,
       contentLength: content?.length || 0,
-      contentPreview: content?.substring(0, 30) + (content?.length > 30 ? '...' : '') || '[empty]',
+      contentPreview: content?.substring(0, 50) + (content?.length > 50 ? '...' : '') || '[empty]',
       hasImage: !!imageUrl
     });
   }, [title, content, imageUrl, alignment]);

@@ -49,7 +49,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
             id: section.id,
             title: section.title,
             content_length: section.content?.length || 0,
-            content_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : ''),
+            content_preview: section.content?.substring(0, 50) + (section.content?.length > 50 ? '...' : ''),
             image: section.image_url ? 'Present' : 'Missing',
             metadata: section.metadata
           })));
@@ -86,7 +86,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         id: section.id,
         title: section.title,
         content_length: section.content?.length || 0,
-        content_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : ''),
+        content_preview: section.content?.substring(0, 50) + (section.content?.length > 50 ? '...' : ''),
         image: section.image_url ? 'Present' : 'Missing',
         metadata: section.metadata
       })));
@@ -147,9 +147,9 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           if (section.component === 'alignment') {
             console.log(`CONTENT COMPARISON for alignment section ${section.id}:`, {
               existing_length: existingSection.content?.length || 0,
-              existing_preview: existingSection.content?.substring(0, 30) + (existingSection.content?.length > 30 ? '...' : '') || '',
+              existing_preview: existingSection.content?.substring(0, 50) + (existingSection.content?.length > 50 ? '...' : '') || '',
               new_length: section.content?.length || 0,
-              new_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : '') || '',
+              new_preview: section.content?.substring(0, 50) + (section.content?.length > 50 ? '...' : '') || '',
               title_changed: existingSection.title !== section.title
             });
           }
@@ -195,7 +195,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           id: section.id,
           title: section.title,
           content_length: section.content?.length || 0,
-          content_preview: section.content?.substring(0, 30) + (section.content?.length > 30 ? '...' : ''),
+          content_preview: section.content?.substring(0, 50) + (section.content?.length > 50 ? '...' : ''),
           image: section.image_url ? 'Present' : 'Missing',
           metadata: section.metadata
         })));

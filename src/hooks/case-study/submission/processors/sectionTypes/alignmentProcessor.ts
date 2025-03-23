@@ -12,10 +12,11 @@ export const processAlignmentSection = async (
 ) => {
   try {
     console.log(`Processing alignment section with published=${published}, alignment=${form.alignment || 'left'}`);
-    console.log('Alignment section content:', {
+    console.log('Alignment section content to save:', {
       title: form.subhead || 'Alignment Section',
       content: form.introductionParagraph || '',
       content_length: form.introductionParagraph?.length || 0,
+      content_preview: form.introductionParagraph?.substring(0, 50) + (form.introductionParagraph?.length > 50 ? '...' : '') || '',
       image_url: form.alignmentImage || null,
       metadata: { alignment: form.alignment || 'left' }
     });
@@ -74,9 +75,11 @@ export const processAlignmentSection = async (
           oldTitle: existingSections[0].title,
           oldContent: existingSections[0].content,
           oldContentLength: existingSections[0].content?.length || 0,
+          oldContentPreview: existingSections[0].content?.substring(0, 30) + (existingSections[0].content?.length > 30 ? '...' : '') || '',
           newTitle: sectionData.title,
           newContent: sectionData.content,
-          newContentLength: sectionData.content?.length || 0
+          newContentLength: sectionData.content?.length || 0,
+          newContentPreview: sectionData.content?.substring(0, 30) + (sectionData.content?.length > 30 ? '...' : '') || ''
         });
       }
       
