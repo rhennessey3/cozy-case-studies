@@ -26,7 +26,7 @@ export const useSectionPersistence = () => {
         id: section.id,
         title: section.title,
         content_length: section.content?.length || 0,
-        content_preview: section.content ? (section.content.substring(0, 50) + '...' : '[Empty content]'),
+        content_preview: section.content ? (section.content.substring(0, 50) + '...') : '[Empty content]',
         image: section.image_url ? 'Present' : 'Missing',
         metadata: section.metadata
       })));
