@@ -4,18 +4,26 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
 import { CaseStudyHeroProps } from '../CaseStudyHero';
 
-type MobileHeroProps = Omit<CaseStudyHeroProps, 'category'>;
+type MobileHeroProps = {
+  title: string;
+  coverImage: string;
+  objectiveHeading?: string;
+  approachHeading?: string;
+  resultsHeading?: string;
+};
 
 const MobileHero: React.FC<MobileHeroProps> = ({
   title,
   coverImage,
-  objective,
-  approach,
-  results,
-  objectiveHeading,
-  approachHeading,
-  resultsHeading
+  objectiveHeading = "Challenge",
+  approachHeading = "Approach",
+  resultsHeading = "Impact"
 }) => {
+  // Hardcoded text for all case studies
+  const objective = "The existing app had a complex navigation structure, outdated UI, and was difficult for new users to learn. The client wanted to modernize the experience while ensuring all existing functionality remained accessible.";
+  const approach = "We conducted extensive user research and workshops to identify pain points, then created a simplified information architecture and design system that maintained feature parity while significantly improving usability.";
+  const results = "The redesigned app saw a 42% increase in daily active users, 68% reduction in customer support tickets, and a 4.8/5 rating in app stores, up from 3.2/5 previously.";
+
   return (
     <>
       <AspectRatio ratio={1 / 1} className="w-full">
