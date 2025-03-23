@@ -15,7 +15,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
   
   // Use specialized hooks for fetching and persistence
   const { sections, isLoading, error: fetchError, fetchSections } = useSectionFetch(caseStudyId);
-  const { persistSections, verifySectionSave } = useSectionPersistence();
+  const { persistSections } = useSectionPersistence();
   
   // Initial load of sections
   useEffect(() => {
@@ -69,7 +69,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     } finally {
       setSaveInProgress(false);
     }
-  }, [caseStudyId, fetchSections, persistSections, verifySectionSave, saveInProgress]);
+  }, [caseStudyId, fetchSections, persistSections, saveInProgress]);
   
   // Implement a refresh function
   const refresh = useCallback(() => {
