@@ -171,6 +171,9 @@ export const useSectionPersistence = () => {
         ? (section.metadata as any).alignment || 'left' 
         : 'left';
       
+      // Print the section title to debug
+      console.log(`Persisting alignment section with title: "${section.title}"`);
+      
       // Check if section exists
       const { data } = await supabase
         .from('case_study_alignment_sections')
@@ -198,7 +201,7 @@ export const useSectionPersistence = () => {
           throw error;
         }
         
-        console.log(`Updated alignment section ${section.id}`);
+        console.log(`Updated alignment section ${section.id} with title "${section.title}"`);
       } else {
         // Insert new section
         const { error } = await supabase
@@ -219,7 +222,7 @@ export const useSectionPersistence = () => {
           throw error;
         }
         
-        console.log(`Inserted new alignment section ${section.id}`);
+        console.log(`Inserted new alignment section ${section.id} with title "${section.title}"`);
       }
     } catch (error) {
       console.error('Error persisting alignment section:', error);

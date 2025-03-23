@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +26,26 @@ const logAlignmentDetails = (
  * Verifies the saved section data by immediately fetching it
  */
 const verifySavedSection = async (sectionId: string) => {
+  // First check in the alignment sections table
+  const { data: alignmentSection, error: alignmentError } = await supabase
+    .from('case_study_alignment_sections')
+    .select('id, title, content, alignment, image_url')
+    .eq('id', sectionId)
+    .single();
+    
+  if (!alignmentError && alignmentSection) {
+    console.log('Verification - Alignment section saved successfully to alignment_sections table:', {
+      id: alignmentSection.id,
+      title: alignmentSection.title || '[Empty title]',
+      content_length: alignmentSection.content?.length || 0,
+      content_preview: alignmentSection.content ? (alignmentSection.content.substring(0, 30) + (alignmentSection.content.length > 30 ? '...' : '')) : '[Empty content]',
+      image: alignmentSection.image_url ? 'Present' : 'Missing',
+      alignment: alignmentSection.alignment
+    });
+    return;
+  }
+  
+  // If not found in alignment table, check legacy table
   const { data: savedSection, error: verifyError } = await supabase
     .from('case_study_sections')
     .select('id, title, content, metadata, image_url')
@@ -43,7 +62,7 @@ const verifySavedSection = async (sectionId: string) => {
     ? (savedSection.metadata as { alignment?: string }).alignment || 'left'
     : 'left';
   
-  console.log('Verification - Alignment section saved successfully:', {
+  console.log('Verification - Alignment section saved successfully to legacy table:', {
     id: savedSection.id,
     title: savedSection.title || '[Empty title]',
     content_length: savedSection.content?.length || 0,
@@ -74,7 +93,17 @@ export const processAlignmentSection = async (
     // Log details for debugging
     logAlignmentDetails(published, alignment, title, content, imageUrl);
     
-    // Check for existing alignment sections
+    // First check if there's an alignment section in the new dedicated table
+    const { data: existingAlignmentSections, error: alignmentFetchError } = await supabase
+      .from('case_study_alignment_sections')
+      .select('id, title, content, image_url, alignment')
+      .eq('case_study_id', caseStudyId);
+      
+    if (alignmentFetchError) {
+      console.error('Error checking for existing alignment sections in dedicated table:', alignmentFetchError);
+    }
+    
+    // Then check in the legacy table
     const { data: existingSections, error: fetchError } = await supabase
       .from('case_study_sections')
       .select('id, content, title, image_url, metadata')
@@ -82,98 +111,92 @@ export const processAlignmentSection = async (
       .eq('component', 'alignment');
       
     if (fetchError) {
-      console.error('Error checking for existing alignment sections:', fetchError);
+      console.error('Error checking for existing alignment sections in legacy table:', fetchError);
       throw new Error(`Failed to check for existing alignment sections: ${fetchError.message}`);
     }
     
-    // Generate or use existing section ID
-    const sectionId = existingSections?.length > 0 
-      ? existingSections[0].id 
-      : `alignment-${uuidv4()}`;
+    // Use alignment section from dedicated table if it exists, otherwise use from legacy table
+    let sectionId;
+    let useAlignmentTable = false;
     
-    // Prepare section data
-    const sectionData = {
-      id: sectionId,
-      case_study_id: caseStudyId,
-      component: 'alignment',
-      title,
-      content,
-      image_url: imageUrl,
-      sort_order: sortOrder,
-      published,
-      metadata: { alignment } as any // Type assertion to avoid type checking issues
-    };
+    if (existingAlignmentSections?.length > 0) {
+      sectionId = existingAlignmentSections[0].id;
+      useAlignmentTable = true;
+      console.log(`Found existing alignment section in dedicated table: ${sectionId}`);
+    } else if (existingSections?.length > 0) {
+      sectionId = existingSections[0].id;
+      console.log(`Found existing alignment section in legacy table: ${sectionId}`);
+    } else {
+      sectionId = `alignment-${uuidv4()}`;
+      console.log(`Creating new alignment section with ID: ${sectionId}`);
+    }
     
-    // Log what we're about to save
-    console.log('Saving alignment section with data:', {
-      id: sectionData.id,
-      title: sectionData.title || '[Empty title]',
-      content_length: sectionData.content?.length || 0,
-      content_preview: sectionData.content ? (sectionData.content.substring(0, 30) + (sectionData.content.length > 30 ? '...' : '')) : '[Empty content]',
-      image_url: sectionData.image_url ? 'Present' : 'Missing',
-      alignment: alignment
-    });
-    
-    let result;
-    
-    if (existingSections?.length > 0) {
-      // Handle multiple existing sections case - update first, mark others for deletion
-      if (existingSections.length > 1) {
-        console.log(`Found ${existingSections.length} existing alignment sections. Updating the first one and marking others for deletion.`);
+    if (useAlignmentTable) {
+      // Update or insert into alignment table
+      const { error } = await supabase
+        .from('case_study_alignment_sections')
+        .upsert({
+          id: sectionId,
+          case_study_id: caseStudyId,
+          title: title,
+          content: content,
+          image_url: imageUrl,
+          alignment: alignment,
+          sort_order: sortOrder,
+          published: published,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+        
+      if (error) {
+        console.error('Error upserting to alignment section table:', error);
+        throw new Error(`Failed to upsert to alignment section table: ${error.message}`);
       }
       
-      // Log content changes if applicable
-      const firstSection = existingSections[0];
+      console.log(`Successfully saved alignment section to dedicated table with title: "${title}"`);
+    } else {
+      // Prepare section data for legacy table
+      const sectionData = {
+        id: sectionId,
+        case_study_id: caseStudyId,
+        component: 'alignment',
+        title: title,
+        content: content,
+        image_url: imageUrl,
+        sort_order: sortOrder,
+        published: published,
+        metadata: { alignment } as any // Type assertion to avoid type checking issues
+      };
       
-      // Safely extract alignment from metadata
-      const existingAlignment = typeof firstSection.metadata === 'object' && firstSection.metadata 
-        ? (firstSection.metadata as { alignment?: string }).alignment || 'left'
-        : 'left';
-      
-      console.log('CONTENT COMPARISON for alignment section update:', {
-        old_title: firstSection.title || '[Empty title]',
-        new_title: title || '[Empty title]',
-        old_content_length: firstSection.content?.length || 0,
-        new_content_length: content?.length || 0,
-        old_content_preview: firstSection.content ? (firstSection.content.substring(0, 50) + (firstSection.content.length > 50 ? '...' : '')) : '[Empty content]',
-        new_content_preview: content ? (content.substring(0, 50) + (content.length > 50 ? '...' : '')) : '[Empty content]',
-        title_changed: firstSection.title !== title,
-        content_changed: firstSection.content !== content,
-        image_changed: firstSection.image_url !== imageUrl,
-        alignment_changed: existingAlignment !== alignment
+      // Log what we're about to save
+      console.log('Saving alignment section to legacy table with data:', {
+        id: sectionData.id,
+        title: sectionData.title || '[Empty title]',
+        content_length: sectionData.content?.length || 0,
+        content_preview: sectionData.content ? (sectionData.content.substring(0, 30) + (sectionData.content.length > 30 ? '...' : '')) : '[Empty content]',
+        image_url: sectionData.image_url ? 'Present' : 'Missing',
+        alignment: alignment
       });
       
-      // Update the first section
-      result = await supabase
+      // Save to legacy table
+      const { error } = await supabase
         .from('case_study_sections')
-        .upsert(sectionData, { 
-          onConflict: 'id'
-        });
-      
-      if (result?.error) {
-        console.error('Error updating alignment section:', result.error);
-        throw new Error(`Failed to update alignment section: ${result.error.message}`);
-      }
-      
-      // Remove this ID from the list to delete
-      existingSectionIds.delete(firstSection.id);
-      
-      // Mark other alignment sections for deletion
-      for (let i = 1; i < existingSections.length; i++) {
-        console.log(`Marking extra alignment section ${existingSections[i].id} for deletion`);
-        // The main section processor will handle the actual deletion
-      }
-    } else {
-      // Insert new section
-      console.log(`Creating new alignment section with published=${published}`);
-      result = await supabase
-        .from('case_study_sections')
-        .insert(sectionData);
+        .upsert(sectionData, { onConflict: 'id' });
         
-      if (result?.error) {
-        console.error('Error creating new alignment section:', result.error);
-        throw new Error(`Failed to create alignment section: ${result.error.message}`);
+      if (error) {
+        console.error('Error upserting to legacy section table:', error);
+        throw new Error(`Failed to upsert to legacy section table: ${error.message}`);
       }
+      
+      console.log(`Successfully saved alignment section to legacy table with title: "${title}"`);
+    }
+    
+    // Remove the section ID from the list to delete
+    if (useAlignmentTable) {
+      // If we're using the alignment table, we can safely keep any entries in the legacy table
+      // as they'll be ignored in the new system
+    } else {
+      // If we're using the legacy table, make sure we don't delete this section
+      existingSectionIds.delete(sectionId);
     }
     
     // Verify the data was saved correctly

@@ -38,6 +38,15 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     
     console.log(`useSectionStorage: Saving ${updatedSections.length} sections`);
     
+    // Debug: Log titles of alignment sections before saving
+    const alignmentSections = updatedSections.filter(s => s.component === 'alignment');
+    if (alignmentSections.length > 0) {
+      console.log('Alignment sections before saving:', alignmentSections.map(s => ({
+        id: s.id,
+        title: s.title || '[No title]'
+      })));
+    }
+    
     try {
       const success = await persistSections(updatedSections, caseStudyId);
       
@@ -49,6 +58,14 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         
         if (alignmentSections) {
           console.log(`useSectionStorage: Verified ${alignmentSections.length} alignment sections`);
+          
+          // Debug: Log the verified alignment section titles
+          console.log('Verified alignment section titles:', 
+            alignmentSections.map((s: any) => ({
+              id: s.id,
+              title: s.title || '[No title]'
+            }))
+          );
         }
         
         // Refresh sections after successful save
