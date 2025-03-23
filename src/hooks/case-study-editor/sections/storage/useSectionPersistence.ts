@@ -104,6 +104,18 @@ export const useSectionPersistence = () => {
       if (existingSection) {
         // Compare content before update to debug issues
         if (section.component === 'alignment') {
+          const existingMetadata = existingSection.metadata || {};
+          const existingAlignment = 
+            typeof existingMetadata === 'object' && existingMetadata 
+              ? (existingMetadata as any).alignment || 'left' 
+              : 'left';
+          
+          const newMetadata = section.metadata || {};
+          const newAlignment = 
+            typeof newMetadata === 'object' && newMetadata 
+              ? (newMetadata as any).alignment || 'left' 
+              : 'left';
+          
           console.log(`CONTENT COMPARISON for alignment section ${section.id}:`, {
             existing_title: existingSection.title || '[Empty title]',
             new_title: section.title || '[Empty title]',
@@ -114,7 +126,8 @@ export const useSectionPersistence = () => {
             title_changed: existingSection.title !== section.title,
             content_changed: existingSection.content !== section.content,
             image_changed: existingSection.image_url !== section.image_url,
-            metadata_changed: JSON.stringify(existingSection.metadata) !== JSON.stringify(section.metadata)
+            metadata_changed: JSON.stringify(existingSection.metadata) !== JSON.stringify(section.metadata),
+            alignment_changed: existingAlignment !== newAlignment
           });
         }
         
