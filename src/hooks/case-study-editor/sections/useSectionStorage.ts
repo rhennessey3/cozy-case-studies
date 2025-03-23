@@ -41,6 +41,12 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       console.log(`useSectionStorage: Fetched ${data?.length || 0} sections from database`);
       if (data && data.length > 0) {
         console.log('useSectionStorage: First few sections:', data.slice(0, 2));
+        
+        // Look for alignment sections specifically
+        const alignmentSections = data.filter(section => section.component === 'alignment');
+        if (alignmentSections.length > 0) {
+          console.log('ALIGNMENT SECTIONS FOUND:', alignmentSections);
+        }
       }
       setSections(data || []);
     } catch (err) {
@@ -125,6 +131,8 @@ export const useSectionStorage = (caseStudyId: string | null) => {
             
           if (updateError) {
             console.error(`Error updating section ${section.id}:`, updateError);
+          } else {
+            console.log(`Successfully updated section ${section.id} (${section.component})`);
           }
         } else {
           // Insert new section
@@ -134,11 +142,26 @@ export const useSectionStorage = (caseStudyId: string | null) => {
             
           if (insertError) {
             console.error(`Error inserting section ${section.id}:`, insertError);
+          } else {
+            console.log(`Successfully inserted new section ${section.id} (${section.component})`);
           }
         }
       }
       
       console.log('useSectionStorage: All sections saved successfully');
+      
+      // Verify storage by immediately fetching alignment sections
+      const { data: verifiedSections, error: verifyError } = await supabase
+        .from('case_study_sections')
+        .select('*')
+        .eq('case_study_id', caseStudyId)
+        .eq('component', 'alignment');
+        
+      if (verifyError) {
+        console.error('Verification error:', verifyError);
+      } else if (verifiedSections) {
+        console.log('VERIFICATION: Alignment sections in database after save:', verifiedSections);
+      }
       
       // Refresh sections after successful save
       await fetchSections();

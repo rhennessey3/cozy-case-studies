@@ -34,6 +34,16 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
     onContentChange(e);
   };
 
+  const handleImageUpload = (url: string) => {
+    console.log(`AlignmentSection image uploaded: ${url.substring(0, 30)}...`);
+    onImageUpload('alignmentImage', url);
+  };
+
+  const handleAlignmentChange = (value: string) => {
+    console.log(`AlignmentSection alignment changed to: ${value}`);
+    onAlignmentChange(value);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -63,7 +73,7 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
         <Label className="block mb-2">Image</Label>
         <ImageUploader 
           imageUrl={formData.alignmentImage || ''} 
-          onImageUploaded={(url) => onImageUpload('alignmentImage', url)}
+          onImageUploaded={handleImageUpload}
           aspectRatio="16:9"
         />
       </div>
@@ -73,7 +83,7 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
         <RadioGroup 
           defaultValue={formData.alignment || 'left'} 
           value={formData.alignment || 'left'}
-          onValueChange={onAlignmentChange}
+          onValueChange={handleAlignmentChange}
           className="flex space-x-4"
         >
           <div className="flex items-center space-x-2">

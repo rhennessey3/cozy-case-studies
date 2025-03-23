@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useFormSubmitHandling, type SubmissionResult } from './submission';
 import { CaseStudyForm } from '@/types/caseStudy';
+import { toast } from 'sonner';
 
 export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
   const navigate = useNavigate();
@@ -40,6 +41,10 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
       window.dispatchEvent(savedEvent);
       
       console.log('Case study saved event dispatched with ID:', result.caseStudyId);
+      
+      // Show success toast with alignment data summary
+      toast.success(`Case study saved successfully!`);
+      toast.info(`Alignment data saved: ${form.subhead ? 'Title ✓' : 'No title'}, ${form.introductionParagraph ? 'Content ✓' : 'No content'}, ${form.alignmentImage ? 'Image ✓' : 'No image'}`);
     } else {
       console.error('Form submission failed:', result?.message || 'Unknown error');
     }

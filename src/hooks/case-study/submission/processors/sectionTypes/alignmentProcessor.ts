@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { v4 as uuidv4 } from 'uuid';
@@ -102,6 +103,19 @@ export const processAlignmentSection = async (
     if (result.error) {
       console.error('Error saving alignment section:', result.error);
       throw new Error(`Failed to save alignment section: ${result.error.message}`);
+    }
+    
+    // Verify the data was saved by immediately fetching it
+    const { data: savedSection, error: verifyError } = await supabase
+      .from('case_study_sections')
+      .select('id, title, content, metadata')
+      .eq('id', sectionId)
+      .single();
+      
+    if (verifyError) {
+      console.error('Error verifying saved alignment section:', verifyError);
+    } else {
+      console.log('Verification - Alignment section saved successfully:', savedSection);
     }
     
     console.log('Alignment section processed successfully');
