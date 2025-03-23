@@ -57,7 +57,7 @@ export const useSectionState = (
     setOpenSections,
     toggleSection,
     cleanupOrphanedSections
-  } = useOpenSections(sessionStorageKeyRef.current);
+  } = useOpenSections();
   
   // Sync sections with open sections state
   useEffect(() => {
