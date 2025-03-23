@@ -14,7 +14,7 @@ export const useSectionPersistence = () => {
   ) => {
     if (!caseStudyId) {
       console.warn('useSectionPersistence: Cannot save sections: No case study ID provided');
-      return;
+      return false;
     }
     
     console.log(`useSectionPersistence: Saving ${updatedSections.length} sections to database`);
@@ -33,8 +33,10 @@ export const useSectionPersistence = () => {
     }
     
     try {
-      // Handle each section type separately using the new schema
+      // Process each section individually to ensure proper saving
       for (const section of updatedSections) {
+        console.log(`Saving section ${section.id} (${section.component})`);
+        
         switch (section.component) {
           case 'alignment':
             await persistAlignmentSection(section, caseStudyId);
@@ -55,8 +57,8 @@ export const useSectionPersistence = () => {
         }
       }
       
-      // Check for sections that need to be deleted
-      await deleteRemovedSections(updatedSections, caseStudyId);
+      // After saving all sections, check if any sections need to be deleted
+      await cleanupOrphanedSections(updatedSections, caseStudyId);
       
       console.log('useSectionPersistence: All sections saved successfully');
       return true;
@@ -67,118 +69,116 @@ export const useSectionPersistence = () => {
     }
   }, []);
   
-  // Helper function to delete sections that are no longer needed
-  const deleteRemovedSections = async (updatedSections: SectionResponse[], caseStudyId: string) => {
+  // Helper function to delete orphaned sections
+  const cleanupOrphanedSections = async (currentSections: SectionResponse[], caseStudyId: string) => {
     try {
-      // Get IDs from the updated sections by type
-      const sectionsByType = {
-        alignment: updatedSections.filter(s => s.component === 'alignment').map(s => s.id),
-        carousel: updatedSections.filter(s => s.component === 'carousel').map(s => s.id),
-        fourParagraphs: updatedSections.filter(s => s.component === 'fourParagraphs').map(s => s.id),
-        introduction: updatedSections.filter(s => s.component === 'introduction').map(s => s.id),
+      // Get IDs of all current sections by type
+      const currentIds = {
+        alignment: currentSections.filter(s => s.component === 'alignment').map(s => s.id),
+        carousel: currentSections.filter(s => s.component === 'carousel').map(s => s.id),
+        fourParagraphs: currentSections.filter(s => s.component === 'fourParagraphs').map(s => s.id),
+        introduction: currentSections.filter(s => s.component === 'introduction').map(s => s.id)
       };
       
-      // Get all existing sections for this case study from each table
-      const { data: existingAlignmentSections } = await supabase
+      // Fetch existing sections from each table
+      const { data: alignmentSections } = await supabase
         .from('case_study_alignment_sections')
         .select('id')
         .eq('case_study_id', caseStudyId);
-        
-      const { data: existingCarouselSections } = await supabase
+      
+      const { data: carouselSections } = await supabase
         .from('case_study_carousel_sections')
         .select('id')
         .eq('case_study_id', caseStudyId);
-        
-      const { data: existingFourParagraphsSections } = await supabase
+      
+      const { data: fourParagraphsSections } = await supabase
         .from('case_study_four_paragraph_sections')
         .select('id')
         .eq('case_study_id', caseStudyId);
-        
-      const { data: existingIntroductionSections } = await supabase
+      
+      const { data: introductionSections } = await supabase
         .from('case_study_introduction_sections')
         .select('id')
         .eq('case_study_id', caseStudyId);
       
-      // Delete alignment sections that are no longer needed
-      if (existingAlignmentSections && existingAlignmentSections.length > 0) {
-        const alignmentToDelete = existingAlignmentSections
-          .filter(s => !sectionsByType.alignment.includes(s.id))
+      // Delete orphaned sections
+      if (alignmentSections && alignmentSections.length > 0) {
+        const toDelete = alignmentSections
+          .filter(s => !currentIds.alignment.includes(s.id))
           .map(s => s.id);
           
-        if (alignmentToDelete.length > 0) {
-          console.log(`Deleting ${alignmentToDelete.length} alignment sections`);
+        if (toDelete.length > 0) {
+          console.log(`Deleting ${toDelete.length} orphaned alignment sections`);
           await supabase
             .from('case_study_alignment_sections')
             .delete()
-            .in('id', alignmentToDelete);
+            .in('id', toDelete);
         }
       }
       
-      // Delete carousel sections that are no longer needed
-      if (existingCarouselSections && existingCarouselSections.length > 0) {
-        const carouselToDelete = existingCarouselSections
-          .filter(s => !sectionsByType.carousel.includes(s.id))
+      if (carouselSections && carouselSections.length > 0) {
+        const toDelete = carouselSections
+          .filter(s => !currentIds.carousel.includes(s.id))
           .map(s => s.id);
           
-        if (carouselToDelete.length > 0) {
-          console.log(`Deleting ${carouselToDelete.length} carousel sections`);
+        if (toDelete.length > 0) {
+          console.log(`Deleting ${toDelete.length} orphaned carousel sections`);
           await supabase
             .from('case_study_carousel_sections')
             .delete()
-            .in('id', carouselToDelete);
+            .in('id', toDelete);
         }
       }
       
-      // Delete four paragraphs sections that are no longer needed
-      if (existingFourParagraphsSections && existingFourParagraphsSections.length > 0) {
-        const fourParagraphsToDelete = existingFourParagraphsSections
-          .filter(s => !sectionsByType.fourParagraphs.includes(s.id))
+      if (fourParagraphsSections && fourParagraphsSections.length > 0) {
+        const toDelete = fourParagraphsSections
+          .filter(s => !currentIds.fourParagraphs.includes(s.id))
           .map(s => s.id);
           
-        if (fourParagraphsToDelete.length > 0) {
-          console.log(`Deleting ${fourParagraphsToDelete.length} four paragraphs sections`);
+        if (toDelete.length > 0) {
+          console.log(`Deleting ${toDelete.length} orphaned four paragraphs sections`);
           await supabase
             .from('case_study_four_paragraph_sections')
             .delete()
-            .in('id', fourParagraphsToDelete);
+            .in('id', toDelete);
         }
       }
       
-      // Delete introduction sections that are no longer needed
-      if (existingIntroductionSections && existingIntroductionSections.length > 0) {
-        const introductionToDelete = existingIntroductionSections
-          .filter(s => !sectionsByType.introduction.includes(s.id))
+      if (introductionSections && introductionSections.length > 0) {
+        const toDelete = introductionSections
+          .filter(s => !currentIds.introduction.includes(s.id))
           .map(s => s.id);
           
-        if (introductionToDelete.length > 0) {
-          console.log(`Deleting ${introductionToDelete.length} introduction sections`);
+        if (toDelete.length > 0) {
+          console.log(`Deleting ${toDelete.length} orphaned introduction sections`);
           await supabase
             .from('case_study_introduction_sections')
             .delete()
-            .in('id', introductionToDelete);
+            .in('id', toDelete);
         }
       }
     } catch (error) {
-      console.error('Error deleting removed sections:', error);
+      console.error('Error cleaning up orphaned sections:', error);
       throw error;
     }
   };
   
-  // Helper function to persist alignment sections to the dedicated table
+  // Helper functions for each section type
   const persistAlignmentSection = async (section: SectionResponse, caseStudyId: string) => {
     try {
+      // Extract alignment from metadata
       const alignmentValue = section.metadata && typeof section.metadata === 'object' 
         ? (section.metadata as any).alignment || 'left' 
         : 'left';
       
       // Check if section exists
-      const { data: existingSection } = await supabase
+      const { data } = await supabase
         .from('case_study_alignment_sections')
         .select('*')
         .eq('id', section.id)
         .maybeSingle();
       
-      if (existingSection) {
+      if (data) {
         // Update existing section
         const { error } = await supabase
           .from('case_study_alignment_sections')
@@ -188,7 +188,8 @@ export const useSectionPersistence = () => {
             image_url: section.image_url,
             alignment: alignmentValue,
             sort_order: section.sort_order,
-            published: section.published
+            published: section.published,
+            updated_at: new Date().toISOString()
           })
           .eq('id', section.id);
           
@@ -197,7 +198,7 @@ export const useSectionPersistence = () => {
           throw error;
         }
         
-        console.log(`Successfully updated alignment section ${section.id}`);
+        console.log(`Updated alignment section ${section.id}`);
       } else {
         // Insert new section
         const { error } = await supabase
@@ -218,7 +219,7 @@ export const useSectionPersistence = () => {
           throw error;
         }
         
-        console.log(`Successfully inserted new alignment section ${section.id}`);
+        console.log(`Inserted new alignment section ${section.id}`);
       }
     } catch (error) {
       console.error('Error persisting alignment section:', error);
@@ -226,29 +227,29 @@ export const useSectionPersistence = () => {
     }
   };
   
-  // Helper function to persist carousel sections
   const persistCarouselSection = async (section: SectionResponse, caseStudyId: string) => {
     try {
       // Extract carousel items from metadata
-      const carouselItems = section.metadata && typeof section.metadata === 'object' && section.metadata.items
-        ? section.metadata.items
+      const carouselItems = section.metadata && typeof section.metadata === 'object' && (section.metadata as any).items
+        ? (section.metadata as any).items
         : [];
       
       // Check if section exists
-      const { data: existingSection } = await supabase
+      const { data } = await supabase
         .from('case_study_carousel_sections')
         .select('*')
         .eq('id', section.id)
         .maybeSingle();
       
-      if (existingSection) {
+      if (data) {
         // Update existing section
         const { error } = await supabase
           .from('case_study_carousel_sections')
           .update({
             title: section.title,
             sort_order: section.sort_order,
-            published: section.published
+            published: section.published,
+            updated_at: new Date().toISOString()
           })
           .eq('id', section.id);
           
@@ -274,7 +275,7 @@ export const useSectionPersistence = () => {
         }
       }
       
-      // Now handle carousel items
+      // Handle carousel items
       // First, delete existing items
       const { error: deleteError } = await supabase
         .from('case_study_carousel_items')
@@ -286,9 +287,9 @@ export const useSectionPersistence = () => {
         throw deleteError;
       }
       
-      // Then insert the new/updated items
+      // Then insert new items
       if (carouselItems && carouselItems.length > 0) {
-        const carouselItemsToInsert = carouselItems.map((item: any, index: number) => ({
+        const itemsToInsert = carouselItems.map((item: any, index: number) => ({
           carousel_section_id: section.id,
           title: item.title || '',
           content: item.content || '',
@@ -298,43 +299,40 @@ export const useSectionPersistence = () => {
         
         const { error: insertError } = await supabase
           .from('case_study_carousel_items')
-          .insert(carouselItemsToInsert);
+          .insert(itemsToInsert);
           
         if (insertError) {
           console.error(`Error inserting carousel items for section ${section.id}:`, insertError);
           throw insertError;
         }
-        
-        console.log(`Successfully updated carousel section ${section.id} with ${carouselItemsToInsert.length} items`);
-      } else {
-        console.log(`Carousel section ${section.id} has no items`);
       }
+      
+      console.log(`Processed carousel section ${section.id}`);
     } catch (error) {
       console.error('Error persisting carousel section:', error);
       throw error;
     }
   };
   
-  // Helper function to persist four paragraphs sections
   const persistFourParagraphsSection = async (section: SectionResponse, caseStudyId: string) => {
     try {
-      // Extract data from metadata
+      // Extract metadata
       const subtitle = section.metadata && typeof section.metadata === 'object' 
         ? (section.metadata as any).subtitle || '' 
         : '';
         
-      const paragraphs = section.metadata && typeof section.metadata === 'object' && section.metadata.paragraphs
-        ? section.metadata.paragraphs
+      const paragraphs = section.metadata && typeof section.metadata === 'object' && (section.metadata as any).paragraphs
+        ? (section.metadata as any).paragraphs
         : [];
       
       // Check if section exists
-      const { data: existingSection } = await supabase
+      const { data } = await supabase
         .from('case_study_four_paragraph_sections')
         .select('*')
         .eq('id', section.id)
         .maybeSingle();
       
-      if (existingSection) {
+      if (data) {
         // Update existing section
         const { error } = await supabase
           .from('case_study_four_paragraph_sections')
@@ -343,7 +341,8 @@ export const useSectionPersistence = () => {
             subtitle: subtitle,
             image_url: section.image_url,
             sort_order: section.sort_order,
-            published: section.published
+            published: section.published,
+            updated_at: new Date().toISOString()
           })
           .eq('id', section.id);
           
@@ -371,7 +370,7 @@ export const useSectionPersistence = () => {
         }
       }
       
-      // Now handle paragraph items
+      // Handle paragraph items
       // First, delete existing items
       const { error: deleteError } = await supabase
         .from('case_study_paragraph_items')
@@ -383,50 +382,47 @@ export const useSectionPersistence = () => {
         throw deleteError;
       }
       
-      // Then insert the new/updated items
+      // Then insert new items
       if (paragraphs && paragraphs.length > 0) {
-        const paragraphItemsToInsert = paragraphs.map((para: any, index: number) => ({
+        const itemsToInsert = paragraphs.map((item: any, index: number) => ({
           paragraph_section_id: section.id,
-          title: para.title || '',
-          content: para.content || '',
+          title: item.title || '',
+          content: item.content || '',
           sort_order: index
         }));
         
         const { error: insertError } = await supabase
           .from('case_study_paragraph_items')
-          .insert(paragraphItemsToInsert);
+          .insert(itemsToInsert);
           
         if (insertError) {
           console.error(`Error inserting paragraph items for section ${section.id}:`, insertError);
           throw insertError;
         }
-        
-        console.log(`Successfully updated four paragraphs section ${section.id} with ${paragraphItemsToInsert.length} paragraphs`);
-      } else {
-        console.log(`Four paragraphs section ${section.id} has no paragraphs`);
       }
+      
+      console.log(`Processed four paragraphs section ${section.id}`);
     } catch (error) {
       console.error('Error persisting four paragraphs section:', error);
       throw error;
     }
   };
   
-  // Helper function to persist introduction sections
   const persistIntroductionSection = async (section: SectionResponse, caseStudyId: string) => {
     try {
-      // Extract subhead from metadata
+      // Extract metadata
       const subheadTwo = section.metadata && typeof section.metadata === 'object' 
         ? (section.metadata as any).subheadTwo || '' 
         : '';
       
       // Check if section exists
-      const { data: existingSection } = await supabase
+      const { data } = await supabase
         .from('case_study_introduction_sections')
         .select('*')
         .eq('id', section.id)
         .maybeSingle();
       
-      if (existingSection) {
+      if (data) {
         // Update existing section
         const { error } = await supabase
           .from('case_study_introduction_sections')
@@ -435,7 +431,8 @@ export const useSectionPersistence = () => {
             content: section.content,
             subhead_two: subheadTwo,
             sort_order: section.sort_order,
-            published: section.published
+            published: section.published,
+            updated_at: new Date().toISOString()
           })
           .eq('id', section.id);
           
@@ -443,8 +440,6 @@ export const useSectionPersistence = () => {
           console.error(`Error updating introduction section ${section.id}:`, error);
           throw error;
         }
-        
-        console.log(`Successfully updated introduction section ${section.id}`);
       } else {
         // Insert new section
         const { error } = await supabase
@@ -463,26 +458,25 @@ export const useSectionPersistence = () => {
           console.error(`Error inserting introduction section ${section.id}:`, error);
           throw error;
         }
-        
-        console.log(`Successfully inserted new introduction section ${section.id}`);
       }
+      
+      console.log(`Processed introduction section ${section.id}`);
     } catch (error) {
       console.error('Error persisting introduction section:', error);
       throw error;
     }
   };
   
-  // Legacy section persistence for backward compatibility
   const persistLegacySection = async (section: SectionResponse, caseStudyId: string) => {
     try {
       // Check if section exists
-      const { data: existingSection } = await supabase
+      const { data } = await supabase
         .from('case_study_sections')
         .select('*')
         .eq('id', section.id)
         .maybeSingle();
       
-      if (existingSection) {
+      if (data) {
         // Update existing section
         const { error } = await supabase
           .from('case_study_sections')
@@ -522,19 +516,23 @@ export const useSectionPersistence = () => {
           throw error;
         }
       }
+      
+      console.log(`Processed legacy section ${section.id}`);
     } catch (error) {
       console.error('Error persisting legacy section:', error);
       throw error;
     }
   };
   
-  // Helper function to verify sections were saved correctly
+  // Function to verify sections were saved correctly
   const verifySectionSave = useCallback(async (caseStudyId: string, component: string = 'alignment') => {
     try {
+      console.log(`Verifying ${component} sections for case study ${caseStudyId}`);
+      
       let data;
       let error;
       
-      // Query the appropriate table based on the component type
+      // Query the appropriate table based on component type
       switch (component) {
         case 'alignment':
           ({ data, error } = await supabase
@@ -565,7 +563,7 @@ export const useSectionPersistence = () => {
           break;
           
         default:
-          // For backward compatibility, query the legacy table
+          // Legacy table
           ({ data, error } = await supabase
             .from('case_study_sections')
             .select('*')
@@ -580,14 +578,14 @@ export const useSectionPersistence = () => {
       }
       
       if (data) {
-        console.log(`VERIFICATION: ${component} sections in database after save:`, data.map((section: any) => ({
-          id: section.id,
-          title: section.title || '[Empty title]',
-          content_length: section.content?.length || 0,
-          content_preview: section.content ? (section.content.substring(0, 50) + (section.content?.length > 50 ? '...' : '')) : '[Empty content]',
-          image: section.image_url ? 'Present' : 'Missing',
-          items_count: section.case_study_carousel_items?.length || section.case_study_paragraph_items?.length || 0
-        })));
+        console.log(`VERIFICATION: Found ${data.length} ${component} sections in database:`, 
+          data.map((section: any) => ({
+            id: section.id,
+            title: section.title || '[No title]',
+            content: section.content ? `${section.content.substring(0, 30)}...` : '[No content]',
+            image: section.image_url ? 'Present' : 'Missing'
+          }))
+        );
       }
       
       return data;

@@ -31,27 +31,45 @@ export const useSectionStorage = (caseStudyId: string | null) => {
   
   // Save sections to Supabase
   const setSections = useCallback(async (updatedSections: SectionResponse[]) => {
+    if (!caseStudyId) {
+      console.warn('useSectionStorage: Cannot save sections without case study ID');
+      return;
+    }
+    
+    console.log(`useSectionStorage: Saving ${updatedSections.length} sections`);
+    
     try {
       const success = await persistSections(updatedSections, caseStudyId);
       
       if (success) {
-        // Verify storage for alignment sections
-        if (caseStudyId) {
-          await verifySectionSave(caseStudyId, 'alignment');
+        console.log('useSectionStorage: Sections saved successfully, now verifying');
+        
+        // Verify storage specifically for alignment sections
+        const alignmentSections = await verifySectionSave(caseStudyId, 'alignment');
+        
+        if (alignmentSections) {
+          console.log(`useSectionStorage: Verified ${alignmentSections.length} alignment sections`);
         }
         
         // Refresh sections after successful save
-        await fetchSections();
+        console.log('useSectionStorage: Refreshing sections from database after save');
+        fetchSections();
+        
+        toast.success('Sections saved');
+      } else {
+        console.error('useSectionStorage: Failed to save sections');
+        toast.error('Failed to save sections');
       }
     } catch (err) {
       console.error('useSectionStorage: Exception in setSections:', err);
+      toast.error('Error saving sections to database');
       setError('Failed to save sections');
     }
   }, [caseStudyId, fetchSections, persistSections, verifySectionSave]);
   
   // Implement a refresh function
   const refresh = useCallback(() => {
-    console.log('useSectionStorage: Refreshing sections from database');
+    console.log('useSectionStorage: Manual refresh requested');
     fetchSections();
   }, [fetchSections]);
   
