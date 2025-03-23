@@ -1,24 +1,22 @@
 
 import { useCallback } from 'react';
+import { useOpenSections as useComponentOpenSections } from '@/components/case-study-editor/sections/hooks/useOpenSections';
 import { SectionResponse } from '../types/sectionTypes';
-import { useOpenSections } from './useOpenSections';
 
 /**
- * Hook to manage section UI state (open/closed sections)
+ * Hook to manage the open/closed state of sections (UI state only)
+ * This is a wrapper around the component-level hook to maintain separation of concerns
  */
-export const useSectionUIState = (sessionStorageKey: string) => {
-  // Session storage key for UI state
-  const storageKey = `case-study-sections-${sessionStorageKey || 'new'}`;
-  
-  // Manage open/closed state for sections (UI state only)
+export const useOpenSections = (sessionStorageKey: string) => {
+  // Use the component-level hook
   const {
     openSections,
     setOpenSections,
     toggleSection,
     cleanupOrphanedSections
-  } = useOpenSections(storageKey);
+  } = useComponentOpenSections(sessionStorageKey);
   
-  // Clean up orphaned sections based on valid section IDs
+  // Wrapper for synchronizing open sections with valid sections
   const synchronizeOpenSections = useCallback((sections: SectionResponse[]) => {
     if (sections.length > 0) {
       // Create a set of valid section IDs
@@ -33,6 +31,7 @@ export const useSectionUIState = (sessionStorageKey: string) => {
     openSections,
     setOpenSections,
     toggleSection,
+    cleanupOrphanedSections,
     synchronizeOpenSections
   };
 };
