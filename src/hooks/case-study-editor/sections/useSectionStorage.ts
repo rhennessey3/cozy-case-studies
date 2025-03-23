@@ -15,12 +15,13 @@ export const useSectionStorage = (caseStudyId: string | null) => {
   // Fetch sections from Supabase
   const fetchSections = useCallback(async () => {
     if (!caseStudyId) {
+      console.log('useSectionStorage: No caseStudyId provided, setting empty sections');
       setIsLoading(false);
       setSections([]);
       return;
     }
     
-    console.log(`Fetching sections for case study ${caseStudyId}`);
+    console.log(`useSectionStorage: Fetching sections for case study ${caseStudyId}`);
     setIsLoading(true);
     
     try {
@@ -30,16 +31,19 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         .eq('case_study_id', caseStudyId);
       
       if (error) {
-        console.error('Error fetching sections from database:', error);
+        console.error('useSectionStorage: Error fetching sections from database:', error);
         setError(error.message);
         setIsLoading(false);
         return;
       }
       
-      console.log(`Fetched ${data?.length || 0} sections from database`);
+      console.log(`useSectionStorage: Fetched ${data?.length || 0} sections from database`);
+      if (data && data.length > 0) {
+        console.log('useSectionStorage: First few sections:', data.slice(0, 2));
+      }
       setSections(data || []);
     } catch (err) {
-      console.error('Exception fetching sections:', err);
+      console.error('useSectionStorage: Exception fetching sections:', err);
       setError('Failed to fetch sections');
     } finally {
       setIsLoading(false);
@@ -48,17 +52,18 @@ export const useSectionStorage = (caseStudyId: string | null) => {
   
   // Initial load of sections
   useEffect(() => {
+    console.log('useSectionStorage: Initial load effect triggered');
     fetchSections();
   }, [fetchSections]);
   
   // Save sections to Supabase
   const persistSections = useCallback(async (updatedSections: SectionResponse[]) => {
     if (!caseStudyId) {
-      console.warn('Cannot save sections: No case study ID provided');
+      console.warn('useSectionStorage: Cannot save sections: No case study ID provided');
       return;
     }
     
-    console.log(`Saving ${updatedSections.length} sections to database`);
+    console.log(`useSectionStorage: Saving ${updatedSections.length} sections to database`);
     
     try {
       // We'll use upsert to handle both inserts and updates
@@ -73,21 +78,25 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         );
       
       if (error) {
-        console.error('Error saving sections to database:', error);
+        console.error('useSectionStorage: Error saving sections to database:', error);
+        toast.error('Error saving sections: ' + error.message);
         setError(error.message);
         return;
       }
       
-      console.log('Sections saved successfully to database');
+      console.log('useSectionStorage: Sections saved successfully to database');
+      // After successful save, immediately refresh the sections to ensure UI consistency
+      fetchSections();
     } catch (err) {
-      console.error('Exception saving sections:', err);
+      console.error('useSectionStorage: Exception saving sections:', err);
+      toast.error('Error saving sections to database');
       setError('Failed to save sections');
     }
-  }, [caseStudyId]);
+  }, [caseStudyId, fetchSections]);
   
   // Implement a refresh function
   const refresh = useCallback(() => {
-    console.log('Refreshing sections from database');
+    console.log('useSectionStorage: Refreshing sections from database');
     fetchSections();
   }, [fetchSections]);
   

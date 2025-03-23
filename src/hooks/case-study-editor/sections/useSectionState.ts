@@ -10,10 +10,12 @@ import {
   mapSectionWithOrdersToSectionResponses, 
   mapSectionResponsesToSectionWithOrders 
 } from './utils/sectionResponseMapper';
+import { isAdminRoute } from '@/hooks/isAdminRoute';
 
 export const useSectionState = (
   caseStudyId: string | null = null
 ) => {
+  console.log('useSectionState INIT with caseStudyId:', caseStudyId);
   // Use a ref to prevent infinite loops
   const isInitializingRef = useRef(true);
   
@@ -30,24 +32,36 @@ export const useSectionState = (
     refresh: refreshFromSupabase
   } = useSectionStorage(caseStudyId);
   
+  console.log('Supabase sections loaded:', supabaseSections?.length || 0, 'loading state:', supabaseLoading);
+  
   // Initialize with empty sections array
   const [sections, setSections] = useState<SectionWithOrder[]>([]);
   const [initialized, setInitialized] = useState(false);
   const lastValidSectionsRef = useRef<SectionWithOrder[]>([]);
   
+  // Track whether we're in an admin route for additional logging
+  const isAdmin = isAdminRoute();
+  console.log('Route context:', isAdmin ? 'ADMIN' : 'PUBLIC');
+  
   // Load initial sections from Supabase
   useEffect(() => {
+    console.log('useEffect - Loading sections from Supabase, initialized:', initialized, 'isInitializing:', isInitializingRef.current);
+    
     if (!initialized && isInitializingRef.current) {
       if (supabaseSections && supabaseSections.length > 0) {
         console.log('Initial sections from Supabase:', supabaseSections);
         // Convert SectionResponse[] to SectionWithOrder[]
         const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(supabaseSections);
+        console.log('Mapped to SectionWithOrder[]:', sectionsWithOrder);
         setSections(sectionsWithOrder);
         lastValidSectionsRef.current = sectionsWithOrder;
+      } else {
+        console.log('No initial sections found in Supabase');
       }
       
       isInitializingRef.current = false;
       setInitialized(true);
+      console.log('Initialization complete, state set to initialized');
     }
   }, [supabaseSections, supabaseLoading, initialized]);
   
@@ -59,11 +73,18 @@ export const useSectionState = (
     cleanupOrphanedSections
   } = useOpenSections();
   
+  // Debug log for open sections
+  useEffect(() => {
+    console.log('Current openSections state:', openSections);
+  }, [openSections]);
+  
   // Sync sections with open sections state
   useEffect(() => {
+    console.log('useEffect - Syncing sections with openSections state. Current sections length:', sections.length);
     if (sections.length > 0) {
       // Create a set of valid section IDs
       const validSectionIds = new Set(sections.map(section => section.id));
+      console.log('Valid section IDs:', Array.from(validSectionIds));
       
       // Clean up orphaned entries in openSections
       cleanupOrphanedSections(validSectionIds);
@@ -87,13 +108,18 @@ export const useSectionState = (
       console.log('Adding section of type:', type);
       
       if (!caseStudyId) {
+        console.error('Cannot add section without a case study');
         toast.error('Cannot add section without a case study');
         return null;
       }
       
       // Add the section to UI state
+      console.log('Before adding section, current sections:', sections);
       const newSection = addSection(sections, type, setSections, setOpenSections);
+      console.log('New section created:', newSection);
+      
       lastValidSectionsRef.current = [...sections, newSection];
+      console.log('Updated lastValidSectionsRef:', lastValidSectionsRef.current);
       
       // No need to save to database here as the hook now handles that
       return newSection;
@@ -106,6 +132,7 @@ export const useSectionState = (
       lastValidSectionsRef.current = lastValidSectionsRef.current.filter(
         section => section.id !== id
       );
+      console.log('After removal, lastValidSectionsRef:', lastValidSectionsRef.current);
     },
     
     toggleSectionPublished: (id: string, published: boolean) => {
@@ -121,6 +148,7 @@ export const useSectionState = (
         
         // Update lastValidSections
         lastValidSectionsRef.current = updatedSections;
+        console.log('After toggling published, lastValidSectionsRef:', lastValidSectionsRef.current);
         
         // Show toast notification
         toast.success(`Section ${published ? 'published' : 'unpublished'}`);
@@ -130,16 +158,45 @@ export const useSectionState = (
     }
   });
 
+  // Save to Supabase when sections change
+  useEffect(() => {
+    console.log('useEffect - Section state changed, current sections:', sections.length);
+    if (caseStudyId && sections.length > 0 && initialized && !isUpdatingRef.current) {
+      console.log('Conditions met for saving sections to Supabase');
+      isUpdatingRef.current = true;
+      
+      // Convert sections from SectionWithOrder to SectionResponse before saving
+      const sectionResponses = mapSectionWithOrdersToSectionResponses(sections, caseStudyId);
+      console.log('Mapped sections to SectionResponses for saving:', sectionResponses);
+      
+      saveToSupabase(sectionResponses);
+      console.log('Sections saved to Supabase');
+      
+      setTimeout(() => {
+        isUpdatingRef.current = false;
+        console.log('Reset isUpdatingRef to false');
+      }, 100);
+    } else {
+      console.log(
+        'Skip saving to Supabase - conditions not met:', 
+        { haveCaseStudyId: !!caseStudyId, sectionsCount: sections.length, initialized, isUpdating: isUpdatingRef.current }
+      );
+    }
+  }, [sections, caseStudyId, initialized, saveToSupabase]);
+
   // Memoized handlers that don't change on re-renders
   const addSectionHandler = useCallback((type: SectionWithOrder['type']) => {
+    console.log('addSectionHandler called with type:', type);
     return handlersRef.current.addSection(type);
   }, []);
 
   const removeSectionHandler = useCallback((id: string) => {
+    console.log('removeSectionHandler called with id:', id);
     handlersRef.current.removeSection(id);
   }, []);
 
   const toggleSectionPublishedHandler = useCallback((id: string, published: boolean) => {
+    console.log('toggleSectionPublishedHandler called with id:', id, 'published:', published);
     handlersRef.current.toggleSectionPublished(id, published);
   }, []);
 
