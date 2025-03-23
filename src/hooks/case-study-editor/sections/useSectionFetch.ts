@@ -3,11 +3,16 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SectionResponse } from './types/sectionTypes';
+import { useAdminCaseStudySections } from '@/hooks/case-study';
 
 export const useSectionFetch = (caseStudyId: string | null) => {
   const [sections, setSections] = useState<SectionResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Use the dedicated admin sections hook
+  const { dbSections, loading: adminLoading, error: adminError } = 
+    caseStudyId ? useAdminCaseStudySections(caseStudyId) : { dbSections: [], loading: false, error: null };
   
   // Fetch sections from the database
   const fetchSections = useCallback(async () => {
@@ -46,10 +51,10 @@ export const useSectionFetch = (caseStudyId: string | null) => {
   }, [caseStudyId]);
   
   return {
-    sections,
+    sections: adminLoading ? sections : (dbSections as SectionResponse[] || []),
     setSections,
-    loading,
-    error,
+    loading: adminLoading || loading,
+    error: adminError ? adminError.message : error,
     fetchSections
   };
 };

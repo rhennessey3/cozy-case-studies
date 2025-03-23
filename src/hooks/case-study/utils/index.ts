@@ -1,6 +1,7 @@
 
 export { isAdminMode, mapCaseStudyToForm, createNewCaseStudyForm, fetchSectionImages } from './fetchUtils';
 export { isLocalAuthMode, checkSupabaseAuth } from './authUtils';
+export { isAdminRoute } from '../../isAdminRoute';
 
 /**
  * @deprecated These imports are maintained for backwards compatibility only

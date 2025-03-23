@@ -4,7 +4,7 @@ import { CaseStudy } from '@/data/caseStudies';
 import ContactSection from '@/components/sections/ContactSection';
 import CaseStudyHero from './CaseStudyHero';
 import { toast } from 'sonner';
-import { useCaseStudySections } from '@/hooks/case-study/use-case-study-sections';
+import { useAdminCaseStudySections, usePublicCaseStudySections } from '@/hooks/case-study';
 import DatabaseSections from './sections/DatabaseSections';
 import LegacyCustomSections from './sections/LegacyCustomSections';
 import NoSectionsMessage from './sections/NoSectionsMessage';
@@ -20,8 +20,12 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy, isAdminV
     toast.dismiss();
   }, []);
 
-  // Fetch sections directly from database - filter by published unless in admin view
-  const { dbSections, loading, error } = useCaseStudySections(caseStudy?.id, !isAdminView);
+  // Use the appropriate hook based on whether we're in admin view or public view
+  const adminResult = isAdminView ? useAdminCaseStudySections(caseStudy?.id) : { dbSections: [], loading: false, error: null };
+  const publicResult = !isAdminView ? usePublicCaseStudySections(caseStudy?.id) : { dbSections: [], loading: false, error: null };
+  
+  // Choose the correct result based on view mode
+  const { dbSections, loading, error } = isAdminView ? adminResult : publicResult;
   
   // Log data for debugging
   useEffect(() => {

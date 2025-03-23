@@ -4,6 +4,8 @@ export { useFetchCaseStudies } from './use-fetch-case-studies';
 export { useFetchCaseStudy } from './use-fetch-case-study';
 export { useCaseStudyForm } from './use-case-study-form';
 export { useCaseStudySubmit } from './use-case-study-submit';
+export { useAdminCaseStudySections } from './use-admin-case-study-sections';
+export { usePublicCaseStudySections } from './use-public-case-study-sections';
 
 // Re-export utilities
 export { 
