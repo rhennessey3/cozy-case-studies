@@ -19,11 +19,6 @@ export const useSectionState = (
   // Use a ref to prevent infinite loops
   const isInitializingRef = useRef(true);
   
-  // Session storage key for UI state only (open/closed sections)
-  const sessionStorageKey = `case-study-ui-state-${caseStudyId || 'new-case-study'}`;
-  // Ref to prevent recalculation of the session storage key on every render
-  const sessionStorageKeyRef = useRef(sessionStorageKey);
-  
   // Use Supabase for section data persistence
   const { 
     sections: supabaseSections, 
@@ -42,6 +37,19 @@ export const useSectionState = (
   // Track whether we're in an admin route for additional logging
   const isAdmin = isAdminRoute();
   console.log('Route context:', isAdmin ? 'ADMIN' : 'PUBLIC');
+  
+  // Manage open/closed state for sections (UI state only)
+  const {
+    openSections,
+    setOpenSections,
+    toggleSection,
+    cleanupOrphanedSections
+  } = useOpenSections();
+  
+  // Debug log for open sections
+  useEffect(() => {
+    console.log('Current openSections state:', openSections);
+  }, [openSections]);
   
   // Load initial sections from Supabase
   useEffect(() => {
@@ -64,19 +72,6 @@ export const useSectionState = (
       console.log('Initialization complete, state set to initialized');
     }
   }, [supabaseSections, supabaseLoading, initialized]);
-  
-  // Manage open/closed state for sections (UI state only)
-  const {
-    openSections,
-    setOpenSections,
-    toggleSection,
-    cleanupOrphanedSections
-  } = useOpenSections();
-  
-  // Debug log for open sections
-  useEffect(() => {
-    console.log('Current openSections state:', openSections);
-  }, [openSections]);
   
   // Sync sections with open sections state
   useEffect(() => {
@@ -101,6 +96,32 @@ export const useSectionState = (
       refreshFromSupabase();
     }
   }, [caseStudyId, refreshFromSupabase]);
+  
+  // Save to Supabase when sections change
+  useEffect(() => {
+    console.log('useEffect - Section state changed, current sections:', sections.length);
+    if (caseStudyId && sections.length > 0 && initialized && !isUpdatingRef.current) {
+      console.log('Conditions met for saving sections to Supabase');
+      isUpdatingRef.current = true;
+      
+      // Convert sections from SectionWithOrder to SectionResponse before saving
+      const sectionResponses = mapSectionWithOrdersToSectionResponses(sections, caseStudyId);
+      console.log('Mapped sections to SectionResponses for saving:', sectionResponses);
+      
+      saveToSupabase(sectionResponses);
+      console.log('Sections saved to Supabase');
+      
+      setTimeout(() => {
+        isUpdatingRef.current = false;
+        console.log('Reset isUpdatingRef to false');
+      }, 100);
+    } else {
+      console.log(
+        'Skip saving to Supabase - conditions not met:', 
+        { haveCaseStudyId: !!caseStudyId, sectionsCount: sections.length, initialized, isUpdating: isUpdatingRef.current }
+      );
+    }
+  }, [sections, caseStudyId, initialized, saveToSupabase]);
   
   // Use refs for handler functions to ensure they don't change between renders
   const handlersRef = useRef({
@@ -157,32 +178,6 @@ export const useSectionState = (
       });
     }
   });
-
-  // Save to Supabase when sections change
-  useEffect(() => {
-    console.log('useEffect - Section state changed, current sections:', sections.length);
-    if (caseStudyId && sections.length > 0 && initialized && !isUpdatingRef.current) {
-      console.log('Conditions met for saving sections to Supabase');
-      isUpdatingRef.current = true;
-      
-      // Convert sections from SectionWithOrder to SectionResponse before saving
-      const sectionResponses = mapSectionWithOrdersToSectionResponses(sections, caseStudyId);
-      console.log('Mapped sections to SectionResponses for saving:', sectionResponses);
-      
-      saveToSupabase(sectionResponses);
-      console.log('Sections saved to Supabase');
-      
-      setTimeout(() => {
-        isUpdatingRef.current = false;
-        console.log('Reset isUpdatingRef to false');
-      }, 100);
-    } else {
-      console.log(
-        'Skip saving to Supabase - conditions not met:', 
-        { haveCaseStudyId: !!caseStudyId, sectionsCount: sections.length, initialized, isUpdating: isUpdatingRef.current }
-      );
-    }
-  }, [sections, caseStudyId, initialized, saveToSupabase]);
 
   // Memoized handlers that don't change on re-renders
   const addSectionHandler = useCallback((type: SectionWithOrder['type']) => {

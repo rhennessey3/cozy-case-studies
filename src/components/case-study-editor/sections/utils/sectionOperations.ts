@@ -2,6 +2,7 @@
 import { SectionWithOrder } from '../types';
 import { createSection } from './createSection';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Adds a new section to the list of sections
@@ -12,15 +13,28 @@ export const addSection = (
   setSections: React.Dispatch<React.SetStateAction<SectionWithOrder[]>>,
   setOpenSections: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 ) => {
+  console.log('addSection: Creating section of type:', type);
   const newSection = createSection(type);
+  console.log('addSection: New section created:', newSection);
   
-  setSections(prev => [...prev, newSection]);
+  // Add to local state for immediate feedback
+  setSections(prev => {
+    console.log('addSection: Adding section to local state. Current sections:', prev.length);
+    const updatedSections = [...prev, newSection];
+    console.log('addSection: Updated sections length:', updatedSections.length);
+    return updatedSections;
+  });
   
   // Auto open the new section
-  setOpenSections(prev => ({
-    ...prev,
-    [newSection.id]: true
-  }));
+  setOpenSections(prev => {
+    console.log('addSection: Setting section to open state:', newSection.id);
+    const updatedOpenSections = {
+      ...prev,
+      [newSection.id]: true
+    };
+    console.log('addSection: Updated open sections state:', updatedOpenSections);
+    return updatedOpenSections;
+  });
   
   toast.success(`${newSection.title} section added`);
   return newSection;
