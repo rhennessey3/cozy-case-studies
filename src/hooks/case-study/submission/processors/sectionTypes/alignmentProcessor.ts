@@ -38,13 +38,19 @@ const verifySavedSection = async (sectionId: string) => {
     return;
   }
   
+  // Safely access alignment from metadata
+  const alignmentValue = typeof savedSection.metadata === 'object' && savedSection.metadata 
+    ? (savedSection.metadata as { alignment?: string }).alignment || 'left'
+    : 'left';
+  
   console.log('Verification - Alignment section saved successfully:', {
     id: savedSection.id,
     title: savedSection.title || '[Empty title]',
     content_length: savedSection.content?.length || 0,
     content_preview: savedSection.content ? (savedSection.content.substring(0, 30) + (savedSection.content.length > 30 ? '...' : '')) : '[Empty content]',
     image: savedSection.image_url ? 'Present' : 'Missing',
-    metadata: savedSection.metadata
+    metadata: savedSection.metadata,
+    alignment: alignmentValue
   });
 };
 
@@ -95,7 +101,7 @@ export const processAlignmentSection = async (
       image_url: imageUrl,
       sort_order: sortOrder,
       published,
-      metadata: { alignment }
+      metadata: { alignment } as any // Type assertion to avoid type checking issues
     };
     
     // Log what we're about to save
@@ -105,7 +111,7 @@ export const processAlignmentSection = async (
       content_length: sectionData.content?.length || 0,
       content_preview: sectionData.content ? (sectionData.content.substring(0, 30) + (sectionData.content.length > 30 ? '...' : '')) : '[Empty content]',
       image_url: sectionData.image_url ? 'Present' : 'Missing',
-      alignment: sectionData.metadata.alignment
+      alignment: alignment
     });
     
     let result;
@@ -118,6 +124,12 @@ export const processAlignmentSection = async (
       
       // Log content changes if applicable
       const firstSection = existingSections[0];
+      
+      // Safely extract alignment from metadata
+      const existingAlignment = typeof firstSection.metadata === 'object' && firstSection.metadata 
+        ? (firstSection.metadata as { alignment?: string }).alignment || 'left'
+        : 'left';
+      
       console.log('CONTENT COMPARISON for alignment section update:', {
         old_title: firstSection.title || '[Empty title]',
         new_title: title || '[Empty title]',
@@ -128,15 +140,14 @@ export const processAlignmentSection = async (
         title_changed: firstSection.title !== title,
         content_changed: firstSection.content !== content,
         image_changed: firstSection.image_url !== imageUrl,
-        alignment_changed: firstSection.metadata?.alignment !== alignment
+        alignment_changed: existingAlignment !== alignment
       });
       
       // Update the first section
       result = await supabase
         .from('case_study_sections')
         .upsert(sectionData, { 
-          onConflict: 'id',
-          returning: 'minimal'
+          onConflict: 'id'
         });
       
       if (result?.error) {

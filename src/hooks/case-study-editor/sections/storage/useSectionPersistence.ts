@@ -122,8 +122,7 @@ export const useSectionPersistence = () => {
         const { error: updateError } = await supabase
           .from('case_study_sections')
           .upsert(sectionData, {
-            onConflict: 'id',
-            returning: 'minimal'
+            onConflict: 'id'
           });
           
         if (updateError) {
