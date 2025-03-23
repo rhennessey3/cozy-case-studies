@@ -3,12 +3,11 @@ import React, { useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import ImageUploader from '@/components/ImageUploader';
 
 interface AlignmentSectionProps {
-  formKey: string;
+  formKey?: string;
   subhead: string;
   introductionParagraph: string;
   alignmentImage: string;
@@ -19,7 +18,6 @@ interface AlignmentSectionProps {
 }
 
 const AlignmentSection: React.FC<AlignmentSectionProps> = ({
-  formKey,
   subhead,
   introductionParagraph,
   alignmentImage,
