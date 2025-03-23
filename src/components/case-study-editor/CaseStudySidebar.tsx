@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { CaseStudy } from '@/data/caseStudies';
 import { Button } from '@/components/ui/button';
-import { Plus, Home, FileText } from 'lucide-react';
+import { Plus, FileText } from 'lucide-react';
 
 interface CaseStudySidebarProps {
   caseStudies: CaseStudy[];
@@ -21,7 +21,6 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
   const location = useLocation();
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   
-  const isAdminHome = location.pathname === '/admin' || location.pathname === '/admin/';
   const isCaseStudiesLanding = location.pathname === '/admin/case-studies';
   const isNewCaseStudy = location.pathname === '/admin/case-studies/new';
 
@@ -46,31 +45,13 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
     onCreateNew();
   };
 
-  const goToAdminHome = () => {
-    navigate('/admin');
-  };
-
   const goToCaseStudies = () => {
     navigate('/admin/case-studies');
   };
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg">
-      {/* Admin Home Link - First item */}
-      <div className="mb-4">
-        <div 
-          className={cn(
-            "p-2 rounded cursor-pointer hover:bg-gray-200 transition-colors flex items-center gap-2",
-            isAdminHome && "bg-gray-200 font-medium"
-          )}
-          onClick={goToAdminHome}
-        >
-          <Home className="h-4 w-4" />
-          <div className="truncate">Admin Home</div>
-        </div>
-      </div>
-      
-      {/* Case Studies Heading with Plus Button - Second item */}
+      {/* Case Studies Heading with Plus Button */}
       <div className="flex items-center justify-between mb-3">
         <div 
           className={cn(
@@ -93,7 +74,7 @@ const CaseStudySidebar: React.FC<CaseStudySidebarProps> = ({
         </Button>
       </div>
       
-      {/* List of Case Studies - Third item */}
+      {/* List of Case Studies */}
       <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
         {(isCreatingNew || isNewCaseStudy) && (
           <div className={cn(

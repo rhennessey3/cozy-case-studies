@@ -6,7 +6,6 @@ import CaseStudiesLanding from './pages/CaseStudiesLanding';
 import CaseStudyDetail from './pages/CaseStudyDetail';
 import NotFound from './pages/NotFound';
 import DatabaseTestPage from './pages/DatabaseTestPage';
-import AdminHome from './pages/AdminHome';
 import AdminLogin from './pages/AdminLogin';
 import AdminCaseStudies from './pages/AdminCaseStudies';
 import CaseStudyEditor from './pages/CaseStudyEditor';
@@ -39,7 +38,7 @@ const routes = createBrowserRouter([
   // Admin routes
   {
     path: '/admin',
-    element: <AdminHome />,
+    element: <AdminCaseStudies />, // Redirect to case studies
   },
   {
     path: '/admin/login',

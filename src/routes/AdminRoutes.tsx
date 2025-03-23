@@ -2,7 +2,6 @@
 import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import AdminHome from '@/pages/AdminHome';
 import AdminLogin from '@/pages/AdminLogin';
 import AdminCaseStudies from '@/pages/AdminCaseStudies';
 import CaseStudyEditor from '@/pages/CaseStudyEditor';
@@ -24,7 +23,11 @@ const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => 
  * Admin routes configuration
  */
 export const AdminRoutes = [
-  <Route key="admin-root" path="/admin" element={<ProtectedRoute element={<AdminHome />} />} />,
+  <Route 
+    key="admin-root" 
+    path="/admin" 
+    element={<Navigate to="/admin/case-studies" replace />} 
+  />,
   <Route key="admin-login" path="/admin/login" element={<AdminLogin />} />,
   <Route 
     key="admin-case-studies" 
