@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,16 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
   onImageUpload,
   onAlignmentChange
 }) => {
+  // Log the form data when it changes
+  useEffect(() => {
+    console.log('AlignmentSection rendering with data:', {
+      subhead: formData.subhead,
+      introductionParagraph: formData.introductionParagraph,
+      alignmentImage: formData.alignmentImage ? '[image present]' : '[no image]',
+      alignment: formData.alignment
+    });
+  }, [formData]);
+
   return (
     <div className="space-y-4">
       <div>
@@ -56,7 +66,8 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
       <div>
         <Label className="block mb-2">Image Alignment</Label>
         <RadioGroup 
-          defaultValue={formData.alignment || 'right'} 
+          defaultValue={formData.alignment || 'left'} 
+          value={formData.alignment || 'left'}
           onValueChange={onAlignmentChange}
           className="flex space-x-4"
         >

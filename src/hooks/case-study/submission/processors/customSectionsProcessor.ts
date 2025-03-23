@@ -66,6 +66,19 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   
   const existingSectionIds = new Set(existingSections?.map(s => s.id) || []);
   
+  // If we have specific fields in the form for alignment section,
+  // process it even if not in customSections
+  if ((form.subhead || form.introductionParagraph || form.alignmentImage) && 
+      !customSections.some(s => s.type === 'alignment')) {
+    console.log('Found alignment data in form but not in customSections array, adding it manually');
+    
+    try {
+      await processAlignmentSection(form, caseStudyId, existingSectionIds, 0, true);
+    } catch (error) {
+      console.error('Error processing alignment data from form fields:', error);
+    }
+  }
+  
   // Process custom sections from the form
   if (customSections.length > 0) {
     console.log('Processing custom sections with valid authentication');

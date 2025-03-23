@@ -9,6 +9,14 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
   
   const handleSubmit = async (e: React.FormEvent): Promise<SubmissionResult> => {
     e.preventDefault();
+    
+    console.log('Submitting form with alignment data:', {
+      subhead: form.subhead,
+      introductionParagraph: form.introductionParagraph,
+      alignmentImage: form.alignmentImage,
+      alignment: form.alignment
+    });
+    
     const result = await submitHandler(e);
     
     if (result && result.success) {
@@ -17,9 +25,16 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
       
       // Dispatch a custom event to notify that the case study was saved
       const savedEvent = new CustomEvent('case-study-saved', { 
-        detail: { slug: eventSlug } 
+        detail: { 
+          slug: eventSlug,
+          caseStudyId: result.caseStudyId 
+        } 
       });
       window.dispatchEvent(savedEvent);
+      
+      console.log('Case study saved event dispatched with ID:', result.caseStudyId);
+    } else {
+      console.error('Form submission failed:', result?.error || 'Unknown error');
     }
     
     return result;

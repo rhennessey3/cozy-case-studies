@@ -44,6 +44,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   const { paragraphItems } = useParagraphItems(form);
 
   const handleAlignmentChange = (value: string) => {
+    console.log('Alignment changed to:', value);
     const event = {
       target: {
         name: 'alignment',
@@ -68,9 +69,13 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
 
   // Listen for save events
   useEffect(() => {
-    const handleSave = () => {
+    const handleSave = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      
       if (caseStudyId) {
         console.log('CaseStudyContentTab: Case study saved event detected, refreshing sections');
+        console.log('Event details:', customEvent.detail);
+        
         // Add a small delay to ensure database operations are complete
         setTimeout(() => refreshSections(), 300);
       }

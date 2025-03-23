@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,17 +9,13 @@ export const processAlignmentSection = async (
   sortOrder: number = 1,
   published: boolean = true // Default to published if not specified
 ) => {
-  // Make validation less strict - only log a warning but still proceed
-  if (!form.subhead && !form.introductionParagraph && !form.alignmentImage) {
-    console.log('Alignment section has minimal data, but proceeding anyway');
-  }
-  
   try {
     console.log(`Processing alignment section with published=${published}, alignment=${form.alignment || 'left'}`);
     console.log('Alignment section content:', {
       title: form.subhead || 'Alignment Section',
       content: form.introductionParagraph || '',
-      image_url: form.alignmentImage || null
+      image_url: form.alignmentImage || null,
+      metadata: { alignment: form.alignment || 'left' }
     });
     
     // Check if this section already exists - but get ALL matching sections
@@ -100,6 +95,7 @@ export const processAlignmentSection = async (
     }
     
     console.log('Alignment section processed successfully');
+    return sectionData.id;
   } catch (error: any) {
     console.error('Error in processAlignmentSection:', error);
     throw new Error(`Failed to process alignment section: ${error.message}`);
