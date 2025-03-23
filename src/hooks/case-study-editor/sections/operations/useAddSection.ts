@@ -6,6 +6,7 @@ import { SectionResponse } from '../types/sectionTypes';
 import { createSection } from '@/components/case-study-editor/sections/utils/createSection';
 import { normalizeSectionName } from '../utils/sectionOperationHelpers';
 import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Hook for adding a new section to a case study
@@ -24,20 +25,24 @@ export const useAddSection = (
     
     console.log(`Adding section of type: ${componentType} to case study ${caseStudyId}`);
     
+    // Create a section with a truly unique ID
+    const newId = uuidv4();
+    
     // Create a temporary section
     const tempSection = createSection(componentType);
+    tempSection.id = newId; // Override with guaranteed unique ID
     
     // Convert to a SectionResponse compatible object
     const newSection: SectionResponse = {
-      id: tempSection.id,
+      id: newId,
       case_study_id: caseStudyId,
       component: componentType,
       title: tempSection.title,
-      sort_order: 0, // Fixed value
+      sort_order: sections.length, // Use current length as sort order
       published: tempSection.published !== undefined ? tempSection.published : true,
       content: '',
       image_url: tempSection.image_url,
-      metadata: tempSection.metadata
+      metadata: tempSection.metadata || {}
     };
     
     try {
@@ -58,7 +63,7 @@ export const useAddSection = (
           case_study_id: caseStudyId,
           component: componentType,
           title: newSection.title,
-          sort_order: 0,
+          sort_order: newSection.sort_order,
           published: newSection.published,
           content: newSection.content || '',
           metadata: newSection.metadata
@@ -83,5 +88,5 @@ export const useAddSection = (
       setSections(prev => prev.filter(s => s.id !== newSection.id));
       return null;
     }
-  }, [caseStudyId, setSections, setOpenSections]);
+  }, [caseStudyId, sections, setSections, setOpenSections]);
 };

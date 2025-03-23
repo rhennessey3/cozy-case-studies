@@ -1,6 +1,6 @@
 
 import { SectionWithOrder } from '../types';
-import { v4 as uuidv4 } from '@/lib/utils';
+import { v4 as uuidv4 } from 'uuid';
 import { getSectionDisplayName } from '@/hooks/case-study-editor/sections/utils/sectionTypeMapping';
 
 /**
@@ -13,12 +13,12 @@ export const createSection = (type: SectionWithOrder['type']): SectionWithOrder 
   const displayName = getSectionDisplayName(type);
   
   return {
-    id: uuidv4(),
+    id: uuidv4(), // Always use UUID for guaranteed uniqueness
     type,
     component: type, // Using type as component
     title: displayName,
     content: '',
-    sort_order: 0, // Fixed value - no longer used for ordering
+    sort_order: 0, // Default value
     published: true, // Default to published
   };
 };

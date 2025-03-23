@@ -52,7 +52,7 @@ export const useSectionState = (
   
   // Load initial sections from Supabase
   useEffect(() => {
-    if (!supabaseLoading && !isInitializedRef.current) {
+    if (!supabaseLoading && supabaseSections && !isInitializedRef.current) {
       console.log('Initializing sections from Supabase:', supabaseSections?.length || 0);
       
       if (supabaseSections && supabaseSections.length > 0) {
@@ -79,24 +79,6 @@ export const useSectionState = (
     }
   }, [sections, cleanupOrphanedSections]);
   
-  // Save to Supabase when sections change
-  const isUpdatingRef = useRef(false);
-  
-  useEffect(() => {
-    if (caseStudyId && sections.length > 0 && initialized && !isUpdatingRef.current) {
-      console.log('Saving sections to Supabase:', sections.length);
-      isUpdatingRef.current = true;
-      
-      // Convert sections from SectionWithOrder to SectionResponse before saving
-      const sectionResponses = mapSectionWithOrdersToSectionResponses(sections, caseStudyId);
-      saveToSupabase(sectionResponses);
-      
-      setTimeout(() => {
-        isUpdatingRef.current = false;
-      }, 300);
-    }
-  }, [sections, caseStudyId, initialized, saveToSupabase]);
-  
   // Add section handler with immediate Supabase persistence
   const addSection = useCallback(async (type: SectionWithOrder['type']) => {
     console.log('Adding section of type:', type);
@@ -113,7 +95,7 @@ export const useSectionState = (
       component: type,
       title: type.charAt(0).toUpperCase() + type.slice(1),
       content: '',
-      sort_order: 0,
+      sort_order: sections.length || 0,
       published: true
     };
     
@@ -165,6 +147,7 @@ export const useSectionState = (
   const removeSection = useCallback((id: string) => {
     console.log('Removing section:', id);
     
+    // First update local state to show immediate feedback
     setSections(prev => {
       const sectionToRemove = prev.find(section => section.id === id);
       if (!sectionToRemove) {

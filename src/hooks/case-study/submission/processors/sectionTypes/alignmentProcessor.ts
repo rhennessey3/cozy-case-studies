@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { CaseStudyForm } from '@/types/caseStudy';
+import { v4 as uuidv4 } from 'uuid';
 
 export const processAlignmentSection = async (
   form: CaseStudyForm,
@@ -13,9 +14,6 @@ export const processAlignmentSection = async (
   if (!form.subhead && !form.introductionParagraph && !form.alignmentImage) {
     console.log('Alignment section has minimal data, but proceeding anyway');
   }
-  
-  // Generate a stable ID based on section type and case study
-  const sectionId = `alignment-${caseStudyId}`;
   
   try {
     console.log(`Processing alignment section with published=${published}, alignment=${form.alignment || 'left'}`);
@@ -37,8 +35,14 @@ export const processAlignmentSection = async (
       throw new Error(`Failed to check for existing alignment sections: ${fetchError.message}`);
     }
     
+    // Generate a unique ID for this section
+    const sectionId = existingSections && existingSections.length > 0 
+      ? existingSections[0].id 
+      : `alignment-${uuidv4()}`;
+    
     // Prepare the section data - ensure all values are included
     const sectionData = {
+      id: sectionId,
       case_study_id: caseStudyId,
       component: 'alignment',
       title: form.subhead || 'Alignment Section',
@@ -53,6 +57,7 @@ export const processAlignmentSection = async (
     
     // Log for debugging
     console.log('Saving alignment section with data:', {
+      id: sectionData.id,
       title: sectionData.title,
       content_length: sectionData.content?.length || 0,
       image_url: sectionData.image_url ? 'Present' : 'Missing',

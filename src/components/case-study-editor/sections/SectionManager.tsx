@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { SectionResponse } from '@/hooks/case-study-editor/sections/types/sectionTypes';
 import { SectionWithOrder } from './types';
+import { Plus } from 'lucide-react';
 
 interface SectionManagerProps {
   sections: SectionResponse[];
@@ -20,20 +21,9 @@ const SectionManager: React.FC<SectionManagerProps> = ({
   onRemoveSection,
   onTogglePublished
 }) => {
-  const handleAddIntroduction = () => {
-    onAddSection('introduction');
-  };
-
-  const handleAddAlignment = () => {
-    onAddSection('alignment');
-  };
-
-  const handleAddCarousel = () => {
-    onAddSection('carousel');
-  };
-
-  const handleAddFourParagraphs = () => {
-    onAddSection('fourParagraphs');
+  const handleAddSection = (type: SectionWithOrder['type']) => {
+    console.log(`Adding section of type: ${type}`);
+    onAddSection(type);
   };
 
   return (
@@ -42,31 +32,31 @@ const SectionManager: React.FC<SectionManagerProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <Button
           variant="secondary"
-          onClick={handleAddIntroduction}
-          className="w-full text-xs"
+          onClick={() => handleAddSection('introduction')}
+          className="w-full text-xs flex items-center justify-center gap-1"
         >
-          Add Introduction
+          <Plus className="h-3 w-3" /> Introduction
         </Button>
         <Button
           variant="secondary"
-          onClick={handleAddAlignment}
-          className="w-full text-xs"
+          onClick={() => handleAddSection('alignment')}
+          className="w-full text-xs flex items-center justify-center gap-1"
         >
-          Add Alignment
+          <Plus className="h-3 w-3" /> Alignment
         </Button>
         <Button
           variant="secondary"
-          onClick={handleAddCarousel}
-          className="w-full text-xs"
+          onClick={() => handleAddSection('carousel')}
+          className="w-full text-xs flex items-center justify-center gap-1"
         >
-          Add Carousel
+          <Plus className="h-3 w-3" /> Carousel
         </Button>
         <Button
           variant="secondary"
-          onClick={handleAddFourParagraphs}
-          className="w-full text-xs"
+          onClick={() => handleAddSection('fourParagraphs')}
+          className="w-full text-xs flex items-center justify-center gap-1"
         >
-          Add 4 Paragraphs
+          <Plus className="h-3 w-3" /> 4 Paragraphs
         </Button>
       </div>
     </div>

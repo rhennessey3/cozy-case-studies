@@ -23,8 +23,8 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
     });
   }, [title, content, imageUrl, alignment]);
 
-  // Normalize alignment value
-  const normalizedAlignment = alignment?.toLowerCase() === 'right' ? 'right' : 'left';
+  // Normalize alignment value to prevent issues
+  const normalizedAlignment = (alignment || '').toLowerCase() === 'right' ? 'right' : 'left';
   
   return (
     <section className="py-12 md:py-20 bg-white">
