@@ -35,6 +35,8 @@ export const useSectionOperations = (
   
   return {
     ...operations,
-    moveSection
+    moveSection,
+    // Add this property for backward compatibility with tests
+    togglePublished: operations.toggleSectionPublished
   };
 };
