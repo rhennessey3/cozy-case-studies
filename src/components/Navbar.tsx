@@ -5,7 +5,6 @@ import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import AnimatedMenuIcon from './AnimatedMenuIcon';
 import gsap from 'gsap';
-import { isAdminRoute } from '@/hooks/isAdminRoute';
 
 interface NavbarProps {
   className?: string;
@@ -18,7 +17,6 @@ const Navbar = ({
   const navigate = useNavigate();
   const location = useLocation();
   const logoRef = useRef<SVGSVGElement>(null);
-  const inAdminRoute = isAdminRoute();
 
   useEffect(() => {
     closeDrawer();
@@ -114,13 +112,6 @@ const Navbar = ({
             </button>
             <button type="button" onClick={() => handleNavigation('/case-studies')} className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[67px]">
               Case Studies
-            </button>
-            <button 
-              type="button" 
-              onClick={() => handleNavigation(inAdminRoute ? '/' : '/admin/case-studies')} 
-              className="text-left text-gray-900 hover:text-cozy-600 transition-colors py-3 cursor-pointer hover:bg-gray-50 rounded-md px-[67px]"
-            >
-              {inAdminRoute ? 'Exit Admin' : 'Admin'}
             </button>
           </nav>
         </div>
