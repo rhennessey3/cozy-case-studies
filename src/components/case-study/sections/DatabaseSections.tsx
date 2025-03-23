@@ -28,7 +28,7 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
   }
   
   // Filter out editor_state sections which are for internal use only
-  const filteredSections = sections.filter(s => s.component !== 'editor_state');
+  const filteredSections = sections.filter(s => s.component !== 'editor_state' && s.component !== 'introduction');
   
   // Filter sections to only include published ones, unless in admin view
   const visibleSections = isAdminView ? filteredSections : filteredSections.filter(s => s.published !== false);
@@ -56,16 +56,6 @@ const DatabaseSections: React.FC<DatabaseSectionsProps> = ({ sections, isAdminVi
         console.log(`Rendering section: ${displayName} (${componentType})`);
         
         switch (componentType) {
-          case 'introduction':
-            return (
-              <IntroductionSection 
-                key={section.id}
-                title={section.title || 'Case Study Introduction'}
-                content={section.content || ''}
-                challengeContent={section.metadata?.challenge || ''}
-                approachContent={section.metadata?.approach || ''}
-              />
-            );
           case 'alignment':
             return (
               <AlignmentSection 
