@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { SectionResponse } from '../types/sectionTypes';
 import { toast } from 'sonner';
@@ -32,14 +33,17 @@ export const useAddSectionHook = (
       component: type,
       title: tempSection.title,
       content: tempSection.content || '',
-      sort_order: 0, // Fixed default value
+      sort_order: sections.length, // Use current length as sort order
       published: tempSection.published !== undefined ? tempSection.published : true,
-      image_url: tempSection.image_url,
-      metadata: tempSection.metadata
+      image_url: '',
+      metadata: {}
     };
     
     // Update local state first for immediate feedback
-    setSections(prev => [...prev, newSection]);
+    setSections(prev => {
+      const updatedSections = [...prev, newSection];
+      return updatedSections;
+    });
     
     // Auto open the new section
     setOpenSections(prev => ({
@@ -57,7 +61,7 @@ export const useAddSectionHook = (
           case_study_id: caseStudyId,
           component: type,
           title: newSection.title,
-          sort_order: 0,
+          sort_order: newSection.sort_order,
           published: newSection.published,
           content: newSection.content || '',
           metadata: newSection.metadata
@@ -78,5 +82,5 @@ export const useAddSectionHook = (
     toast.success(`${newSection.title} section added`);
     
     return newSection;
-  }, [caseStudyId, setSections, setOpenSections]);
+  }, [caseStudyId, sections.length, setSections, setOpenSections]);
 };
