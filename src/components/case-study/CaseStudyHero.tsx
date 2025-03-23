@@ -8,9 +8,6 @@ export interface CaseStudyHeroProps {
   title: string;
   coverImage: string;
   category: string;
-  objective?: string;
-  approach?: string;
-  results?: string;
   objectiveHeading?: string;
   approachHeading?: string;
   resultsHeading?: string;
@@ -20,14 +17,16 @@ const CaseStudyHero = ({
   title,
   coverImage,
   category,
-  objective = "Honeybaked Ham was looking for a new revenue stream and wanted to test digital gift cards as a way to make that happen.",
-  approach = "Alongside my team we created a digital platform that transforms the way people are capable of fundraising. Utilizing the latest in payment gateway infrastructure and digital fulfillment we were able to increase the opportunity to revenue by over 200%.",
-  results = "30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.",
   objectiveHeading = "Challenge",
   approachHeading = "Approach",
   resultsHeading = "Impact"
 }: CaseStudyHeroProps) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
+  
+  // Hardcoded text for all case studies
+  const objective = "The existing app had a complex navigation structure, outdated UI, and was difficult for new users to learn. The client wanted to modernize the experience while ensuring all existing functionality remained accessible.";
+  const approach = "We conducted extensive user research and workshops to identify pain points, then created a simplified information architecture and design system that maintained feature parity while significantly improving usability.";
+  const results = "The redesigned app saw a 42% increase in daily active users, 68% reduction in customer support tickets, and a 4.8/5 rating in app stores, up from 3.2/5 previously.";
   
   return (
     <section className={`${isExtraSmallScreen ? 'h-auto' : 'h-screen'} flex`}>

@@ -23,12 +23,6 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy, isAdminV
         title={caseStudy.title}
         coverImage={caseStudy.coverImage}
         category={caseStudy.category}
-        objective={caseStudy.content.challenge}
-        approach={caseStudy.content.approach}
-        results={caseStudy.content.results}
-        objectiveHeading="Challenge"
-        approachHeading="Approach"
-        resultsHeading="Impact"
       />
       
       {/* Render case study sections from caseStudy.customSections if available */}
