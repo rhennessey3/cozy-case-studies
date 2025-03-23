@@ -4,7 +4,7 @@
  * This is maintained for compatibility with existing imports
  */
 
-import { CaseStudy } from '@/types/caseStudy';
+import { CaseStudy } from '@/data/caseStudies'; // Updated import path
 
 /**
  * @deprecated Local storage is no longer used

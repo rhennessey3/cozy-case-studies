@@ -9,6 +9,7 @@ interface FormActionsProps {
   onCancel?: () => void;
   onSubmit?: () => void;
   className?: string;
+  slug?: string; // Added slug prop to interface
 }
 
 const FormActions: React.FC<FormActionsProps> = ({ 
@@ -16,7 +17,8 @@ const FormActions: React.FC<FormActionsProps> = ({
   saving = false,
   onCancel,
   onSubmit,
-  className = ''
+  className = '',
+  slug // Adding slug parameter
 }) => {
   return (
     <div className={`flex items-center gap-2 ${className}`}>

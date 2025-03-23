@@ -4,7 +4,7 @@
  * Local storage functionality has been removed.
  */
 
-import { CaseStudy } from '@/types/caseStudy';
+import { CaseStudy } from '@/data/caseStudies'; // Updated import path
 
 /**
  * @deprecated Local storage is no longer used for case studies
