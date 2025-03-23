@@ -28,7 +28,8 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       const { data, error } = await supabase
         .from('case_study_sections')
         .select('*')
-        .eq('case_study_id', caseStudyId);
+        .eq('case_study_id', caseStudyId)
+        .order('sort_order', { ascending: true });
       
       if (error) {
         console.error('useSectionStorage: Error fetching sections from database:', error);
@@ -66,13 +67,39 @@ export const useSectionStorage = (caseStudyId: string | null) => {
     console.log(`useSectionStorage: Saving ${updatedSections.length} sections to database`);
     
     try {
+      // Delete any existing sections first to avoid duplicates
+      const currentSections = await supabase
+        .from('case_study_sections')
+        .select('id')
+        .eq('case_study_id', caseStudyId);
+      
+      // Get IDs from the new sections
+      const newSectionIds = new Set(updatedSections.map(section => section.id));
+      
+      // Find sections to delete (they exist in DB but not in our new list)
+      const sectionsToDelete = currentSections.data?.filter(
+        section => !newSectionIds.has(section.id)
+      );
+      
+      // Delete sections that are no longer needed
+      if (sectionsToDelete && sectionsToDelete.length > 0) {
+        console.log(`useSectionStorage: Deleting ${sectionsToDelete.length} stale sections`);
+        for (const section of sectionsToDelete) {
+          await supabase
+            .from('case_study_sections')
+            .delete()
+            .eq('id', section.id);
+        }
+      }
+      
       // We'll use upsert to handle both inserts and updates
       const { error } = await supabase
         .from('case_study_sections')
         .upsert(
-          updatedSections.map(section => ({
+          updatedSections.map((section, index) => ({
             ...section,
-            case_study_id: caseStudyId
+            case_study_id: caseStudyId,
+            sort_order: index // Set sort order based on array position
           })),
           { onConflict: 'id' }
         );

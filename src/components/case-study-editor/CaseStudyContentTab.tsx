@@ -82,6 +82,8 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     return () => window.removeEventListener('case-study-saved', handleSave);
   }, [caseStudyId, refreshSections]);
 
+  console.log('CaseStudyContentTab rendering with sections:', sections?.length || 0);
+
   return (
     <EditorSectionManager 
       sections={sections}
