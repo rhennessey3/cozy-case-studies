@@ -32,7 +32,16 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     console.log(`AlignmentSection input changed: ${e.target.name} = ${e.target.value.substring(0, 30)}${e.target.value.length > 30 ? '...' : ''}`);
-    onContentChange(e);
+    
+    // Create a direct copy of the event to ensure it doesn't get nullified by React's event pooling
+    const syntheticEvent = {
+      target: {
+        name: e.target.name,
+        value: e.target.value
+      }
+    } as React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
+    
+    onContentChange(syntheticEvent);
   };
 
   const handleImageUpload = (url: string) => {
@@ -68,6 +77,9 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
           placeholder="Section content"
           className="min-h-[150px]"
         />
+        <div className="text-xs text-muted-foreground mt-1">
+          {formData.introductionParagraph ? `${formData.introductionParagraph.length} characters` : 'No content yet'}
+        </div>
       </div>
 
       <div>

@@ -85,10 +85,21 @@ export const processAlignmentSection = async (
       
       // Keep the first one
       const firstSection = existingSections[0];
+      
+      // Use upsert to ensure the data is updated correctly
       result = await supabase
         .from('case_study_sections')
-        .update(sectionData)
-        .eq('id', firstSection.id);
+        .upsert({
+          id: firstSection.id,
+          case_study_id: sectionData.case_study_id,
+          component: sectionData.component,
+          title: sectionData.title,
+          content: sectionData.content,
+          image_url: sectionData.image_url,
+          sort_order: sectionData.sort_order,
+          published: sectionData.published,
+          metadata: sectionData.metadata
+        });
       
       // Remove this ID from the set of sections to delete
       existingSectionIds.delete(firstSection.id);
@@ -107,7 +118,7 @@ export const processAlignmentSection = async (
         .insert(sectionData);
     }
     
-    if (result.error) {
+    if (result && result.error) {
       console.error('Error saving alignment section:', result.error);
       throw new Error(`Failed to save alignment section: ${result.error.message}`);
     }

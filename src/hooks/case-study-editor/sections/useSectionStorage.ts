@@ -129,6 +129,9 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       
       // Process each section individually to avoid race conditions
       for (const [index, section] of updatedSections.entries()) {
+        // Deep clone the section to avoid reference issues
+        const sectionToSave = JSON.parse(JSON.stringify(section));
+        
         // Check if section exists
         const { data: existingSection } = await supabase
           .from('case_study_sections')
@@ -137,7 +140,7 @@ export const useSectionStorage = (caseStudyId: string | null) => {
           .maybeSingle();
         
         const sectionData = {
-          ...section,
+          ...sectionToSave,
           case_study_id: caseStudyId,
           sort_order: index // Update sort order based on array position
         };
@@ -154,11 +157,10 @@ export const useSectionStorage = (caseStudyId: string | null) => {
             });
           }
           
-          // Update existing section
+          // Update existing section - use upsert to ensure all fields are updated
           const { error: updateError } = await supabase
             .from('case_study_sections')
-            .update(sectionData)
-            .eq('id', section.id);
+            .upsert(sectionData);
             
           if (updateError) {
             console.error(`Error updating section ${section.id}:`, updateError);

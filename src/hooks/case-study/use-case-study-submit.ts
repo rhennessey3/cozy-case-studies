@@ -27,6 +27,9 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
       form.alignment = 'left';
     }
     
+    // Make a safe copy of the form data to prevent any reference issues
+    const formToSubmit = JSON.parse(JSON.stringify(form));
+    
     const result = await submitHandler(e);
     
     if (result && result.success) {
