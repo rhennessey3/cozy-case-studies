@@ -1,14 +1,13 @@
 
-import { useState, useEffect, useRef } from 'react';
-import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
+import { useState, useRef, useEffect } from 'react';
 import { SectionResponse } from '../types/sectionTypes';
 import { mapSectionResponsesToSectionWithOrders } from '../utils/sectionResponseMapper';
+import { SectionWithOrder } from '@/components/case-study-editor/sections/types';
 
 /**
- * Hook to manage section initialization from Supabase
+ * Hook to handle section initialization from Supabase
  */
 export const useSectionInitialization = (
-  caseStudyId: string | null,
   supabaseSections: SectionResponse[],
   supabaseLoading: boolean
 ) => {
@@ -17,38 +16,28 @@ export const useSectionInitialization = (
   const isInitializingRef = useRef(true);
   const lastValidSectionsRef = useRef<SectionWithOrder[]>([]);
   
-  // Log for debugging
-  console.log('useSectionInitialization - caseStudyId:', caseStudyId);
-  console.log('useSectionInitialization - supabaseSections:', supabaseSections?.length || 0);
-  console.log('useSectionInitialization - loading:', supabaseLoading);
-  
   // Load initial sections from Supabase
   useEffect(() => {
-    console.log('useEffect - Initialization check, initialized:', initialized, 'isInitializing:', isInitializingRef.current);
-    
-    if (!initialized && isInitializingRef.current) {
+    if (!supabaseLoading && isInitializingRef.current) {
+      console.log('useSectionInitialization: Loading sections from Supabase:', 
+        supabaseSections?.length || 0);
+      
       if (supabaseSections && supabaseSections.length > 0) {
-        console.log('Initial sections from Supabase:', supabaseSections);
         // Convert SectionResponse[] to SectionWithOrder[]
         const sectionsWithOrder = mapSectionResponsesToSectionWithOrders(supabaseSections);
-        console.log('Mapped to SectionWithOrder[]:', sectionsWithOrder);
         setSections(sectionsWithOrder);
         lastValidSectionsRef.current = sectionsWithOrder;
-      } else {
-        console.log('No initial sections found in Supabase');
       }
       
       isInitializingRef.current = false;
       setInitialized(true);
-      console.log('Initialization complete, state set to initialized');
     }
-  }, [supabaseSections, supabaseLoading, initialized]);
+  }, [supabaseSections, supabaseLoading]);
   
   return {
     sections,
     setSections,
     initialized,
-    isInitializingRef,
     lastValidSectionsRef
   };
 };
