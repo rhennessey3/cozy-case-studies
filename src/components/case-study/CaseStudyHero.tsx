@@ -24,9 +24,9 @@ const CaseStudyHero = ({
   objective = "To create a sustainable packaging solution that reduces environmental impact while enhancing brand identity.",
   approach = "Utilizing eco-friendly materials and innovative design techniques to balance functionality and sustainability.",
   results = "30% reduction in material usage, 45% increase in brand recognition, and 100% biodegradable packaging solution.",
-  objectiveHeading = "Objective",
+  objectiveHeading = "Challenge",
   approachHeading = "Approach",
-  resultsHeading = "Results"
+  resultsHeading = "Impact"
 }: CaseStudyHeroProps) => {
   const isExtraSmallScreen = useMediaQuery('(max-width: 450px)');
   

@@ -63,6 +63,9 @@ const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy, isAdminV
         objective={caseStudy.content.challenge}
         approach={caseStudy.content.approach}
         results={caseStudy.content.results}
+        objectiveHeading="Challenge"
+        approachHeading="Approach"
+        resultsHeading="Impact"
       />
       
       {loading ? (

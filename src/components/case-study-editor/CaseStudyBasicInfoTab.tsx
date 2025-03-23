@@ -165,25 +165,25 @@ const CaseStudyBasicInfoTab: React.FC<CaseStudyBasicInfoTabProps> = ({
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <RequiredLabel htmlFor="subhead-three">Results</RequiredLabel>
+                <RequiredLabel htmlFor="subhead-three">Impact</RequiredLabel>
                 <Input 
                   id="subhead-three" 
                   name="results" 
                   value={form.results} 
                   onChange={handleChange} 
-                  placeholder="Results"
+                  placeholder="Impact"
                   className={`bg-gray-50 border-gray-200 ${!form.results.trim() ? "border-red-300" : ""}`}
                 />
               </div>
               
               <div className="space-y-2">
-                <RequiredLabel htmlFor="subhead-three-paragraph">Results Description</RequiredLabel>
+                <RequiredLabel htmlFor="subhead-three-paragraph">Impact Description</RequiredLabel>
                 <Textarea 
                   id="subhead-three-paragraph" 
                   name="conclusion" 
                   value={form.conclusion} 
                   onChange={handleChange} 
-                  placeholder="Describe the results..."
+                  placeholder="Describe the impact..."
                   className={`bg-gray-50 border-gray-200 ${!form.conclusion.trim() ? "border-red-300" : ""}`}
                   rows={3}
                 />
