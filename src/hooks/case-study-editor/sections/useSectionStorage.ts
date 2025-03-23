@@ -11,6 +11,7 @@ import { useSectionPersistence } from './storage/useSectionPersistence';
  */
 export const useSectionStorage = (caseStudyId: string | null) => {
   const [error, setError] = useState<string | null>(null);
+  const [saveInProgress, setSaveInProgress] = useState(false);
   
   // Use specialized hooks for fetching and persistence
   const { sections, isLoading, error: fetchError, fetchSections } = useSectionFetch(caseStudyId);
@@ -36,6 +37,13 @@ export const useSectionStorage = (caseStudyId: string | null) => {
       return;
     }
     
+    // Prevent multiple concurrent save operations
+    if (saveInProgress) {
+      console.log('useSectionStorage: Save already in progress, skipping');
+      return;
+    }
+    
+    setSaveInProgress(true);
     console.log(`useSectionStorage: Saving ${updatedSections.length} sections`);
     
     // Check for alignment sections to debug title issues
@@ -72,17 +80,20 @@ export const useSectionStorage = (caseStudyId: string | null) => {
         console.log('useSectionStorage: Refreshing sections from database after save');
         fetchSections();
         
-        toast.success('Sections saved');
+        // Only show toast once - not every time this function is called
+        toast.success('Sections saved', { id: 'sections-saved' });
       } else {
         console.error('useSectionStorage: Failed to save sections');
-        toast.error('Failed to save sections');
+        toast.error('Failed to save sections', { id: 'sections-save-error' });
       }
     } catch (err) {
       console.error('useSectionStorage: Exception in setSections:', err);
-      toast.error('Error saving sections to database');
+      toast.error('Error saving sections to database', { id: 'sections-save-exception' });
       setError('Failed to save sections');
+    } finally {
+      setSaveInProgress(false);
     }
-  }, [caseStudyId, fetchSections, persistSections, verifySectionSave]);
+  }, [caseStudyId, fetchSections, persistSections, verifySectionSave, saveInProgress]);
   
   // Implement a refresh function
   const refresh = useCallback(() => {
