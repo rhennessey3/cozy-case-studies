@@ -27,7 +27,14 @@ export const useCaseStudySubmit = (form: CaseStudyForm, slug?: string) => {
       const savedEvent = new CustomEvent('case-study-saved', { 
         detail: { 
           slug: eventSlug,
-          caseStudyId: result.caseStudyId 
+          caseStudyId: result.caseStudyId,
+          // Add alignment data to the event for debugging
+          alignmentData: {
+            subhead: form.subhead,
+            introductionParagraph: form.introductionParagraph,
+            alignmentImage: form.alignmentImage,
+            alignment: form.alignment
+          }
         } 
       });
       window.dispatchEvent(savedEvent);

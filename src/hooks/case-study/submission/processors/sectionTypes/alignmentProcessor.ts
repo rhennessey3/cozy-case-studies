@@ -21,7 +21,7 @@ export const processAlignmentSection = async (
     // Check if this section already exists - but get ALL matching sections
     const { data: existingSections, error: fetchError } = await supabase
       .from('case_study_sections')
-      .select('id')
+      .select('id, content, title')
       .eq('case_study_id', caseStudyId)
       .eq('component', 'alignment');
       
@@ -64,6 +64,16 @@ export const processAlignmentSection = async (
     if (existingSections && existingSections.length > 0) {
       // If multiple sections exist, we'll update the first one and delete the others
       console.log(`Found ${existingSections.length} existing alignment sections. Updating the first one and marking others for deletion.`);
+      
+      // Log the existing content vs new content
+      if (existingSections[0].content !== sectionData.content || existingSections[0].title !== sectionData.title) {
+        console.log('Updating content from:', {
+          oldTitle: existingSections[0].title,
+          oldContent: existingSections[0].content,
+          newTitle: sectionData.title,
+          newContent: sectionData.content
+        });
+      }
       
       // Keep the first one
       const firstSection = existingSections[0];

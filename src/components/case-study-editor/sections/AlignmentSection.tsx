@@ -29,6 +29,11 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
     });
   }, [formData]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    console.log(`AlignmentSection input changed: ${e.target.name} = ${e.target.value}`);
+    onContentChange(e);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -37,7 +42,7 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
           id="subhead" 
           name="subhead" 
           value={formData.subhead || ''} 
-          onChange={onContentChange} 
+          onChange={handleInputChange} 
           placeholder="Section title" 
         />
       </div>
@@ -48,7 +53,7 @@ const AlignmentSection: React.FC<AlignmentSectionProps> = ({
           id="introductionParagraph" 
           name="introductionParagraph" 
           value={formData.introductionParagraph || ''} 
-          onChange={onContentChange} 
+          onChange={handleInputChange} 
           placeholder="Section content"
           className="min-h-[150px]"
         />

@@ -71,6 +71,12 @@ export const processCustomSections = async (form: CaseStudyForm, caseStudyId: st
   if ((form.subhead || form.introductionParagraph || form.alignmentImage) && 
       !customSections.some(s => s.type === 'alignment')) {
     console.log('Found alignment data in form but not in customSections array, adding it manually');
+    console.log('Alignment data to be processed:', {
+      subhead: form.subhead,
+      introductionParagraph: form.introductionParagraph,
+      alignmentImage: form.alignmentImage,
+      alignment: form.alignment
+    });
     
     try {
       await processAlignmentSection(form, caseStudyId, existingSectionIds, 0, true);
