@@ -23,7 +23,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   // Generate form key for stable rendering
   const formKey = useFormKey(form);
   
-  // Initialize section management
+  // Initialize section management with refactored hooks
   const { 
     sections, 
     openSections, 
@@ -53,10 +53,10 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
     handleContentChange(event);
   };
 
-  // Refresh sections when needed - every time caseStudyId changes and on initial load
+  // Refresh sections when caseStudyId changes or component mounts
   useEffect(() => {
     if (caseStudyId) {
-      console.log('CaseStudyId changed or component mounted, refreshing sections');
+      console.log('CaseStudyContentTab: caseStudyId changed or component mounted, refreshing sections');
       refreshSections();
     }
   }, [caseStudyId, refreshSections]);
@@ -64,7 +64,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   // Also refresh when no sections are available
   useEffect(() => {
     if (caseStudyId && (!sections || sections.length === 0)) {
-      console.log('No sections loaded, refreshing from database');
+      console.log('CaseStudyContentTab: No sections loaded, refreshing from database');
       refreshSections();
     }
   }, [caseStudyId, sections, refreshSections]);
@@ -73,7 +73,7 @@ const CaseStudyContentTab: React.FC<CaseStudyContentTabProps> = React.memo(({
   useEffect(() => {
     const handleSave = () => {
       if (caseStudyId) {
-        console.log('Case study saved event detected, refreshing sections');
+        console.log('CaseStudyContentTab: Case study saved event detected, refreshing sections');
         setTimeout(() => refreshSections(), 500);
       }
     };
